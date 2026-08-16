@@ -38,6 +38,8 @@
           <h2>RUN CONFIG</h2>
           <div class="settingRow compact"><span>DIFFICULTY</span><button id="difficultyBtn"></button></div>
           <div id="difficultyDesc" class="tiny blockText"></div>
+          <div class="settingRow compact"><span>CONTRACT</span><button id="contractBtn"></button></div>
+          <div id="contractDesc" class="tiny blockText"></div>
           <div class="metaLine"><span>RESEARCH</span><b id="researchLevelText">0</b></div>
           <div class="metaLine"><span>ACHIEVEMENTS</span><b id="achievementCountText">0/0</b></div>
           <div class="metaLine"><span>LIFETIME KILLS</span><b id="lifetimeKillsText">0</b></div>
@@ -52,7 +54,7 @@
         </div>
       </div>
 
-      <div class="footerHelp">WASD / ARROWS / GAMEPAD — MOVE · P / ESC — PAUSE · M — AUDIO · F — FULLSCREEN</div>
+      <div class="footerHelp">WASD / ARROWS / MOUSE / GAMEPAD — MOVE · P / ESC — PAUSE · M — AUDIO · F — FULLSCREEN</div>
     </div>
   </section>
 
@@ -93,7 +95,7 @@
   <section id="codexScreen" class="overlay">
     <div class="panel widePanel">
       <div class="headerSplit"><div><h1>CODEX</h1><h2>PROFILE / SYSTEM INDEX</h2></div><div id="codexSummary" class="tag"></div></div>
-      <div class="tabRow"><button id="codexStatsTab" class="selected">STATS</button><button id="codexWeaponsTab">WEAPONS</button><button id="codexEnemiesTab">HOSTILES</button></div>
+      <div class="tabRow"><button id="codexStatsTab" class="selected">STATS</button><button id="codexWeaponsTab">WEAPONS</button><button id="codexEnemiesTab">HOSTILES</button><button id="codexDiscoveryTab">DISCOVERY</button></div>
       <div id="codexContent" class="codexContent"></div>
       <div class="menuRow"><button data-close="codexScreen">BACK</button></div>
     </div>
@@ -106,6 +108,7 @@
         <div class="settingRow"><div><b>PLAYER HP</b><div class="tiny">HUD value and/or bar above frame.</div></div><button id="playerHpSetting"></button></div>
         <div class="settingRow"><div><b>ENEMY HP</b><div class="tiny">Hostile health bars.</div></div><button id="enemyHpSetting"></button></div>
         <div class="settingRow"><div><b>XP READOUT</b><div class="tiny">Numeric progress above XP bar.</div></div><button id="xpSetting"></button></div>
+        <div class="settingRow"><div><b>MOUSE CONTROL</b><div class="tiny">HOLD: steer while holding LMB · FOLLOW: steer toward cursor.</div></div><button id="mouseSetting"></button></div>
         <div class="settingRow"><div><b>SCREEN SHAKE</b><div class="tiny">Combat impact camera movement.</div></div><button id="shakeSetting"></button></div>
         <div class="settingRow"><div><b>FLASH EFFECTS</b><div class="tiny">Bright cache / evolution pulses.</div></div><button id="flashSetting"></button></div>
         <div class="settingRow"><div><b>PARTICLES</b><div class="tiny">Visual debris density.</div></div><button id="particleSetting"></button></div>
