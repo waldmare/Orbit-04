@@ -1,41 +1,86 @@
 # ORBIT//04
 
-Lightweight browser-based space survivor inspired by early-2000s mobile games.
+Minimalist retro space survivor for browser and desktop.
 
-## Status
+## Current build
 
-Early prototype.
+`0.9.0`
 
-## Current features
+- 12-minute runs with 3 boss signatures
+- 7 playable frames
+- 8 weapon systems and 8 evolutions
+- 10 in-run passive modules
+- 5 volatile risk/reward protocols
+- 6 hostile archetypes, elites and boss patterns
+- XP, level choices, rerolls and skips
+- Signal Window events, anomalies and data caches
+- chain / graze / REDLINE / OVERDRIVE systems
+- IFF corruption: hostile-to-ally conversion
+- permanent Research progression
+- local achievements, codex and lifetime statistics
+- 3 difficulty modes
+- procedural music and sound effects
+- keyboard, gamepad movement and touch movement
+- configurable HP bars, XP readout, particles, flash and screen shake
+- local save export / import
 
-* Automatic shooting
-* WASD / arrow-key movement
-* Enemy waves
-* XP and leveling
-* Random upgrades
-* Increasing difficulty
-* Score system
+## Run
 
-## Tech
+Open `index.html` in a modern browser.
 
-* HTML
-* CSS
-* JavaScript
-* HTML5 Canvas
-* No dependencies
-* No build process
+No web build step is required.
 
-## Run locally
+## Controls
 
-Open `index.html` in a browser.
+- `WASD` / arrow keys — move
+- gamepad left stick / D-pad — move
+- `P` / `Esc` — pause
+- `M` — audio
+- `F` — fullscreen
 
-## Roadmap
+Weapons fire automatically.
 
-* [ ] Multiple weapons
-* [ ] Multiple enemy types
-* [ ] Bosses
-* [ ] Improved upgrade system
-* [ ] Local high score
-* [ ] Sound and music
-* [ ] Mobile controls
-* [ ] Public release
+## Desktop
+
+Desktop packaging uses Electron.
+
+```bash
+npm install
+npm start
+```
+
+Create a packaged application:
+
+```bash
+npm run package
+```
+
+Output is written to `out/`.
+
+## Repository layout
+
+```text
+index.html          UI shell
+styles.css          interface styles
+game.js             game logic and content
+desktop/main.cjs    desktop entry point
+package.json        desktop tooling
+forge.config.cjs    Electron Forge config
+STEAM_RELEASE.md    release checklist
+```
+
+## Monetization
+
+The game contains inactive adapter hooks for rewarded/interstitial portal ads. No advertising SDK is bundled.
+
+`SUPPORT_URL` in `game.js` may be set for a web support page. Keep it empty for store builds unless the target platform permits external support links.
+
+## Save data
+
+Browser progress is stored in `localStorage` under `orbit04-save-v2`.
+
+The Settings screen supports manual save export/import.
+
+## License
+
+Source-visible proprietary project. See `LICENSE.md`.

@@ -1,0 +1,19 @@
+{
+  "name": "orbit-04",
+  "productName": "ORBIT 04",
+  "version": "0.9.0",
+  "description": "Minimalist retro space survivor.",
+  "main": "desktop/main.cjs",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "test": "node --check game.js && node tests/smoke.js"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "latest",
+    "@electron-forge/maker-zip": "latest",
+    "electron": "43.2.0"
+  }
+}
