@@ -3,11 +3,11 @@ setlocal
 cd /d "%~dp0"
 
 if not exist "node_modules\electron\dist\electron.exe" (
-  echo Instalowanie wymaganych skladnikow ORBIT//04...
+  echo Installing ORBIT//04 dependencies...
   call npm.cmd install
   if errorlevel 1 (
     echo.
-    echo Instalacja nie powiodla sie. Zostaw to okno otwarte i wyslij jego tresc.
+    echo Installation failed. Keep this window open and include the complete output in a bug report.
     pause
     exit /b 1
   )
@@ -16,6 +16,6 @@ if not exist "node_modules\electron\dist\electron.exe" (
 call npm.cmd start
 if errorlevel 1 (
   echo.
-  echo Gra nie wystartowala. Zostaw to okno otwarte i wyslij jego tresc.
+  echo The game did not start. Keep this window open and include the complete output in a bug report.
   pause
 )

@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.63.0 — Premium Asset Edition
+## 0.63.0 — Sprite and licensed-audio integration
 
-- added eight role-specific premium spacecraft sprites with transparent alpha
+- added eight role-specific spacecraft sprites with transparent alpha
 - gave scout, charger, tank, gunner, splitter, sniper and boss distinct silhouettes
 - preserved source aspect ratios instead of forcing every ship into a square
 - replaced image-duplicate shadows and hull glows that could render as black rectangles
@@ -12,7 +12,7 @@
 - retained adaptive exploration/combat/boss crossfades and impact ducking
 - did not change enemy statistics, weapon balance, spawn timing or progression
 
-## 0.62.0 — Studio Edition
+## 0.62.0 — Readability and audio controls
 
 - added an independent Phase Dash readiness widget and low-hull danger treatment
 - added optional critical/all damage numbers with a pooled retained-text renderer
@@ -23,20 +23,20 @@
 - separated enemy fire, drone, nova, mine, beam, critical, dash, phase-shift, elite and boss-down sounds
 - expanded all three synchronized adaptive music layers from 24 to 48 seconds
 - added impact-driven music ducking, micro-pitch variation and mix-specific mastering
-- extended regression coverage for QoL controls, readability systems and studio audio assets
+- extended regression coverage for usability controls, readability systems and audio assets
 
-## 0.61.0 — Luminous Edition
+## 0.61.0 — Top-down runtime restoration
 
-- restored the polished top-down Phaser runtime as the active game direction
+- restored the top-down Phaser runtime as the active implementation
 - added PHASE DASH with directional control, invulnerability and a readable cooldown
 - added dash echoes, stronger engine plumes, dual energy waves and nearby bullet phasing
 - made SIGNAL RUSH pull XP from a wider radius and at much higher speed
-- added restrained cinematic lighting drift, panel motion and luminous interface feedback
+- added background lighting drift, panel motion and interface state feedback
 - improved HUD hierarchy, XP and boss bars, choice hover feedback and event impact
 - kept the complete 0.60 combat, progression, adaptive audio and dynamic-space feature set
 - added automated regression coverage for dash behavior and the active top-down renderer
 
-## 0.60.0 — Resonance Edition
+## 0.60.0 — Adaptive audio and background states
 
 - replaced the previous short music loop with three phase-locked 24-second adaptive stems
 - added exploration, combat and boss mixes with continuous state-driven crossfades
@@ -46,7 +46,7 @@
 - connected scene changes to run time and boss encounters
 - expanded regression checks for the dynamic visual and audio asset pipeline
 
-## 0.50.0 — Reforged Edition
+## 0.50.0 — Retained sprite renderer
 
 - replaced immediate-mode combat drawing with a retained Phaser sprite renderer
 - added original high-detail player, hostile and boss spacecraft assets
@@ -57,19 +57,19 @@
 - preserved the previous vector presentation as an automatic renderer fallback
 - expanded asset and syntax checks for the new visual engine
 
-## 0.40.0 — Vanguard Edition
+## 0.40.0 — Phaser WebGL renderer
 
 - forced the desktop renderer onto Phaser WebGL with automatic Canvas fallback
-- added a cinematic deep-space background, parallax and ambient engine particles
+- added a deep-space background, parallax and ambient engine particles
 - rebuilt ship rendering with material shadows, layered hull panels, cockpit cores and animated thrusters
 - integrated combat impact with the Phaser camera
-- redesigned menu, button and HUD materials around a premium glass interface
+- redesigned menu, button and HUD materials around a translucent panel interface
 - replaced oscillator-first audio with 15 locally generated 48 kHz stereo WAV assets
 - added a sample-based adaptive combat soundtrack and dynamic mix controls
 - retained procedural audio only as a missing-asset fallback
 - expanded asset and renderer regression tests
 
-## 0.30.0 — Engine Edition
+## 0.30.0 — Phaser migration
 
 - migrated runtime rendering from direct Canvas 2D drawing to Phaser 3.90
 - raised internal render output to 1440×810

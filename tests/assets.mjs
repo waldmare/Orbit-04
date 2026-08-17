@@ -69,7 +69,7 @@ for (const relative of referencedAssets) {
 
 const mediaFiles = (await walk(path.join(root, 'assets')))
   .filter(file => mediaExtensions.has(path.extname(file).toLowerCase()));
-assert.ok(mediaFiles.length >= 100, 'premium media pack is incomplete');
+assert.ok(mediaFiles.length >= 100, 'runtime media set is incomplete');
 
 let totalBytes = 0;
 for (const absolute of mediaFiles) {

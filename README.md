@@ -3,202 +3,168 @@
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
 ![Version](https://img.shields.io/badge/version-0.63.0-62e6ff)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
-![Electron](https://img.shields.io/badge/Electron-desktop-9d8cff)
+![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
-Kosmiczny survival / bullet heaven z premium widokiem z góry.
+ORBIT//04 is a single-player, top-down space survival game. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a third boss encounter.
 
-**Aktualny build:** `0.63.0 — Premium Asset Edition`
+Current version: `0.63.0`
 
-![ORBIT//04 — kierunek wizualny](docs/visual-direction-concept.png)
+## Runtime overview
 
-## Szybki start
-
-1. Pobierz lub sklonuj repozytorium.
-2. W Windows uruchom `START_ORBIT.cmd`.
-3. Przy pierwszym starcie launcher sam pobierze zależności i przygotuje lokalny Phaser.
-
-Gra działa jako lokalna aplikacja Electron. Nie uruchamiaj `index.html` bezpośrednio z dysku.
-
-## Technologie
-
-| Warstwa | Rozwiązanie |
+| Component | Implementation |
 |---|---|
-| Renderer | Phaser 3.90 / WebGL z Canvas fallback |
-| Desktop | Electron 43 |
-| Gameplay | JavaScript, bez zewnętrznego backendu |
-| Audio | licencjonowane sample Kenney i Mixkit |
-| Automatyzacja | GitHub Actions + testy Node.js |
+| Rendering | Phaser 3.90, WebGL with Canvas fallback |
+| Internal resolution | 1440 × 810 |
+| Desktop host | Electron 43 |
+| Game logic | JavaScript running locally in the renderer process |
+| Save data | Browser `localStorage` with manual export and import |
+| Automated checks | Node.js tests on GitHub Actions |
 
-## Silnik i prezentacja
+The supported runtime is the top-down Phaser implementation loaded by `index.html`. The repository also contains an inactive third-person prototype; it is not imported by the current game.
 
-- aktywny renderer Phaser 3.90 WebGL z widokiem z góry
-- osiem nowych, pełnych modeli statków: gracz, sześć klas przeciwników i boss
-- pooling setek przeciwników, pocisków, dropów i efektów
-- warstwowe światło addytywne, smugi silników, cienie i uderzenia energii
-- cztery animowane fazy kosmosu: deep space, pulsar, gravity rift i supernova
-- kinowe przejścia tła, paralaksa i proceduralne zjawiska kosmiczne
-- duży, skalowalny interfejs desktopowy z trybami LARGE / XL / XXL
-- aplikacja Electron działająca całkowicie lokalnie
+## Implemented game systems
 
-Eksperymentalny renderer trzecioosobowy nie jest ładowany i nie jest zależnością aktywnej gry.
+- 10 selectable frames with individual base statistics, starting weapons, and traits
+- 11 automatic weapon systems with upgrades and evolutions
+- 3 difficulty levels, 4 sectors, and 4 optional run contracts
+- boss encounters at approximately 3:30, 7:30, and 12:00
+- optional Ascension mode after completing the base run
+- persistent credits, research upgrades, frame mastery, operations, achievements, and Codex data
+- projectile grazing, kill chains, Signal Rush, Overdrive, caches, anomalies, and hostile conversion
+- keyboard, mouse, and gamepad movement
+- local save export, import, and reset controls
 
-## Luminous gameplay polish
+Detailed balance targets are documented in [BALANCE.md](BALANCE.md). Historical changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
-- nowy Phase Dash na `Shift`: unik, krótka nietykalność i kasowanie bliskich pocisków
-- czytelny cooldown dasha bezpośrednio w HUD
-- smugi po statku, podwójna fala energetyczna i mocniejsza praca silników podczas dasha
-- SIGNAL RUSH przyspiesza i powiększa przyciąganie XP, dzięki czemu nagroda jest natychmiast odczuwalna
-- dopracowane reakcje interfejsu, wejścia paneli, komunikaty i luminancja sceny
-- zachowane 10 statków, 11 broni, ewolucje, synergie, doktryny, kontrakty i Ascension
+## Rendering implementation
 
-## Premium asset pass
+The Phaser scene loads the active backgrounds, ship sprites, and audio files from local paths. `visual-engine.js` manages retained object pools for ships, projectiles, pickups, particles, orbiting weapons, and damage text. Energy beams, arcs, rifts, telegraphs, and additive lighting use separate graphics layers.
 
-- każdy typ przeciwnika ma teraz własną sylwetkę, materiał i kolorystykę zamiast jednego wielokrotnie barwionego modelu
-- proporcje sprite'ów są zachowywane przez renderer; statki nie są już rozciągane do kwadratów
-- wadliwe cienie będące czarnymi kopiami PNG zastąpiono miękkimi geometrycznymi cieniami
-- aktywne SFX korzystają z 70-elementowego pakietu Kenney Sci-Fi Sounds CC0
-- eksplozje, bossowie i broń ciężka mają dodatkową warstwę niskoczęstotliwościowego uderzenia
-- proceduralną muzykę zastąpiły trzy pełne utwory Mixkit z adaptacyjnym przejściem eksploracja / walka / boss
+The renderer includes:
 
-## Studio QoL i readability
+- distinct sprites for the player, six standard enemy classes, and the boss
+- aspect-ratio-preserving sprite scaling
+- geometric shadows instead of duplicated sprite silhouettes
+- configurable particles, additive glow, background detail, contrast, and graphics quality
+- four runtime background states: deep space, pulsar, gravitational rift, and supernova
+- a vector rendering fallback when the retained sprite engine is unavailable
 
-- osobny widget Phase Dash z paskiem gotowości
-- szybki restart bez wychodzenia do hangaru oraz `R` po zakończeniu runu
-- opcjonalne liczby obrażeń: tylko krytyki, wszystkie albo wyłączone
-- telegraphy przed strzałami snajperów, gunnerów, bossów oraz szarżą chargera
-- delikatna winieta REDLINE przy niskiej integralności kadłuba
-- PILOT ASSIST z krótką podpowiedzią sterowania na początku runu
-- tryb REDUCED MOTION ograniczający drgania, animacje UI i ruch tła
-- profile dynamiki CINEMA, BALANCED i NIGHT
-- oddzielne sample dla głównych broni, trafień, interfejsu i zdarzeń specjalnych
-- trzy pełne utwory z adaptacyjnym miksem i automatycznym duckingiem przy uderzeniach
+The current repository does not include a verified screenshot of version 0.63.0. Images that are not captured from the running build are not presented here as gameplay.
 
-## Core systems
+## Audio implementation
 
-- 12-minute base runs + optional Ascension endgame
-- 10 playable frames with unique traits and mastery
-- 11 weapon systems, evolutions and Overcharge
-- hidden weapon synergies
-- Doctrines, Contracts and Volatile Protocols
-- 4 sectors with different encounter modifiers
-- Echo Hunter adaptive nemesis
-- multi-phase bosses
-- IFF hostile conversion / allied fleet builds
-- Signal Windows, Anomalies and Secret Transmissions
-- Data / Rare / Omega / Paradox caches
-- chain, graze, REDLINE and OVERDRIVE systems
-- persistent Research, Operations, achievements and Codex
-- licensed sample-based combat pack and adaptive full-length soundtrack
-- keyboard, mouse, gamepad and touch input
+Gameplay sound effects use selected files from Kenney's Sci-Fi Sounds package. Music uses three Mixkit tracks assigned to exploration, combat, and boss states. The runtime crossfades between those states and applies separate sound-effect and music volume controls.
 
-## 0.60 Resonance audio and space
+License and source information is listed in [THIRD_PARTY.md](THIRD_PARTY.md).
 
-- completely regenerated 14-piece combat SFX pack at 48 kHz stereo
-- three synchronized music stems: exploration, combat and boss
-- continuous crossfades driven by threat, REDLINE, SIGNAL RUSH and boss encounters
-- cinematic sub-bass, filtered texture, mechanical transients and stereo room reflections
-- four-stage background director: deep space, pulsar, gravitational rift and supernova
-- 4.2-second cinematic crossfades, parallax drift and procedural celestial pulses
-- boss encounters force the supernova scene without changing gameplay balance
+## Display and accessibility settings
 
-## 0.50 Reforged presentation
+The settings screen provides:
 
-- completely replaced immediate-mode combat shapes with a retained Phaser sprite renderer
-- new high-detail player interceptor, hostile hunter and boss carrier artwork
-- pooled enemies, projectiles, loot, particles, mines, drones and photon blades
-- layered hull materials, shadows, additive engine plumes, reactor light and rank markers
-- scalable boss presentation and readable sprite-based health bars
-- energy arcs, beams and rifts composited in a dedicated additive FX layer
-- animated hangar hero ship and cinematic vignette
-- the former vector renderer remains only as a safe fallback
+- player and enemy health display modes
+- numeric or percentage XP display
+- critical-only, all, or disabled damage numbers
+- optional attack telegraphs and pilot hints
+- `HOLD`, `FOLLOW`, and disabled mouse steering modes
+- screen shake and flash toggles
+- full and reduced motion modes
+- three interface scales
+- particle, graphics, glow, background, and contrast controls
+- three dynamic-range profiles with independent music and sound-effect volume
 
-## 0.40 Vanguard presentation
+## Requirements
 
-- cinematic deep-space background loaded through Phaser
-- forced WebGL, additive lighting, parallax and engine particles
-- material shadows, hull panels, cockpit cores and animated thrusters
-- camera shake integrated with Phaser cameras
-- redesigned glass HUD, menus and buttons
-- 15 layered 48 kHz stereo sound assets
-- sample-based adaptive combat music replacing oscillator-first audio
-- full LARGE / XL / XXL interface scaling and expanded graphics controls
+- Node.js 22 is used by CI
+- npm
+- Windows, macOS, or Linux supported by the installed Electron version
 
-## 0.30 visual pass
+## Install and run
 
-The original low-resolution pixel renderer was replaced with Phaser.
+### Windows launcher
 
-- smooth vector spacecraft and hostile silhouettes
-- additive projectile and engine glow
-- layered star field and sector fog
-- modern 16:9 desktop HUD
-- higher-resolution rendering
-- differentiated elite, boss, rift, cache and weapon effects
-- configurable FX quality
-- no `image-rendering: pixelated`
+Double-click `START_ORBIT.cmd`. The launcher installs missing dependencies and starts Electron.
 
-The game keeps its restrained retro-futuristic identity without imitating a phone screen.
-
-## Balance pass
-
-`0.30.0` reduces health-sponge scaling and shifts difficulty toward movement, density and projectile pressure.
-
-- slightly later first elite
-- earlier first boss encounter
-- lower boss HP, stronger later boss damage
-- flatter early hostile hull growth
-- sharper late-run density curve
-- narrower power gap between defensive and glass-cannon frames
-- smoother XP curve
-- revive returns at 30% hull
-
-See `BALANCE.md` for the design targets.
-
-## Uruchomienie
-
-Najprościej: kliknij dwukrotnie `START_ORBIT.cmd` w folderze gry. Przy pierwszym uruchomieniu plik sam doinstaluje brakujące składniki.
-
-Alternatywnie w terminalu:
+### Windows terminal
 
 ```bat
 npm.cmd install
 npm.cmd start
 ```
 
-`npm.cmd` omija blokadę `npm.ps1` bez zmieniania polityki PowerShell. Nie otwieraj `index.html` bezpośrednio z dysku — pełny renderer WebGL i audio uruchamia aplikacja Electron.
+Using `npm.cmd` avoids the PowerShell `npm.ps1` execution-policy restriction without changing the system execution policy.
 
-Package:
+### macOS or Linux terminal
+
+```bash
+npm install
+npm start
+```
+
+The install step runs `postinstall`, which copies the pinned Phaser runtime to `vendor/phaser.min.js`. Opening `index.html` directly from the filesystem is not the supported launch path.
+
+## Controls
+
+| Input | Action |
+|---|---|
+| `WASD` or arrow keys | Move |
+| Hold left mouse button | Steer toward the cursor in `HOLD` mode |
+| Mouse position | Steer toward the cursor in `FOLLOW` mode |
+| Left stick or D-pad | Move with a gamepad |
+| `Shift` | Phase Dash |
+| `P` or `Esc` | Pause or resume |
+| `M` | Toggle audio |
+| `F` | Toggle fullscreen |
+| `R` | Restart after a completed or failed run |
+
+Weapons fire automatically.
+
+## Tests
+
+Run the complete suite:
+
+```bat
+npm.cmd test
+```
+
+Run only the asset integrity audit:
+
+```bat
+npm.cmd run test:assets
+```
+
+The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, renderer integration, runtime asset references, media file signatures, image dimensions, and the local Phaser bundle.
+
+## Package the desktop application
 
 ```bat
 npm.cmd run package
 ```
 
-Electron Forge writes output to `out/`.
+Electron Forge writes the packaged application to `out/`. Release validation steps are listed in [STEAM_RELEASE.md](STEAM_RELEASE.md).
 
-## Test
+## Repository layout
 
-```bat
-npm.cmd test
-npm.cmd run test:assets
+```text
+index.html                 Application shell and interface
+game.js                    Game state, content, input, audio, and Phaser setup
+visual-engine.js           Retained sprite pools and rendering layers
+styles.css                 Interface and display settings
+desktop/main.cjs           Electron main process
+assets/                    Runtime images and audio
+tests/                     Gameplay, renderer, and asset checks
+tools/                     Asset build and Phaser vendoring scripts
+.github/workflows/ci.yml   GitHub Actions test workflow
 ```
 
-Testy sprawdzają progresję, walkę, bossów, IFF, synergie, Ascension, renderer oraz integralność wszystkich obrazów i plików audio używanych przez grę.
+## Contributing
 
-## Controls
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and pull request requirements. Visual changes must use screenshots captured from the running game. Concept art and mockups must be labeled explicitly.
 
-- `WASD` / strzałki — ruch
-- przytrzymany lewy przycisk myszy — sterowanie w stronę kursora
-- `Shift` — Phase Dash
-- `P` / `Esc` — pauza
-- `M` — wyciszenie dźwięku
-- `F` — pełny ekran
-- `R` — szybki restart po zakończeniu runu
-- lewy drążek / D-pad — sterowanie gamepadem
+## Project status
 
-Weapons fire automatically.
+Version 0.63.0 is a playable development build, not a release candidate. External playtesting, late-run performance measurements, balance telemetry, and packaged desktop validation are still required before a 1.0 release.
 
-## Status
+## License
 
-Grywalny build premium z aktywnym silnikiem top-down Phaser. Eksperymentalny prototyp 3D pozostaje nieaktywny i nie jest ładowany przez grę.
-
-Przed wersją 1.0 projekt nadal wymaga zewnętrznych playtestów, telemetrii balansu, testów wydajności late-game i pełnej walidacji paczki desktopowej.
+The project source is publicly visible but proprietary. See [LICENSE.md](LICENSE.md). Third-party software and media retain their respective licenses as documented in [THIRD_PARTY.md](THIRD_PARTY.md).

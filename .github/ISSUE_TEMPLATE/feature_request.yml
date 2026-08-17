@@ -1,41 +1,41 @@
-name: Propozycja funkcji
-description: Zaproponuj ulepszenie gameplayu, dostępności, interfejsu lub prezentacji.
+name: Feature request
+description: Propose a scoped gameplay, accessibility, rendering, audio, or tooling change.
 title: "[FEATURE] "
 body:
   - type: textarea
     id: problem
     attributes:
-      label: Jaki problem gracza rozwiązuje ta funkcja?
-      description: Opisz potrzebę, zanim przedstawisz rozwiązanie.
+      label: Problem statement
+      description: Describe the user or developer problem before proposing an implementation.
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Proponowane rozwiązanie
+      label: Proposed change
     validations:
       required: true
   - type: dropdown
     id: area
     attributes:
-      label: Obszar
+      label: Affected component
       options:
-        - Gameplay loop
-        - QoL / dostępność
-        - Grafika / czytelność
+        - Gameplay
+        - Accessibility / usability
+        - Rendering / readability
         - Audio
-        - Sterowanie
-        - Wydajność
-        - Narzędzia / testy
+        - Input
+        - Performance
+        - Tooling / tests
     validations:
       required: true
   - type: textarea
     id: tradeoffs
     attributes:
-      label: Ryzyka i kompromisy
-      description: Czy zmiana wpływa na balans, czytelność, wydajność albo zapis gry?
+      label: Risks and trade-offs
+      description: Note any effect on balance, readability, performance, compatibility, or save data.
   - type: textarea
     id: references
     attributes:
-      label: Materiały pomocnicze
-      description: Opcjonalne szkice, zrzuty ekranu lub przykłady podobnych rozwiązań.
+      label: Supporting material
+      description: Add technical references, diagrams, or screenshots when they clarify the proposal.

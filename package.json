@@ -2,7 +2,7 @@
   "name": "orbit-04",
   "productName": "ORBIT 04",
   "version": "0.63.0",
-  "description": "Premium top-down tactical space survival bullet heaven built with Phaser 3.",
+  "description": "Top-down space survival game built with JavaScript, Phaser 3, and Electron.",
   "main": "desktop/main.cjs",
   "private": true,
   "scripts": {

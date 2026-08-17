@@ -1,19 +1,19 @@
-## Co zmieniono
+## Change summary
 
-Opisz krótko zakres zmiany i jej wpływ na gracza.
+Describe the implementation and its user-visible effect.
 
-## Dlaczego
+## Rationale
 
-Wyjaśnij problem, potrzebę albo cel projektu.
+State the problem, requirement, or technical reason for the change.
 
-## Weryfikacja
+## Verification
 
-- [ ] Uruchomiłem `npm test`.
-- [ ] Sprawdziłem grę przez `npm start` lub `START_ORBIT.cmd`.
-- [ ] Zmiana nie modyfikuje balansu bez wyraźnego uzasadnienia.
-- [ ] Dodałem zrzuty ekranu dla zmian wizualnych.
-- [ ] Sprawdziłem licencje i zaktualizowałem `THIRD_PARTY.md` dla nowych assetów.
+- [ ] `npm test` passes.
+- [ ] The Electron runtime was checked with `npm start` or `START_ORBIT.cmd`.
+- [ ] Balance changes are documented and intentionally scoped.
+- [ ] Visual changes include screenshots captured from the running game.
+- [ ] New third-party assets have verified licenses and entries in `THIRD_PARTY.md`.
 
-## Ryzyko / dalsza praca
+## Risk and follow-up
 
-Wymień znane ograniczenia, ryzyko regresji i elementy wymagające playtestów.
+List known limitations, regression risks, and any required playtesting or performance checks.

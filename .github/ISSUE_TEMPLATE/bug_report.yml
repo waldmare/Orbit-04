@@ -1,66 +1,66 @@
-name: Zgłoszenie błędu
-description: Zgłoś powtarzalny problem z grą, dźwiękiem, grafiką lub uruchamianiem.
+name: Bug report
+description: Report a reproducible runtime, rendering, audio, input, or startup problem.
 title: "[BUG] "
 body:
   - type: markdown
     attributes:
-      value: Dzięki za pomoc w ulepszaniu ORBIT//04. Wypełnij pola możliwie dokładnie.
+      value: Include enough information to reproduce the problem on a clean installation.
   - type: dropdown
     id: area
     attributes:
-      label: Obszar
+      label: Affected component
       options:
-        - Uruchamianie / instalacja
+        - Startup / installation
         - Gameplay
-        - Grafika / interfejs
-        - Dźwięk / muzyka
-        - Sterowanie
-        - Wydajność
-        - Zapis postępu
-        - Inny
+        - Rendering / interface
+        - Audio
+        - Input
+        - Performance
+        - Save data
+        - Other
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: Kroki odtworzenia
-      description: Opisz dokładnie, co zrobić od uruchomienia gry do wystąpienia błędu.
+      label: Reproduction steps
+      description: List each action from startup until the problem occurs.
       placeholder: |
-        1. Uruchom...
-        2. Wybierz...
-        3. Błąd pojawia się...
+        1. Start the game with...
+        2. Select...
+        3. Observe...
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
-      label: Oczekiwany rezultat
+      label: Expected result
     validations:
       required: true
   - type: textarea
     id: actual
     attributes:
-      label: Rzeczywisty rezultat
+      label: Actual result
     validations:
       required: true
   - type: input
     id: environment
     attributes:
-      label: System i sposób uruchomienia
+      label: Environment and launch method
       placeholder: Windows 11, START_ORBIT.cmd / npm.cmd start
     validations:
       required: true
   - type: textarea
     id: evidence
     attributes:
-      label: Log lub zrzut ekranu
-      description: Przeciągnij tutaj plik albo wklej pełny komunikat błędu. Usuń prywatne dane.
+      label: Logs or screenshots
+      description: Attach the relevant file or paste the complete error output. Remove private information first.
   - type: checkboxes
     id: checks
     attributes:
-      label: Weryfikacja
+      label: Pre-submission checks
       options:
-        - label: Sprawdziłem, że podobne zgłoszenie nie jest już otwarte.
+        - label: I checked that an equivalent issue is not already open.
           required: true
-        - label: Zgłoszenie nie zawiera tokenów, haseł ani prywatnych danych.
+        - label: This report contains no credentials, tokens, or private information.
           required: true

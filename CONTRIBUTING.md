@@ -1,10 +1,12 @@
-# Współpraca przy ORBIT//04
+# Contributing to ORBIT//04
 
-Dzięki za zainteresowanie projektem. Najbardziej przydatne są małe, dobrze opisane zmiany, które zachowują czytelność walki i nie wprowadzają niesprawdzonych assetów.
+Contributions should be limited to one clearly defined change. Runtime fixes must preserve existing gameplay behavior unless the change explicitly targets balance or progression.
 
-## Uruchomienie środowiska
+## Development setup
 
-W Windows:
+GitHub Actions uses Node.js 22. On Windows, use `npm.cmd` when PowerShell prevents `npm.ps1` from running.
+
+Windows:
 
 ```bat
 npm.cmd install
@@ -12,7 +14,7 @@ npm.cmd test
 npm.cmd start
 ```
 
-W macOS lub Linux:
+macOS or Linux:
 
 ```bash
 npm install
@@ -20,25 +22,34 @@ npm test
 npm start
 ```
 
-Instalacja uruchamia skrypt `postinstall`, który kopiuje Phaser do lokalnego katalogu `vendor/`.
+The `postinstall` script copies `phaser.min.js` from the pinned npm dependency into `vendor/`. The copied file is required for offline Electron startup and is excluded from Git.
 
-## Proponowany przepływ pracy
+## Change workflow
 
-1. Utwórz gałąź o krótkiej, opisowej nazwie.
-2. Ogranicz zmianę do jednego problemu lub funkcji.
-3. Uruchom pełne `npm test`.
-4. Opisz wpływ na gracza oraz sposób sprawdzenia zmiany.
-5. Dołącz zrzut ekranu przy zmianach interfejsu albo grafiki.
+1. Create a branch with a short descriptive name.
+2. Keep the diff focused on one fix or feature.
+3. Add a regression test when the behavior can be checked automatically.
+4. Run the full test suite.
+5. Check the Electron runtime for changes that affect rendering, input, audio, or startup.
+6. Document user-visible behavior and known limitations in the pull request.
 
-## Zasady jakości
+## Project constraints
 
-- nie zmieniaj balansu przy poprawkach technicznych lub wizualnych;
-- utrzymuj czytelne telegraphy ataków i obsługę `REDUCED MOTION`;
-- nie dodawaj `node_modules/`, paczek zbudowanych ani lokalnego `vendor/phaser.min.js`;
-- każdy zewnętrzny asset musi mieć jasną licencję i wpis w `THIRD_PARTY.md`;
-- nie umieszczaj sekretów, tokenów, danych kont ani prywatnych ścieżek systemowych;
-- nowe elementy runtime powinny mieć test regresyjny, jeśli można je sprawdzić automatycznie.
+- Do not change balance values as part of an unrelated technical or visual fix.
+- Preserve attack telegraphs, high-contrast display options, and reduced-motion behavior.
+- Do not commit `node_modules/`, packaged builds, or `vendor/phaser.min.js`.
+- Do not add assets without a verified license and an entry in `THIRD_PARTY.md` when applicable.
+- Use screenshots captured from the running game. Label concept art or mockups explicitly and do not present them as implemented UI.
+- Do not commit credentials, access tokens, personal data, or machine-specific paths.
 
-## Zgłoszenia błędów
+## Testing
 
-Użyj formularza GitHub i podaj kroki odtworzenia, wersję systemu, sposób uruchomienia oraz pełny komunikat błędu. Przy problemach graficznych dołącz zrzut ekranu, a przy problemach startowych treść terminala.
+```bat
+npm.cmd test
+```
+
+The test command runs syntax checks, gameplay regression tests, renderer checks, and the media integrity audit. The asset audit verifies runtime references, media signatures, image dimensions, and the local Phaser bundle.
+
+## Bug reports
+
+Use the GitHub bug report form. Include reproducible steps, operating system, launch method, and complete error output. Attach a runtime screenshot for rendering problems and terminal output for startup failures.

@@ -58,4 +58,4 @@ await save('combat_loop',16,(t)=>{
   const side=beat%2?-.018:.018;const mono=pad+bass+kick+hat+arp;return[mono*(1-side)+arp*.18,mono*(1+side)-arp*.12]
 },{reverb:.26,gain:.82});
 
-console.log(`Generated premium audio pack in ${outDir}`);
+console.log(`Generated audio pack in ${outDir}`);
