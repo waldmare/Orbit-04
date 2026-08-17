@@ -12,7 +12,8 @@
     "start": "npm run vendor && electron .",
     "package": "npm run vendor && electron-forge package",
     "make": "npm run vendor && electron-forge make",
-    "test": "node --check visual-engine.js && node --check tools/generate-audio-reforged.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs"
+    "test:assets": "node tests/assets.mjs",
+    "test": "node --check visual-engine.js && node --check tools/generate-audio-reforged.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs && npm run test:assets"
   },
   "dependencies": {
     "phaser": "3.90.0"
