@@ -1,43 +1,153 @@
 # ORBIT//04
 
-Minimalist retro space survivor for browser and desktop.
+Kosmiczny survival / bullet heaven z premium widokiem z góry.
 
-## Current build
+**Aktualny build:** `0.63.0 — Premium Asset Edition`
 
-`0.10.1`
+## Silnik i prezentacja
 
-- 12-minute runs with multi-phase bosses
-- 7 playable frames with persistent mastery
-- 8 weapon systems, evolutions and cross-system synergies
-- passive modules, volatile protocols and ultra-rare artifacts
-- 5 optional run contracts
-- hostile conversion and expandable IFF ally builds
-- chain, graze, REDLINE and 4-tier OVERDRIVE systems
-- data cache decrypt sequences and rarity-specific feedback
-- secret transmissions and run events
-- flawless boss rewards
-- Research meta-progression, achievements and discovery Codex
-- procedural layered music and combat SFX
-- keyboard, mouse, gamepad and touch movement
-- local save export / import
+- aktywny renderer Phaser 3.90 WebGL z widokiem z góry
+- osiem nowych, pełnych modeli statków: gracz, sześć klas przeciwników i boss
+- pooling setek przeciwników, pocisków, dropów i efektów
+- warstwowe światło addytywne, smugi silników, cienie i uderzenia energii
+- cztery animowane fazy kosmosu: deep space, pulsar, gravity rift i supernova
+- kinowe przejścia tła, paralaksa i proceduralne zjawiska kosmiczne
+- duży, skalowalny interfejs desktopowy z trybami LARGE / XL / XXL
+- aplikacja Electron działająca całkowicie lokalnie
 
-## Run
+Eksperymentalny renderer trzecioosobowy nie jest ładowany i nie jest zależnością aktywnej gry.
 
-Open `index.html` in a modern browser.
+## Luminous gameplay polish
 
-No web build step is required.
+- nowy Phase Dash na `Shift`: unik, krótka nietykalność i kasowanie bliskich pocisków
+- czytelny cooldown dasha bezpośrednio w HUD
+- smugi po statku, podwójna fala energetyczna i mocniejsza praca silników podczas dasha
+- SIGNAL RUSH przyspiesza i powiększa przyciąganie XP, dzięki czemu nagroda jest natychmiast odczuwalna
+- dopracowane reakcje interfejsu, wejścia paneli, komunikaty i luminancja sceny
+- zachowane 10 statków, 11 broni, ewolucje, synergie, doktryny, kontrakty i Ascension
 
-## Controls
+## Premium asset pass
 
-- `WASD` / arrow keys — move
-- hold left mouse button — steer toward cursor (default)
-- optional mouse `FOLLOW` mode — steer toward cursor without holding a button
-- gamepad left stick / D-pad — move
-- `P` / `Esc` — pause
-- `M` — audio
-- `F` — fullscreen
+- każdy typ przeciwnika ma teraz własną sylwetkę, materiał i kolorystykę zamiast jednego wielokrotnie barwionego modelu
+- proporcje sprite'ów są zachowywane przez renderer; statki nie są już rozciągane do kwadratów
+- wadliwe cienie będące czarnymi kopiami PNG zastąpiono miękkimi geometrycznymi cieniami
+- aktywne SFX korzystają z 70-elementowego pakietu Kenney Sci-Fi Sounds CC0
+- eksplozje, bossowie i broń ciężka mają dodatkową warstwę niskoczęstotliwościowego uderzenia
+- proceduralną muzykę zastąpiły trzy pełne utwory Mixkit z adaptacyjnym przejściem eksploracja / walka / boss
 
-Weapons fire automatically.
+## Studio QoL i readability
+
+- osobny widget Phase Dash z paskiem gotowości
+- szybki restart bez wychodzenia do hangaru oraz `R` po zakończeniu runu
+- opcjonalne liczby obrażeń: tylko krytyki, wszystkie albo wyłączone
+- telegraphy przed strzałami snajperów, gunnerów, bossów oraz szarżą chargera
+- delikatna winieta REDLINE przy niskiej integralności kadłuba
+- PILOT ASSIST z krótką podpowiedzią sterowania na początku runu
+- tryb REDUCED MOTION ograniczający drgania, animacje UI i ruch tła
+- profile dynamiki CINEMA, BALANCED i NIGHT
+- oddzielne sample dla głównych broni, trafień, interfejsu i zdarzeń specjalnych
+- trzy pełne utwory z adaptacyjnym miksem i automatycznym duckingiem przy uderzeniach
+
+## Core systems
+
+- 12-minute base runs + optional Ascension endgame
+- 10 playable frames with unique traits and mastery
+- 11 weapon systems, evolutions and Overcharge
+- hidden weapon synergies
+- Doctrines, Contracts and Volatile Protocols
+- 4 sectors with different encounter modifiers
+- Echo Hunter adaptive nemesis
+- multi-phase bosses
+- IFF hostile conversion / allied fleet builds
+- Signal Windows, Anomalies and Secret Transmissions
+- Data / Rare / Omega / Paradox caches
+- chain, graze, REDLINE and OVERDRIVE systems
+- persistent Research, Operations, achievements and Codex
+- licensed sample-based combat pack and adaptive full-length soundtrack
+- keyboard, mouse, gamepad and touch input
+
+## 0.60 Resonance audio and space
+
+- completely regenerated 14-piece combat SFX pack at 48 kHz stereo
+- three synchronized music stems: exploration, combat and boss
+- continuous crossfades driven by threat, REDLINE, SIGNAL RUSH and boss encounters
+- cinematic sub-bass, filtered texture, mechanical transients and stereo room reflections
+- four-stage background director: deep space, pulsar, gravitational rift and supernova
+- 4.2-second cinematic crossfades, parallax drift and procedural celestial pulses
+- boss encounters force the supernova scene without changing gameplay balance
+
+## 0.50 Reforged presentation
+
+- completely replaced immediate-mode combat shapes with a retained Phaser sprite renderer
+- new high-detail player interceptor, hostile hunter and boss carrier artwork
+- pooled enemies, projectiles, loot, particles, mines, drones and photon blades
+- layered hull materials, shadows, additive engine plumes, reactor light and rank markers
+- scalable boss presentation and readable sprite-based health bars
+- energy arcs, beams and rifts composited in a dedicated additive FX layer
+- animated hangar hero ship and cinematic vignette
+- the former vector renderer remains only as a safe fallback
+
+## 0.40 Vanguard presentation
+
+- cinematic deep-space background loaded through Phaser
+- forced WebGL, additive lighting, parallax and engine particles
+- material shadows, hull panels, cockpit cores and animated thrusters
+- camera shake integrated with Phaser cameras
+- redesigned glass HUD, menus and buttons
+- 15 layered 48 kHz stereo sound assets
+- sample-based adaptive combat music replacing oscillator-first audio
+- full LARGE / XL / XXL interface scaling and expanded graphics controls
+
+## 0.30 visual pass
+
+The original low-resolution pixel renderer was replaced with Phaser.
+
+- smooth vector spacecraft and hostile silhouettes
+- additive projectile and engine glow
+- layered star field and sector fog
+- modern 16:9 desktop HUD
+- higher-resolution rendering
+- differentiated elite, boss, rift, cache and weapon effects
+- configurable FX quality
+- no `image-rendering: pixelated`
+
+The game keeps its restrained retro-futuristic identity without imitating a phone screen.
+
+## Balance pass
+
+`0.30.0` reduces health-sponge scaling and shifts difficulty toward movement, density and projectile pressure.
+
+- slightly later first elite
+- earlier first boss encounter
+- lower boss HP, stronger later boss damage
+- flatter early hostile hull growth
+- sharper late-run density curve
+- narrower power gap between defensive and glass-cannon frames
+- smoother XP curve
+- revive returns at 30% hull
+
+See `BALANCE.md` for the design targets.
+
+## Uruchomienie
+
+Najprościej: kliknij dwukrotnie `START_ORBIT.cmd` w folderze gry. Przy pierwszym uruchomieniu plik sam doinstaluje brakujące składniki.
+
+Alternatywnie w terminalu:
+
+```bat
+npm.cmd install
+npm.cmd start
+```
+
+`npm.cmd` omija blokadę `npm.ps1` bez zmieniania polityki PowerShell. Nie otwieraj `index.html` bezpośrednio z dysku — pełny renderer WebGL i audio uruchamia aplikacja Electron.
+
+Package:
+
+```bash
+npm run package
+```
+
+Electron Forge writes output to `out/`.
 
 ## Test
 
@@ -45,48 +155,20 @@ Weapons fire automatically.
 npm test
 ```
 
-## Desktop
+The smoke suite checks core progression, combat, bosses, IFF, synergies, Ascension and renderer-facing calls.
 
-Desktop packaging uses Electron.
+## Controls
 
-```bash
-npm install
-npm start
-```
+- `WASD` — ruch względem kamery
+- mysz — obrót kamery
+- `Shift` — dash
+- `P` — pauza
+- kliknięcie w obraz gry — ponowne przejęcie kamery
 
-Package the application:
+Weapons fire automatically.
 
-```bash
-npm run package
-```
+## Status
 
-Output is written to `out/`.
+Pierwszy grywalny vertical slice nowego silnika 3D. Nie jest jeszcze release candidate.
 
-## Repository layout
-
-```text
-index.html          UI shell
-styles.css          interface styles
-game.js             game logic and content
-desktop/main.cjs    desktop entry point
-tests/smoke.js      automated smoke tests
-package.json        desktop tooling
-forge.config.cjs    Electron Forge config
-STEAM_RELEASE.md    release checklist
-```
-
-## Monetization
-
-Inactive adapter hooks exist for rewarded/interstitial portal ads. No advertising SDK is bundled.
-
-`SUPPORT_URL` in `game.js` may be set for a support page where permitted by the target platform.
-
-## Save data
-
-Browser progress is stored in `localStorage` under `orbit04-save-v2`.
-
-The Settings screen supports manual save export/import.
-
-## License
-
-Source-visible proprietary project. See `LICENSE.md`.
+Final balance requires external playtest telemetry, late-game performance testing and full desktop package validation.

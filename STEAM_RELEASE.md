@@ -1,64 +1,42 @@
-# Steam release checklist
+# ORBIT//04 — Steam build notes
 
-This repository contains the game and a desktop packaging scaffold. Steam publication still requires a Steamworks partner account, an app credit, store setup, a packaged build and Valve review.
+## Local prerequisites
 
-## 1. Test the browser build first
+- Node.js LTS
+- npm
+- Windows for final Windows package validation
 
-Open `index.html` and complete full runs on:
-
-- Standard
-- Hardline
-- Blackout after unlock
-
-Test fresh save, save export/import, all frames, all weapons and pause/settings.
-
-## 2. Create the Windows desktop build
-
-Install current Node.js LTS, then in the repository folder run:
+## Install
 
 ```bash
 npm install
+```
+
+This installs Phaser and creates a local `vendor/phaser.min.js`, so the desktop build does not depend on a CDN.
+
+## Test desktop runtime
+
+```bash
+npm start
+```
+
+## Package
+
+```bash
 npm run package
 ```
 
-Electron Forge writes the packaged application to `out/`.
+Output is written to `out/`.
 
-Run the generated executable on a clean Windows machine before uploading it anywhere.
+## Pre-Steam checklist
 
-## 3. Steamworks onboarding
-
-Create the Steamworks partner account and purchase one Steam Direct app credit for the game.
-
-Do not add Steam-specific code until an App ID exists.
-
-## 4. Steamworks integration
-
-Before release, decide whether to connect these local systems to Steamworks:
-
-- achievements
-- statistics
-- cloud saves
-- leaderboards
-
-The game currently exposes local achievement/stat hooks in `game.js` through the `PLATFORM` adapter. They intentionally do nothing until a Steam integration is added.
-
-## 5. Upload
-
-Use SteamPipe to upload the packaged game files to the application's depot, configure the Windows launch option to the packaged executable, set a private testing branch, and test through the Steam client.
-
-## 6. Store release
-
-Prepare final store assets, description, pricing, supported languages and required questionnaires. Complete Valve's store-page and build review before selecting the release date.
-
-## Release gate
-
-Do not call the build final until all of the following are verified:
-
-- no JavaScript console errors
-- no progression dead ends
-- all achievements trigger once
-- no save corruption after update
-- stable frame rate under late-run enemy density
-- gamepad behavior documented accurately
-- clean Windows packaged build
-- Steam branch install / uninstall / update test passed
+- complete multiple fresh-save 12-minute runs;
+- test all 10 frames;
+- verify mouse, keyboard and controller input;
+- validate fullscreen / window resize behavior;
+- test audio mute and settings persistence;
+- test save export / import;
+- test offline launch;
+- validate late-game FPS and entity caps;
+- add final application icon and Steam capsule art;
+- add Steamworks App ID / achievements only after the local build is stable.

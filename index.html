@@ -1,22 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="pl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <meta name="description" content="ORBIT//04 — minimalist retro space survivor." />
+  <meta name="description" content="ORBIT//04 — trzecioosobowy kosmiczny survival roguelite 3D." />
   <meta name="theme-color" content="#05070a" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' data: blob:" />
   <title>ORBIT//04</title>
   <link rel="stylesheet" href="styles.css" />
-  <script defer src="game.js"></script>
+  <script src="vendor/phaser.min.js" defer></script>
+  <script src="visual-engine.js" defer></script>
+  <script src="game.js" defer></script>
 </head>
 <body>
 <div id="wrap">
-  <canvas id="game" width="960" height="540" aria-label="ORBIT//04 game canvas"></canvas>
+  <canvas id="game" width="1440" height="810" aria-label="ORBIT//04 game canvas"></canvas>
 
   <div id="hud" class="hidden" aria-live="polite">
     <div id="hudTop"><div id="hudLeft"></div><div id="hudRight"></div></div>
     <div id="hudSub"></div>
     <div id="bossBar" class="hidden"><div id="bossLabel"></div><div class="bar"><div id="bossFill"></div></div></div>
+    <div id="rushMeter" class="hidden"><div id="rushLabel"></div><div class="bar"><div id="rushFill"></div></div></div>
+    <div id="abilityBar"><div id="dashWidget" class="ready"><b>SHIFT</b><span id="dashStatus">PHASE DASH · READY</span><i><em id="dashCharge"></em></i></div></div>
     <div id="xpbar"><div id="xpfill"></div><div id="xptext"></div></div>
   </div>
   <div id="centerMessage"></div>
@@ -25,7 +30,7 @@
   <section id="titleScreen" class="overlay show">
     <div class="panel titlePanel">
       <div class="brand">
-        <div><h1>ORBIT//04</h1><div class="muted">MINIMAL SPACE SURVIVAL</div></div>
+        <div><h1>ORBIT//04</h1><div class="muted">TACTICAL SPACE SURVIVAL</div></div>
         <div class="tag">BUILD <span id="versionText"></span><br><span id="saveLine"></span></div>
       </div>
 
@@ -38,14 +43,18 @@
           <h2>RUN CONFIG</h2>
           <div class="settingRow compact"><span>DIFFICULTY</span><button id="difficultyBtn"></button></div>
           <div id="difficultyDesc" class="tiny blockText"></div>
+          <div class="settingRow compact"><span>SECTOR</span><button id="sectorBtn"></button></div>
+          <div id="sectorDesc" class="tiny blockText"></div>
           <div class="settingRow compact"><span>CONTRACT</span><button id="contractBtn"></button></div>
           <div id="contractDesc" class="tiny blockText"></div>
           <div class="metaLine"><span>RESEARCH</span><b id="researchLevelText">0</b></div>
+          <div class="metaLine"><span>OPERATIONS</span><b id="operationCountText">0/0</b></div>
           <div class="metaLine"><span>ACHIEVEMENTS</span><b id="achievementCountText">0/0</b></div>
           <div class="metaLine"><span>LIFETIME KILLS</span><b id="lifetimeKillsText">0</b></div>
           <div class="menuStack">
             <button id="startBtn" class="primary">START RUN</button>
             <button id="researchBtn">RESEARCH</button>
+            <button id="operationsBtn">OPERATIONS</button>
             <button id="achievementsBtn">ACHIEVEMENTS</button>
             <button id="codexBtn">CODEX / STATS</button>
             <button id="settingsBtn">SETTINGS</button>
@@ -54,7 +63,7 @@
         </div>
       </div>
 
-      <div class="footerHelp">WASD / ARROWS / MOUSE / GAMEPAD — MOVE · P / ESC — PAUSE · M — AUDIO · F — FULLSCREEN</div>
+      <div class="footerHelp">WASD / STRZAŁKI / MYSZ — RUCH   ·   SHIFT — PHASE DASH   ·   P / ESC — PAUZA</div>
     </div>
   </section>
 
@@ -69,10 +78,27 @@
     </div>
   </section>
 
+  <section id="doctrineScreen" class="overlay">
+    <div class="panel levelPanel">
+      <div class="headerSplit"><div><h1>DOCTRINE LINK</h1><h2>CHOOSE A RUN-DEFINING SYSTEM LAW</h2></div><div id="doctrineMeta" class="tag"></div></div>
+      <div id="doctrineChoices" class="choiceGrid"></div>
+      <div class="tiny" style="margin-top:10px">Two doctrines per run. Choices are permanent until the transmission ends.</div>
+    </div>
+  </section>
+
+  <section id="ascendScreen" class="overlay">
+    <div class="panel smallPanel centered">
+      <h1>ORBIT STABLE</h1><h2>THE NULL CARRIER IS DOWN</h2>
+      <p class="muted">Bank the clear, or enter Ascension. Endless pressure scales every cycle; score and salvage multipliers rise with it.</p>
+      <div id="ascendStats" class="tag" style="text-align:center;margin:12px 0"></div>
+      <div class="menuRow centered"><button id="bankRunBtn" class="primary">BANK RUN</button><button id="ascendRunBtn">ASCEND</button></div>
+    </div>
+  </section>
+
   <section id="pauseScreen" class="overlay">
     <div class="panel smallPanel centered">
       <h1>PAUSED</h1><p class="muted">Transmission suspended.</p>
-      <div class="menuRow centered"><button id="resumeBtn" class="primary">RESUME</button><button id="pauseSettingsBtn">SETTINGS</button><button id="menuBtn">ABORT RUN</button></div>
+      <div class="menuRow centered"><button id="resumeBtn" class="primary">RESUME</button><button id="pauseBankBtn" class="hidden">BANK ASCENSION</button><button id="restartRunBtn">RESTART RUN</button><button id="pauseSettingsBtn">SETTINGS</button><button id="menuBtn">ABORT RUN</button></div>
     </div>
   </section>
 
@@ -81,6 +107,14 @@
       <div class="headerSplit"><div><h1>RESEARCH</h1><h2>PERMANENT FRAME CALIBRATION</h2></div><div class="tag">CREDITS <span id="researchCredits"></span></div></div>
       <div id="researchGrid" class="researchGrid"></div>
       <div class="menuRow"><button data-close="researchScreen">BACK</button></div>
+    </div>
+  </section>
+
+  <section id="operationsScreen" class="overlay">
+    <div class="panel widePanel">
+      <div class="headerSplit"><div><h1>OPERATIONS</h1><h2>PERMANENT OBJECTIVES / CREDIT REWARDS</h2></div><div id="operationsSummary" class="tag"></div></div>
+      <div id="operationsGrid" class="operationsGrid"></div>
+      <div class="menuRow"><button data-close="operationsScreen">BACK</button></div>
     </div>
   </section>
 
@@ -108,11 +142,23 @@
         <div class="settingRow"><div><b>PLAYER HP</b><div class="tiny">HUD value and/or bar above frame.</div></div><button id="playerHpSetting"></button></div>
         <div class="settingRow"><div><b>ENEMY HP</b><div class="tiny">Hostile health bars.</div></div><button id="enemyHpSetting"></button></div>
         <div class="settingRow"><div><b>XP READOUT</b><div class="tiny">Numeric progress above XP bar.</div></div><button id="xpSetting"></button></div>
+        <div class="settingRow"><div><b>DAMAGE NUMBERS</b><div class="tiny">CRITS keeps important spikes visible without combat clutter.</div></div><button id="damageNumbersSetting"></button></div>
+        <div class="settingRow"><div><b>ATTACK TELEGRAPHS</b><div class="tiny">Aim lines and charge rings before dangerous attacks.</div></div><button id="telegraphSetting"></button></div>
+        <div class="settingRow"><div><b>PILOT HINTS</b><div class="tiny">Short control and objective reminders when a run begins.</div></div><button id="hintsSetting"></button></div>
         <div class="settingRow"><div><b>MOUSE CONTROL</b><div class="tiny">HOLD: steer while holding LMB · FOLLOW: steer toward cursor.</div></div><button id="mouseSetting"></button></div>
         <div class="settingRow"><div><b>SCREEN SHAKE</b><div class="tiny">Combat impact camera movement.</div></div><button id="shakeSetting"></button></div>
         <div class="settingRow"><div><b>FLASH EFFECTS</b><div class="tiny">Bright cache / evolution pulses.</div></div><button id="flashSetting"></button></div>
+        <div class="settingRow"><div><b>MOTION</b><div class="tiny">REDUCED limits camera shake, panel movement and background drift.</div></div><button id="motionSetting"></button></div>
+        <div class="settingRow"><div><b>UI SCALE</b><div class="tiny">Size of menus, descriptions and the combat HUD.</div></div><button id="uiScaleSetting"></button></div>
         <div class="settingRow"><div><b>PARTICLES</b><div class="tiny">Visual debris density.</div></div><button id="particleSetting"></button></div>
+        <div class="settingRow"><div><b>GRAPHICS PRESET</b><div class="tiny">Geometry detail and space-fog density.</div></div><button id="graphicsSetting"></button></div>
+        <div class="settingRow"><div><b>GLOW FX</b><div class="tiny">Additive weapon, ship and hostile lighting.</div></div><button id="glowSetting"></button></div>
+        <div class="settingRow"><div><b>SPACE BACKGROUND</b><div class="tiny">FULL, SIMPLE or OFF for maximum clarity.</div></div><button id="backgroundSetting"></button></div>
+        <div class="settingRow"><div><b>CONTRAST</b><div class="tiny">HIGH improves HUD and object separation.</div></div><button id="contrastSetting"></button></div>
         <div class="settingRow"><div><b>AUDIO</b><div class="tiny">Procedural music and SFX.</div></div><button id="audioSetting"></button></div>
+        <div class="settingRow"><div><b>DYNAMIC RANGE</b><div class="tiny">CINEMA is widest · NIGHT keeps impacts controlled and dialogue-like cues clear.</div></div><button id="audioMixSetting"></button></div>
+        <div class="settingRow"><div><b>SFX VOLUME</b><div class="tiny">Weapons, impacts and interface feedback.</div></div><button id="sfxVolumeSetting"></button></div>
+        <div class="settingRow"><div><b>MUSIC VOLUME</b><div class="tiny">Adaptive soundtrack intensity.</div></div><button id="musicVolumeSetting"></button></div>
       </div>
       <div class="dataActions"><button id="exportSaveBtn">EXPORT SAVE</button><button id="importSaveBtn">IMPORT SAVE</button><button id="resetSaveBtn" class="danger">RESET SAVE</button></div>
       <div class="menuRow"><button id="settingsBackBtn">BACK</button></div>

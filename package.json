@@ -1,15 +1,21 @@
 {
   "name": "orbit-04",
   "productName": "ORBIT 04",
-  "version": "0.10.1",
-  "description": "Minimalist retro space survivor.",
+  "version": "0.63.0",
+  "description": "Premium top-down tactical space survival bullet heaven built with Phaser 3.",
   "main": "desktop/main.cjs",
   "private": true,
   "scripts": {
-    "start": "electron .",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "test": "node --check game.js && node tests/smoke.js"
+    "vendor": "node tools/vendor-phaser.mjs",
+    "audio:build": "node tools/generate-audio-reforged.mjs",
+    "postinstall": "npm run vendor",
+    "start": "npm run vendor && electron .",
+    "package": "npm run vendor && electron-forge package",
+    "make": "npm run vendor && electron-forge make",
+    "test": "node --check visual-engine.js && node --check tools/generate-audio-reforged.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs"
+  },
+  "dependencies": {
+    "phaser": "3.90.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "latest",
