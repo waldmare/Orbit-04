@@ -12,5 +12,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+      - name: Install dependencies and vendor Phaser
+        run: npm ci
       - name: Syntax and gameplay smoke tests
         run: npm test
