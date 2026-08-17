@@ -1,8 +1,34 @@
 # ORBIT//04
 
+[![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
+![Version](https://img.shields.io/badge/version-0.63.0-62e6ff)
+![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
+![Electron](https://img.shields.io/badge/Electron-desktop-9d8cff)
+![License](https://img.shields.io/badge/license-source--visible-f4ba68)
+
 Kosmiczny survival / bullet heaven z premium widokiem z góry.
 
 **Aktualny build:** `0.63.0 — Premium Asset Edition`
+
+![ORBIT//04 — kierunek wizualny](docs/visual-direction-concept.png)
+
+## Szybki start
+
+1. Pobierz lub sklonuj repozytorium.
+2. W Windows uruchom `START_ORBIT.cmd`.
+3. Przy pierwszym starcie launcher sam pobierze zależności i przygotuje lokalny Phaser.
+
+Gra działa jako lokalna aplikacja Electron. Nie uruchamiaj `index.html` bezpośrednio z dysku.
+
+## Technologie
+
+| Warstwa | Rozwiązanie |
+|---|---|
+| Renderer | Phaser 3.90 / WebGL z Canvas fallback |
+| Desktop | Electron 43 |
+| Gameplay | JavaScript, bez zewnętrznego backendu |
+| Audio | licencjonowane sample Kenney i Mixkit |
+| Automatyzacja | GitHub Actions + testy Node.js |
 
 ## Silnik i prezentacja
 
@@ -143,32 +169,36 @@ npm.cmd start
 
 Package:
 
-```bash
-npm run package
+```bat
+npm.cmd run package
 ```
 
 Electron Forge writes output to `out/`.
 
 ## Test
 
-```bash
-npm test
+```bat
+npm.cmd test
+npm.cmd run test:assets
 ```
 
-The smoke suite checks core progression, combat, bosses, IFF, synergies, Ascension and renderer-facing calls.
+Testy sprawdzają progresję, walkę, bossów, IFF, synergie, Ascension, renderer oraz integralność wszystkich obrazów i plików audio używanych przez grę.
 
 ## Controls
 
-- `WASD` — ruch względem kamery
-- mysz — obrót kamery
-- `Shift` — dash
-- `P` — pauza
-- kliknięcie w obraz gry — ponowne przejęcie kamery
+- `WASD` / strzałki — ruch
+- przytrzymany lewy przycisk myszy — sterowanie w stronę kursora
+- `Shift` — Phase Dash
+- `P` / `Esc` — pauza
+- `M` — wyciszenie dźwięku
+- `F` — pełny ekran
+- `R` — szybki restart po zakończeniu runu
+- lewy drążek / D-pad — sterowanie gamepadem
 
 Weapons fire automatically.
 
 ## Status
 
-Pierwszy grywalny vertical slice nowego silnika 3D. Nie jest jeszcze release candidate.
+Grywalny build premium z aktywnym silnikiem top-down Phaser. Eksperymentalny prototyp 3D pozostaje nieaktywny i nie jest ładowany przez grę.
 
-Final balance requires external playtest telemetry, late-game performance testing and full desktop package validation.
+Przed wersją 1.0 projekt nadal wymaga zewnętrznych playtestów, telemetrii balansu, testów wydajności late-game i pełnej walidacji paczki desktopowej.
