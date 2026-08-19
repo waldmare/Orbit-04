@@ -10,11 +10,11 @@
     "audio:build": "node tools/generate-audio-reforged.mjs",
     "postinstall": "npm run vendor",
     "start": "npm run vendor && electron .",
-    "screenshot": "npm run vendor && electron . --orbit-capture",
+    "screenshot": "npm run vendor && electron . -- --orbit-capture",
     "package": "npm run vendor && electron-forge package",
     "make": "npm run vendor && electron-forge make",
     "test:assets": "node tests/assets.mjs",
-    "test": "node --check visual-engine.js && node --check tools/generate-audio-reforged.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs && npm run test:assets"
+    "test": "node --check desktop/main.cjs && node --check visual-engine.js && node --check tools/generate-audio-reforged.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs && npm run test:assets"
   },
   "dependencies": {
     "phaser": "3.90.0"

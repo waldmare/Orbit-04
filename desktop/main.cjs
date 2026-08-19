@@ -2,6 +2,24 @@ const { app, BrowserWindow, Menu, shell } = require('electron');
 const { mkdir, writeFile } = require('node:fs/promises');
 const path = require('node:path');
 
+async function waitForRenderer(win, timeoutMs = 20000) {
+  const deadline = Date.now() + timeoutMs;
+  let state = null;
+  do {
+    state = await win.webContents.executeJavaScript(`({
+      title: document.title,
+      canvas: document.getElementById('game')?.dataset.engine || 'missing',
+      renderer: document.getElementById('game')?.dataset.renderer || 'missing',
+      visuals: document.getElementById('game')?.dataset.visualEngine || 'missing',
+      audio: document.getElementById('game')?.dataset.audioEngine || 'missing',
+      boot: document.body.dataset.orbitBoot || 'missing'
+    })`);
+    if (state.boot === 'ok') return state;
+    await new Promise(resolve => setTimeout(resolve, 250));
+  } while (Date.now() < deadline);
+  return state;
+}
+
 function createWindow() {
   const smokeMode = process.argv.includes('--orbit-smoke');
   const captureMode = process.argv.includes('--orbit-capture');
@@ -37,20 +55,11 @@ function createWindow() {
     console.error(`[renderer-gone] ${details.reason}`);
   });
   win.webContents.on('did-finish-load', async () => {
-    setTimeout(async () => {
-      try {
-        const state = await win.webContents.executeJavaScript(`({
-          title: document.title,
-          canvas: document.getElementById('game')?.dataset.engine || 'missing',
-          renderer: document.getElementById('game')?.dataset.renderer || 'missing',
-          visuals: document.getElementById('game')?.dataset.visualEngine || 'missing',
-          audio: document.getElementById('game')?.dataset.audioEngine || 'missing',
-          boot: document.body.dataset.orbitBoot || 'missing'
-        })`);
+    try {
+        const state = await waitForRenderer(win);
         console.log(`[renderer-ready] ${JSON.stringify(state)}`);
         if (automatedMode && state.boot !== 'ok') {
-          process.exitCode = 1;
-          return app.quit();
+          return app.exit(1);
         }
         if (smokeMode && state.boot === 'ok') {
           const setup = await win.webContents.executeJavaScript(`(() => {
@@ -67,7 +76,7 @@ function createWindow() {
               if (!setup.dashed || setup.floaters < 1 || gameplay.mode !== 'run' || gameplay.time <= 0 || gameplay.enemies < 1 || gameplay.floaterPool < 1) process.exitCode = 1;
             } catch (error) {
               console.error(`[gameplay-smoke] ${error.message}`);process.exitCode = 1;
-            } finally { app.quit(); }
+            } finally { app.exit(process.exitCode || 0); }
           }, 900);
         }
         if (captureMode && state.boot === 'ok') {
@@ -80,14 +89,36 @@ function createWindow() {
             save.settings.uiScale='XL';
             applyDisplaySettings();
             startRun();
-            return {mode:state.mode,sector:state.sector.name,difficulty:state.difficulty};
+            state.time=105;
+            state.level=5;
+            state.chain=24;
+            state.chainTimer=999;
+            state.rush=8;
+            state.spawnT=999;
+            state.eliteT=999;
+            const layout=[
+              ['scout',false,210,145],['charger',false,755,165],
+              ['tank',true,190,395],['gunner',false,770,390],
+              ['splitter',false,390,105],['sniper',true,570,445]
+            ];
+            for(const [type,elite,x,y] of layout)spawnEnemy(type,elite,{x,y});
+            updateDynamicBackground(performance.now(),4200);
+            hideAll();
+            hud.classList.remove('hidden');
+            draw();
+            void document.body.offsetHeight;
+            return {mode:state.mode,sector:state.sector.name,difficulty:state.difficulty,enemies:state.enemies.length,visibleScreens:screens.filter(id => $(id).classList.contains('show')),hudHidden:hud.classList.contains('hidden')};
           })()`);
           setTimeout(async () => {
             const screenshotPath = path.join(__dirname, '..', 'docs', 'runtime-screenshot.png');
             try {
-              const gameplay = await win.webContents.executeJavaScript(`({mode:state?.mode,time:state?.time||0,enemies:state?.enemies?.length||0,renderer:document.getElementById('game')?.dataset.renderer||'missing'})`);
-              if (gameplay.mode !== 'run' || gameplay.time < 4 || gameplay.enemies < 1) throw new Error(`capture scene not ready: ${JSON.stringify(gameplay)}`);
-              const image = await win.webContents.capturePage();
+              const gameplay = await win.webContents.executeJavaScript(`({mode:state?.mode,time:state?.time||0,enemies:state?.enemies?.length||0,renderer:document.getElementById('game')?.dataset.renderer||'missing',visibleScreens:screens.filter(id => $(id).classList.contains('show')),hudHidden:hud.classList.contains('hidden')})`);
+              if (gameplay.mode !== 'run' || gameplay.time < 100 || gameplay.enemies < 6 || gameplay.visibleScreens.length || gameplay.hudHidden) throw new Error(`capture scene not ready: ${JSON.stringify(gameplay)}`);
+              // BrowserWindow.capturePage keeps a hidden page paintable while the
+              // capture is active; WebContents.capturePage can return its stale
+              // pre-game compositor frame on Windows.
+              await win.capturePage(undefined, { stayHidden: true });
+              const image = await win.capturePage(undefined, { stayHidden: true });
               if (image.isEmpty()) throw new Error('captured image is empty');
               await mkdir(path.dirname(screenshotPath), { recursive: true });
               await writeFile(screenshotPath, image.toPNG());
@@ -95,14 +126,13 @@ function createWindow() {
             } catch (error) {
               console.error(`[runtime-capture] ${error.message}`);
               process.exitCode = 1;
-            } finally { app.quit(); }
-          }, 6500);
+            } finally { app.exit(process.exitCode || 0); }
+          }, 1200);
         }
       } catch (error) {
         console.error(`[renderer-probe] ${error.message}`);
-        if (automatedMode) { process.exitCode = 1; app.quit(); }
+        if (automatedMode) app.exit(1);
       }
-    }, 1400);
   });
   win.loadFile(path.join(__dirname, '..', 'index.html'));
 
