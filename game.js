@@ -57,21 +57,29 @@ function edgePos(m=34){const e=(Math.random()*4)|0,p=Math.random();return e===0?
 
 // ---------- SAVE / PROFILE ----------
 const SAVE_KEY='orbit04-save-v2';
+const SAVE_BACKUP_KEY='orbit04-save-v2-backup';
 const OLD_SAVE_KEY='orbit04-save-v1';
 const DEFAULT_SETTINGS={playerHp:'BOTH',enemyHp:'ELITES',xpReadout:'BOTH',damageNumbers:'CRITS',telegraphs:'ON',hints:'ON',mouse:'HOLD',shake:'ON',flash:'ON',motion:'FULL',uiScale:'XL',particles:'HIGH',graphics:'HIGH',glow:'ON',background:'FULL',contrast:'HIGH',audio:'ON',audioMix:'CINEMA',sfxVolume:'100%',musicVolume:'70%'};
 const DEFAULT_STATS={totalDamage:0,damageTaken:0,bosses:0,highestLevel:1,bestChain:0,bestGrazeChain:0,totalGrazes:0,signalRushes:0,clears:0,hardlineClears:0,blackoutClears:0,playTime:0,caches:0,conversions:0,flawlessBosses:0,secretEvents:0,nemeses:0,doctrinesChosen:0,operationsClaimed:0,ascensions:0,endlessTime:0,overcharges:0};
 const DEFAULT_SAVE={credits:0,bestScore:0,bestTime:0,bestAscension:0,totalKills:0,runs:0,unlocked:['striker'],selected:'striker',difficulty:'STANDARD',contract:'NONE',sector:'AURORA',achievements:[],claimedOperations:[],research:{},shipMastery:{},sectorClears:{},discoveredWeapons:['pulse'],discoveredEnemies:['scout'],discoveredEvolutions:[],discoveredSynergies:[],discoveredArtifacts:[],stats:{...DEFAULT_STATS},settings:{...DEFAULT_SETTINGS}};
 function deepProfile(raw={}){return {...DEFAULT_SAVE,...raw,unlocked:Array.isArray(raw.unlocked)?raw.unlocked:['striker'],achievements:Array.isArray(raw.achievements)?raw.achievements:[],claimedOperations:Array.isArray(raw.claimedOperations)?raw.claimedOperations:[],research:{...(raw.research||{})},shipMastery:{...(raw.shipMastery||{})},sectorClears:{...(raw.sectorClears||{})},discoveredWeapons:Array.isArray(raw.discoveredWeapons)?raw.discoveredWeapons:['pulse'],discoveredEnemies:Array.isArray(raw.discoveredEnemies)?raw.discoveredEnemies:['scout'],discoveredEvolutions:Array.isArray(raw.discoveredEvolutions)?raw.discoveredEvolutions:[],discoveredSynergies:Array.isArray(raw.discoveredSynergies)?raw.discoveredSynergies:[],discoveredArtifacts:Array.isArray(raw.discoveredArtifacts)?raw.discoveredArtifacts:[],stats:{...DEFAULT_STATS,...(raw.stats||{})},settings:{...DEFAULT_SETTINGS,...(raw.settings||{})}}}
+function decodeProfile(serialized){const raw=JSON.parse(serialized);if(!raw||typeof raw!=='object'||Array.isArray(raw))throw new Error('Invalid save profile');return deepProfile(raw)}
+let saveRecoverySource='',saveWriteWarning=false;
 function loadSave(){
-  try{const current=localStorage.getItem(SAVE_KEY);if(current)return deepProfile(JSON.parse(current));
-    const old=localStorage.getItem(OLD_SAVE_KEY);if(old){const o=JSON.parse(old),m=deepProfile({...o,difficulty:'STANDARD',settings:{...DEFAULT_SETTINGS,...(o.settings||{}),audio:o.audio===false?'OFF':'ON'}});localStorage.setItem(SAVE_KEY,JSON.stringify(m));return m}
-  }catch(_e){}
+  saveRecoverySource='';
+  try{const current=localStorage.getItem(SAVE_KEY);if(current)return decodeProfile(current)}catch(error){console.warn('[save] primary profile is invalid:',error?.message||String(error))}
+  try{const backup=localStorage.getItem(SAVE_BACKUP_KEY);if(backup){const recovered=decodeProfile(backup);saveRecoverySource='backup';try{localStorage.setItem(SAVE_KEY,JSON.stringify(recovered))}catch(error){console.warn('[save] recovered profile could not be promoted:',error?.message||String(error))}return recovered}}catch(error){console.warn('[save] backup profile is invalid:',error?.message||String(error))}
+  try{const old=localStorage.getItem(OLD_SAVE_KEY);if(old){const o=decodeProfile(old),m=deepProfile({...o,difficulty:'STANDARD',settings:{...DEFAULT_SETTINGS,...(o.settings||{}),audio:o.audio===false?'OFF':'ON'}});try{localStorage.setItem(SAVE_KEY,JSON.stringify(m))}catch(error){console.warn('[save] migrated profile could not be stored:',error?.message||String(error))}saveRecoverySource='migration';return m}}catch(error){console.warn('[save] legacy profile is invalid:',error?.message||String(error))}
   return deepProfile();
 }
 let save=loadSave();
-function persist(render=true){localStorage.setItem(SAVE_KEY,JSON.stringify(save));if(render)renderMenu()}
+function persist(render=true){
+  try{const serialized=JSON.stringify(save),current=localStorage.getItem(SAVE_KEY);if(current){try{decodeProfile(current);localStorage.setItem(SAVE_BACKUP_KEY,current)}catch(_error){}}localStorage.setItem(SAVE_KEY,serialized);saveWriteWarning=false}
+  catch(error){console.warn('[save] profile write failed:',error?.message||String(error));if(!saveWriteWarning){saveWriteWarning=true;toast('SAVE WRITE FAILED','Progress remains active for this session.')}}
+  if(render)renderMenu();return !saveWriteWarning
+}
 function exportSave(){try{const code=btoa(JSON.stringify(save));navigator.clipboard?.writeText(code).then(()=>toast('SAVE EXPORTED','Copied to clipboard.')).catch(()=>prompt('Copy save code:',code));if(!navigator.clipboard)prompt('Copy save code:',code)}catch(_e){toast('EXPORT FAILED')}}
-function importSave(){const code=prompt('Paste ORBIT//04 save code:');if(!code)return;try{save=deepProfile(JSON.parse(atob(code.trim())));persist();renderSettings();toast('SAVE IMPORTED')}catch(_e){alert('Invalid save code.')}}
+function importSave(){const code=prompt('Paste ORBIT//04 save code:');if(!code)return;try{save=decodeProfile(atob(code.trim()));persist();renderSettings();toast('SAVE IMPORTED')}catch(_e){alert('Invalid save code.')}}
 
 // ---------- AUDIO ----------
 const AUDIO=(()=>{
@@ -710,4 +718,5 @@ function bootRenderer(){
 }
 
 renderSettings();renderMenu();
+if(saveRecoverySource==='backup')setTimeout(()=>toast('SAVE RECOVERED','Loaded the last valid local backup.'),250);
 if(TEST_MODE){engineReady=false;document.body.dataset.orbitBoot='ok'}else bootRenderer();

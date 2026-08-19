@@ -67,6 +67,13 @@ vm.runInContext(`
   if(!state.choosing) throw new Error('level-up screen did not open');
   selectOffer(state.currentOffers[0]);
   renderResearch(); renderAchievements(); renderCodex(); renderSettings();
+  save.credits=321; persist(false);
+  save.credits=654; persist(false);
+  localStorage.setItem(SAVE_KEY,'{"invalid":');
+  const recovered=loadSave();
+  if(recovered.credits!==321||saveRecoverySource!=='backup') throw new Error('save backup recovery failed');
+  if(JSON.parse(localStorage.getItem(SAVE_KEY)).credits!==321) throw new Error('recovered save was not promoted');
+  save=recovered;
 `,ctx);
 console.log('ORBIT smoke test: PASS');
 
