@@ -10,6 +10,7 @@
     "audio:build": "node tools/generate-audio-reforged.mjs",
     "postinstall": "npm run vendor",
     "start": "npm run vendor && electron .",
+    "screenshot": "npm run vendor && electron . --orbit-capture",
     "package": "npm run vendor && electron-forge package",
     "make": "npm run vendor && electron-forge make",
     "test:assets": "node tests/assets.mjs",

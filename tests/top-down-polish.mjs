@@ -5,11 +5,12 @@ import { fileURLToPath } from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=file=>readFileSync(path.join(root,file),'utf8');
-const html=read('index.html'),game=read('game.js'),visuals=read('visual-engine.js'),styles=read('styles.css'),docs=read('README.md'),pkg=JSON.parse(read('package.json'));
+const html=read('index.html'),game=read('game.js'),visuals=read('visual-engine.js'),styles=read('styles.css'),desktop=read('desktop/main.cjs'),docs=read('README.md'),pkg=JSON.parse(read('package.json'));
 
 assert.equal(pkg.version,'0.63.0');
 assert.equal(pkg.dependencies.phaser,'3.90.0');
 assert.equal(pkg.description,'Top-down space survival game built with JavaScript, Phaser 3, and Electron.');
+assert.match(pkg.scripts.screenshot,/--orbit-capture/,'runtime screenshot script is missing');
 assert.ok(!pkg.dependencies.three,'inactive 3D engine must not ship as a runtime dependency');
 assert.match(html,/<html lang="en">/,'document language metadata is not English');
 assert.match(html,/top-down space survival game built with Phaser 3 and Electron/,'runtime metadata is inaccurate');
@@ -17,6 +18,7 @@ assert.match(html,/vendor\/phaser\.min\.js[\s\S]*visual-engine\.js[\s\S]*game\.j
 assert.doesNotMatch(html,/game-3d\.mjs|styles-3d\.css/,'third-person build is still active');
 assert.doesNotMatch(docs,/visual-direction-concept|ASSET_PROMPTS|ImageGen|OpenAI/,'documentation references non-runtime concept material');
 assert.match(docs,/does not include a verified screenshot of version 0\.63\.0/,'screenshot status is not documented');
+for(const token of ['--orbit-capture','orbit04-capture','capturePage','runtime-screenshot.png','image.isEmpty'])assert.ok(desktop.includes(token),`missing runtime capture safeguard: ${token}`);
 
 const vendor=path.join(root,'vendor/phaser.min.js');
 assert.ok(existsSync(vendor)&&statSync(vendor).size>500000,'offline Phaser runtime is missing');

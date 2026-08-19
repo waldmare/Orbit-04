@@ -1,11 +1,17 @@
 const { app, BrowserWindow, Menu, shell } = require('electron');
+const { mkdir, writeFile } = require('node:fs/promises');
 const path = require('node:path');
 
 function createWindow() {
   const smokeMode = process.argv.includes('--orbit-smoke');
+  const captureMode = process.argv.includes('--orbit-capture');
+  const automatedMode = smokeMode || captureMode;
   const win = new BrowserWindow({
     width: 1440,
     height: 810,
+    useContentSize: captureMode,
+    frame: !captureMode,
+    show: !captureMode,
     minWidth: 960,
     minHeight: 540,
     backgroundColor: '#02050a',
@@ -13,7 +19,9 @@ function createWindow() {
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: true
+      sandbox: true,
+      backgroundThrottling: false,
+      ...(captureMode ? { partition: 'orbit04-capture' } : {})
     }
   });
 
@@ -40,6 +48,10 @@ function createWindow() {
           boot: document.body.dataset.orbitBoot || 'missing'
         })`);
         console.log(`[renderer-ready] ${JSON.stringify(state)}`);
+        if (automatedMode && state.boot !== 'ok') {
+          process.exitCode = 1;
+          return app.quit();
+        }
         if (smokeMode && state.boot === 'ok') {
           const setup = await win.webContents.executeJavaScript(`(() => {
             save.settings.audio='OFF'; save.settings.damageNumbers='ALL'; startRun();
@@ -58,8 +70,37 @@ function createWindow() {
             } finally { app.quit(); }
           }, 900);
         }
+        if (captureMode && state.boot === 'ok') {
+          await win.webContents.executeJavaScript(`(() => {
+            save.settings.audio='OFF';
+            save.settings.hints='OFF';
+            save.settings.damageNumbers='ALL';
+            save.settings.graphics='ULTRA';
+            save.settings.background='FULL';
+            save.settings.uiScale='XL';
+            applyDisplaySettings();
+            startRun();
+            return {mode:state.mode,sector:state.sector.name,difficulty:state.difficulty};
+          })()`);
+          setTimeout(async () => {
+            const screenshotPath = path.join(__dirname, '..', 'docs', 'runtime-screenshot.png');
+            try {
+              const gameplay = await win.webContents.executeJavaScript(`({mode:state?.mode,time:state?.time||0,enemies:state?.enemies?.length||0,renderer:document.getElementById('game')?.dataset.renderer||'missing'})`);
+              if (gameplay.mode !== 'run' || gameplay.time < 4 || gameplay.enemies < 1) throw new Error(`capture scene not ready: ${JSON.stringify(gameplay)}`);
+              const image = await win.webContents.capturePage();
+              if (image.isEmpty()) throw new Error('captured image is empty');
+              await mkdir(path.dirname(screenshotPath), { recursive: true });
+              await writeFile(screenshotPath, image.toPNG());
+              console.log(`[runtime-capture] ${JSON.stringify({...gameplay,path:screenshotPath,size:image.getSize()})}`);
+            } catch (error) {
+              console.error(`[runtime-capture] ${error.message}`);
+              process.exitCode = 1;
+            } finally { app.quit(); }
+          }, 6500);
+        }
       } catch (error) {
         console.error(`[renderer-probe] ${error.message}`);
+        if (automatedMode) { process.exitCode = 1; app.quit(); }
       }
     }, 1400);
   });
