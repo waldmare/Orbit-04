@@ -24,6 +24,8 @@ const vendor=path.join(root,'vendor/phaser.min.js');
 assert.ok(existsSync(vendor)&&statSync(vendor).size>500000,'offline Phaser runtime is missing');
 for(const token of ['tryPhaseDash','dashCooldown','damageNumber','telegraphs','audioMix','MIXES','musicDuck','SIGNAL RUSH','desiredBackground','licensed-sample-assets-v1','cinematicLayers'])assert.ok(game.includes(token),`missing runtime integration token: ${token}`);
 for(const token of ['dashEchoes','syncFloaters','settings.telegraphs','player-ship-v3','enemyTexture','fitSprite','syncEnemies','drawEnergyEffects'])assert.ok(visuals.includes(token),`missing retained visual system: ${token}`);
+assert.match(game,/player-interceptor-v2\.png[\s\S]*enemy-hunter-v2\.png[\s\S]*boss-carrier-v2\.png/,'matte-free ship assets are not wired into the runtime');
+assert.match(visuals,/orbit-glow[^\n]*setVisible\(false\)[\s\S]*drawEnergyEffects[\s\S]*this\.fx\.fillCircle/,'vector glow fallback is not active');
 for(const token of ['abilityBar','ambientDrift','panelArrival','eventImpact','rushField','data-motion'])assert.ok(styles.includes(token),`missing presentation token: ${token}`);
 
 for(const asset of ['laserSmall_002.ogg','explosionCrunch_004.ogg','forceField_001.ogg','laserLarge_001.ogg','lowFrequency_explosion_001.ogg']){

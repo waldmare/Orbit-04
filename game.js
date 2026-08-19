@@ -26,9 +26,9 @@ const canvas=$('game'),wrap=$('wrap');
 const W=960,H=540,RENDER_SCALE=1.5,RENDER_W=Math.round(W*RENDER_SCALE),RENDER_H=Math.round(H*RENDER_SCALE);
 const ENGINE_ASSETS={
   backgrounds:{deep:'assets/visuals/deep-space-arena-v1.png',pulsar:'assets/visuals/space-pulsar-v1.png',rift:'assets/visuals/space-rift-v1.png',supernova:'assets/visuals/space-supernova-v1.png'},
-  player:'assets/visuals/player-interceptor-v3.png',
-  enemies:{scout:'assets/visuals/enemy-scout-v3.png',charger:'assets/visuals/enemy-charger-v3.png',tank:'assets/visuals/enemy-tank-v3.png',gunner:'assets/visuals/enemy-gunner-v3.png',splitter:'assets/visuals/enemy-splitter-v3.png',sniper:'assets/visuals/enemy-sniper-v3.png'},
-  boss:'assets/visuals/boss-carrier-v3.png',
+  player:'assets/visuals/player-interceptor-v2.png',
+  enemies:{scout:'assets/visuals/enemy-scout-v3.png',charger:'assets/visuals/enemy-charger-v3.png',tank:'assets/visuals/enemy-tank-v3.png',gunner:'assets/visuals/enemy-gunner-v3.png',splitter:'assets/visuals/enemy-splitter-v3.png',sniper:'assets/visuals/enemy-hunter-v2.png'},
+  boss:'assets/visuals/boss-carrier-v2.png',
   audio:{
     ui_click:'assets/audio/premium/kenney-sci-fi-sounds/impactMetal_000.ogg',run_start:'assets/audio/premium/kenney-sci-fi-sounds/thrusterFire_004.ogg',
     pulse:'assets/audio/premium/kenney-sci-fi-sounds/laserSmall_000.ogg',missile:'assets/audio/premium/kenney-sci-fi-sounds/thrusterFire_000.ogg',rail:'assets/audio/premium/kenney-sci-fi-sounds/laserLarge_004.ogg',arc:'assets/audio/premium/kenney-sci-fi-sounds/forceField_002.ogg',

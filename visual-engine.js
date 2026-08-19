@@ -88,24 +88,24 @@
     addTo(layer,objects){layer.add(objects);return objects}
 
     createPlayer(){
-      const root=this.scene.add.container(),glow=this.scene.add.image(0,0,'orbit-glow').setBlendMode(Phaser.BlendModes.ADD),
-        plumeL=this.scene.add.image(-5,17,'orbit-plume').setOrigin(.5,0).setBlendMode(Phaser.BlendModes.ADD),
-        plumeR=this.scene.add.image(5,17,'orbit-plume').setOrigin(.5,0).setBlendMode(Phaser.BlendModes.ADD),
-        shadow=this.scene.add.ellipse(2,4,34,17,0x000000,.46),
-        hullGlow=this.scene.add.image(0,0,'orbit-glow').setBlendMode(Phaser.BlendModes.ADD).setAlpha(.12),
-        body=this.scene.add.image(0,0,'player-ship-v3'),shield=this.scene.add.image(0,0,'orbit-ring').setBlendMode(Phaser.BlendModes.ADD);
+      const root=this.scene.add.container(),glow=this.scene.add.image(0,0,'orbit-glow').setBlendMode(Phaser.BlendModes.ADD).setVisible(false),
+        plumeL=this.scene.add.image(-5,17,'orbit-plume').setOrigin(.5,0).setBlendMode(Phaser.BlendModes.ADD).setVisible(false),
+        plumeR=this.scene.add.image(5,17,'orbit-plume').setOrigin(.5,0).setBlendMode(Phaser.BlendModes.ADD).setVisible(false),
+        shadow=this.scene.add.ellipse(2,4,34,17,0x000000,0).setVisible(false),
+        hullGlow=this.scene.add.image(0,0,'orbit-glow').setBlendMode(Phaser.BlendModes.ADD).setVisible(false),
+        body=this.scene.add.image(0,0,'player-ship-v3'),shield=this.scene.add.image(0,0,'orbit-ring').setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
       root.add([glow,plumeL,plumeR,shadow,hullGlow,body,shield]);return{root,glow,plumeL,plumeR,shadow,hullGlow,body,shield};
     }
     createEnemy(){
-      const root=this.scene.add.container(),glow=this.scene.add.image(0,0,'orbit-glow').setBlendMode(Phaser.BlendModes.ADD),
-        plume=this.scene.add.image(0,0,'orbit-plume').setBlendMode(Phaser.BlendModes.ADD),shadow=this.scene.add.ellipse(2,4,30,15,0x000000,.44),
-        body=this.scene.add.image(0,0,'enemy-scout-v3'),rank=this.scene.add.image(0,0,'orbit-rank').setBlendMode(Phaser.BlendModes.ADD),
+      const root=this.scene.add.container(),glow=this.scene.add.image(0,0,'orbit-glow').setBlendMode(Phaser.BlendModes.ADD).setVisible(false),
+        plume=this.scene.add.image(0,0,'orbit-plume').setBlendMode(Phaser.BlendModes.ADD).setVisible(false),shadow=this.scene.add.ellipse(2,4,30,15,0x000000,0).setVisible(false),
+        body=this.scene.add.image(0,0,'enemy-scout-v3'),rank=this.scene.add.image(0,0,'orbit-rank').setBlendMode(Phaser.BlendModes.ADD).setVisible(false),
         hpBg=this.scene.add.rectangle(0,0,1,3,0x12060a,.9).setOrigin(0,.5),hpFill=this.scene.add.rectangle(0,0,1,3,0xff6177,.96).setOrigin(0,.5);
       root.add([glow,plume,shadow,body,rank,hpBg,hpFill]);this.enemyLayer.add(root);return{root,glow,plume,shadow,body,rank,hpBg,hpFill};
     }
     createAlly(){
-      const root=this.scene.add.container(),glow=this.scene.add.image(0,0,'orbit-glow').setBlendMode(Phaser.BlendModes.ADD),
-        shadow=this.scene.add.ellipse(2,4,28,14,0x000000,.42),body=this.scene.add.image(0,0,'enemy-scout-v3').setTint(0x8dffd6);
+      const root=this.scene.add.container(),glow=this.scene.add.image(0,0,'orbit-glow').setBlendMode(Phaser.BlendModes.ADD).setVisible(false),
+        shadow=this.scene.add.ellipse(2,4,28,14,0x000000,0).setVisible(false),body=this.scene.add.image(0,0,'enemy-scout-v3').setTint(0x8dffd6);
       root.add([glow,shadow,body]);this.enemyLayer.add(root);return{root,glow,shadow,body};
     }
     createProjectile(texture){const root=this.scene.add.image(0,0,texture).setBlendMode(Phaser.BlendModes.ADD);this.projectileLayer.add(root);return{root}}
@@ -137,19 +137,16 @@
       if(!gameState||gameState.mode!=='run'){
         const x=this.width*.5+Math.sin(this.time*.35)*18,y=this.height*.56+Math.sin(this.time*.55)*6,size=quality==='LOW'?88:102;
         this.setShip(this.player,x,y,size,-Math.PI/2,palette[settings.selected]||palette.striker,false);
-        this.player.glow.setVisible(glowOn).setAlpha(.18);this.player.hullGlow.setVisible(glowOn);this.player.shield.setAlpha(.22).setTint(0x8de9ff);
-        this.player.plumeL.setAlpha(.72);this.player.plumeR.setAlpha(.72);this.menuHalo.setPosition(x,y).setRotation(this.time*.06).setTint(0x8de9ff);
+        this.player.glow.setVisible(false);this.player.hullGlow.setVisible(false);this.player.shield.setVisible(false);
+        this.player.plumeL.setVisible(false);this.player.plumeR.setVisible(false);this.menuHalo.setVisible(false);
         for(const echo of this.dashEchoes)echo.setVisible(false);this.hideCombatPools();return;
       }
       const p=gameState.p,dx=p.x-(p._visualX??p.x),dy=p.y-(p._visualY??p.y);
       if(Math.hypot(dx,dy)>.12){const target=Math.atan2(dy,dx),diff=Math.atan2(Math.sin(target-this.playerAngle),Math.cos(target-this.playerAngle));this.playerAngle+=diff*.24}
       p._visualX=p.x;p._visualY=p.y;
       this.setShip(this.player,p.x,p.y,52,this.playerAngle,palette[p.frame]||palette.striker,p.hitFlash>0);
-      const dashActive=(p.dashFx||0)>0,dashPower=Math.max(0,Math.min(1,(p.dashFx||0)/.32)),thrust=dashActive?1.75:p.moving?1:.62,pulse=.90+Math.sin(this.time*32)*.10;this.player.root.setScale(dashActive?1.06:1);
-      this.player.plumeL.setAlpha(.72*thrust).setDisplaySize(5.2*(dashActive?1.45:1),24*pulse*(dashActive?1.7:1));this.player.plumeR.setAlpha(.72*thrust).setDisplaySize(5.2*(dashActive?1.45:1),24*pulse*(dashActive?1.7:1));
-      this.player.glow.setVisible(glowOn).setAlpha(dashActive?.36:quality==='ULTRA'?.22:quality==='HIGH'?.17:.11);
-      this.player.hullGlow.setVisible(glowOn&&quality!=='LOW').setAlpha(quality==='ULTRA'?.18:.11);
-      this.player.shield.setTint(p.hp/p.maxHp<.30?0xff6177:0x8de9ff).setAlpha((p.iFrames>0?.38:.13)*(glowOn?1:.35)).setRotation(-this.player.root.rotation+this.time*.22);
+      const dashActive=(p.dashFx||0)>0,dashPower=Math.max(0,Math.min(1,(p.dashFx||0)/.32));this.player.root.setScale(dashActive?1.06:1);
+      this.player.plumeL.setVisible(false);this.player.plumeR.setVisible(false);this.player.glow.setVisible(false);this.player.hullGlow.setVisible(false);this.player.shield.setVisible(false);
       for(let i=0;i<this.dashEchoes.length;i++){const echo=this.dashEchoes[i],trail=(i+1)/(this.dashEchoes.length+1);if(dashActive){echo.setVisible(true).setPosition(p.x+(p.dashFromX-p.x)*trail,p.y+(p.dashFromY-p.y)*trail).setRotation(this.playerAngle+Math.PI/2).setDisplaySize(52,52).setAlpha(dashPower*(.34-i*.055)).setTint(i%2?0x8dffd6:0x8de9ff)}else echo.setVisible(false)}
       const shake=gameState.shake||0;this.root.setPosition(shake?(Math.random()-.5)*shake:0,shake?(Math.random()-.5)*shake:0);this.fx.setPosition(this.root.x*this.scale,this.root.y*this.scale);
       this.syncEnemies(gameState,settings,quality,glowOn);this.syncAllies(gameState);this.syncProjectiles(gameState);
@@ -159,21 +156,18 @@
     hideCombatPools(){for(const pool of [this.enemies,this.allies,this.friendlyBullets,this.hostileBullets,this.loot,this.particles,this.floaters,this.drones,this.blades,this.mines])this.use(pool,0,()=>{})}
     syncEnemies(s,settings,quality,glowOn){
       this.use(this.enemies,s.enemies.length,(v,i)=>{
-        const e=s.enemies[i],boss=!!e.boss,size=boss?e.r*3.75:e.r*(e.elite?3.35:3.0),angle=Math.atan2(s.p.y-e.y,s.p.x-e.x),tint=e.hit>0?0xffffff:(e.nemesis?0xffffff:(enemyTint[e.type]||tintValue(e.color)));
+        const e=s.enemies[i],boss=!!e.boss,size=boss?e.r*3.75:e.r*(e.elite?3.35:3.0),angle=Math.atan2(s.p.y-e.y,s.p.x-e.x);
         v.root.setPosition(e.x,e.y);const texture=boss?enemyTexture.boss:(enemyTexture[e.type]||enemyTexture.scout);v.body.setTexture(texture);
         this.fitSprite(v.body,size);v.body.setRotation(angle+Math.PI/2);
         v.shadow.setPosition(2.2,3.2).setDisplaySize(size*.72,size*.34).setRotation(angle+Math.PI/2).setAlpha(.46);
         v.body.setPosition(0,0).clearTint();if(e.hit>0&&v.body.setTintFill)v.body.setTintFill(0xffffff);
-        const backX=-Math.cos(angle)*size*.31,backY=-Math.sin(angle)*size*.31;
-        v.plume.setPosition(backX,backY).setRotation(angle-Math.PI/2).setDisplaySize(Math.max(3,size*.07),Math.max(8,size*.24)).setTint(boss?0xff254e:0xff4d65).setAlpha(quality==='LOW'?.30:.64);
-        v.glow.setDisplaySize(size*(boss?1.42:1.18),size*(boss?1.42:1.18)).setTint(boss?0xff3159:tint).setAlpha(glowOn?(boss?.25:e.elite?.16:.07):0);
-        v.rank.setDisplaySize(size*1.16,size*1.16).setTint(e.bounty?0xffd27a:e.nemesis?0xffffff:boss?0xff536b:0xf4ba68).setAlpha((e.elite||e.nemesis)?(boss?.50:.36):0).setRotation(-this.time*(boss?.12:.28));
+        v.plume.setVisible(false);v.glow.setVisible(false);v.rank.setVisible(false);
         const hpMode=settings.enemyHp,show=hpMode==='ALL'||(hpMode==='ELITES'&&e.elite),bw=boss?72:Math.max(25,e.r*2.5),y=-size*.47;
         v.hpBg.setVisible(show).setPosition(-bw/2,y).setDisplaySize(bw,3.2);v.hpFill.setVisible(show).setPosition(-bw/2,y).setDisplaySize(bw*Math.max(0,Math.min(1,e.hp/e.maxHp)),3.2).setFillStyle(boss?0xff536b:0xffd27a,.98);
       });
     }
     syncAllies(s){
-      this.use(this.allies,s.allies.length,(v,i)=>{const a=s.allies[i],target=s.enemies.find(e=>!e.dead),angle=target?Math.atan2(target.y-a.y,target.x-a.x):-Math.PI/2,size=Math.max(25,(a.r||9)*3),texture=enemyTexture[a.type]||enemyTexture.scout;v.root.setPosition(a.x,a.y);v.body.setTexture(texture).clearTint().setTint(0x8dffd6).setRotation(angle+Math.PI/2);this.fitSprite(v.body,size);v.shadow.setDisplaySize(size*.72,size*.34).setRotation(angle+Math.PI/2);v.glow.setDisplaySize(size*1.25,size*1.25).setTint(0x8dffd6).setAlpha(.12)});
+      this.use(this.allies,s.allies.length,(v,i)=>{const a=s.allies[i],target=s.enemies.find(e=>!e.dead),angle=target?Math.atan2(target.y-a.y,target.x-a.x):-Math.PI/2,size=Math.max(25,(a.r||9)*3),texture=enemyTexture[a.type]||enemyTexture.scout;v.root.setPosition(a.x,a.y);v.body.setTexture(texture).clearTint().setTint(0x8dffd6).setRotation(angle+Math.PI/2);this.fitSprite(v.body,size);v.shadow.setVisible(false);v.glow.setVisible(false)});
     }
     syncProjectiles(s){
       this.use(this.friendlyBullets,s.bullets.length,(v,i)=>{const b=s.bullets[i],speed=Math.hypot(b.vx||0,b.vy||0);v.root.setPosition(b.x,b.y).setRotation(speed?Math.atan2(b.vy,b.vx):0).setDisplaySize(Math.max(11,b.r*4.8),Math.max(3,b.r*1.7)).setTint(tintValue(b.color)).setAlpha(.95)});
@@ -196,6 +190,18 @@
     syncFloaters(s){const source=s.floaters||[];this.use(this.floaters,source.length,(v,i)=>{const f=source[i],life=Math.max(0,Math.min(1,f.life/f.maxLife));v.root.setPosition(f.x,f.y).setText(f.text).setColor(f.color).setFontSize(f.crit?14:10).setScale(f.crit?1+.18*(1-life):1).setAlpha(Math.min(1,life*1.8))})}
     drawEnergyEffects(s,settings,quality,glowOn){
       const line=(x1,y1,x2,y2,color,alpha,width)=>{this.fx.lineStyle(width,tintValue(color),alpha);this.fx.beginPath();this.fx.moveTo(x1,y1);this.fx.lineTo(x2,y2);this.fx.strokePath()};
+      const p=s.p,playerColor=p.hp/p.maxHp<.30?0xff6177:0x8de9ff;
+      if(glowOn){
+        this.fx.fillStyle(playerColor,quality==='ULTRA'?.11:.075);this.fx.fillCircle(p.x,p.y,quality==='ULTRA'?32:27);
+        const backX=p.x-Math.cos(this.playerAngle)*25,backY=p.y-Math.sin(this.playerAngle)*25;line(p.x,p.y,backX,backY,'#65e7ff',.42,p.moving?4.5:2.5);
+        for(const e of s.enemies){if(e.dead)continue;const color=e.boss?0xff3159:(enemyTint[e.type]||tintValue(e.color));this.fx.fillStyle(color,e.boss?.10:e.elite?.065:.032);this.fx.fillCircle(e.x,e.y,e.r*(e.boss?2.6:e.elite?2.15:1.75))}
+      }
+      for(const e of s.enemies){
+        if(e.dead||(!e.elite&&!e.nemesis&&!e.boss))continue;
+        const color=e.bounty?0xffd27a:e.nemesis?0xffffff:e.boss?0xff536b:0xf4ba68,r=e.r*(e.boss?1.72:1.48);
+        this.fx.lineStyle(e.boss?1.8:1.15,color,e.boss?.72:.55);this.fx.strokeCircle(e.x,e.y,r);
+        for(let i=0;i<4;i++){const a=this.time*(e.boss?.18:.34)+i*Math.PI/2,c=Math.cos(a),sn=Math.sin(a);line(e.x+c*(r-3),e.y+sn*(r-3),e.x+c*(r+4),e.y+sn*(r+4),color,.72,1.2)}
+      }
       if(settings.telegraphs!=='OFF')for(const e of s.enemies){if(e.dead)continue;const ranged=e.type==='gunner'||e.type==='sniper'||e.boss;if(ranged&&e.shootT>0&&e.shootT<.34){const alpha=(.34-e.shootT)/.34,color=e.boss?'#ff526f':e.type==='sniper'?'#ffcf78':'#ff8ca1';if(glowOn)line(e.x,e.y,s.p.x,s.p.y,color,alpha*.18,5);line(e.x,e.y,s.p.x,s.p.y,color,alpha*.68,1)}if(e.type==='charger'&&e.burst<=0&&e.chargeT>0&&e.chargeT<.48){const alpha=(.48-e.chargeT)/.48;this.fx.lineStyle(2,0xffc36c,.35+alpha*.5);this.fx.strokeCircle(e.x,e.y,e.r+8+alpha*9)}}
       for(const a of s.arcs){const alpha=Math.max(0,Math.min(1,a.life*9));if(a.circle){this.fx.lineStyle(quality==='ULTRA'?5:3,tintValue(a.color||'#9cf7ff'),alpha*.42);this.fx.strokeCircle(a.x1,a.y1,a.r)}else{if(glowOn)line(a.x1,a.y1,a.x2,a.y2,a.color||'#9cf7ff',alpha*.22,7);line(a.x1,a.y1,a.x2,a.y2,'#e9fdff',alpha*.92,1.35)}}
       for(const b of s.beams){const alpha=Math.max(0,Math.min(1,b.life*10));if(glowOn)line(b.x1,b.y1,b.x2,b.y2,b.color,alpha*.25,11);line(b.x1,b.y1,b.x2,b.y2,'#ffffff',alpha*.94,1.5);line(b.x1,b.y1,b.x2,b.y2,b.color,alpha*.78,3.4)}
