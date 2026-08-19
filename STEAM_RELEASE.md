@@ -70,6 +70,8 @@ Base capsules may contain the game artwork, product name, and official subtitle 
 
 Valve reviews the store page and build separately. The build must launch on every operating system advertised on the store page. See the current [review process](https://partner.steamgames.com/doc/store/review_process), [release process](https://partner.steamgames.com/doc/store/releasing), [SteamPipe upload guide](https://partner.steamgames.com/doc/sdk/uploading), and [Steamworks SDK documentation](https://partner.steamgames.com/doc/sdk).
 
+The Content Survey also requires an accurate description of pre-generated content created with generative tools and any content generated live while the game runs. Audit every shipped asset before answering; do not treat “no live generation” as “no pre-generated content.” See Valve's current [Content Survey guidance](https://partner.steamgames.com/doc/gettingstarted/contentsurvey).
+
 ## Release decision
 
 Do not press **Release App** until all of these are true:

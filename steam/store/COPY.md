@@ -41,6 +41,6 @@ Earn credits, improve persistent research, raise frame mastery, complete operati
 - In-app purchases: none
 - Advertising: none
 - User-generated content: none
-- Generative content during gameplay: none
+- Live-generated content during gameplay: none
 
-Minimum and recommended hardware specifications remain **unpublished** until measured on representative low-, mid-, and high-range Windows systems.
+Minimum and recommended hardware specifications remain **unpublished** until measured on representative low-, mid-, and high-range Windows systems. Complete a source-provenance audit of every shipped visual, audio, narrative, and localization asset before answering the separate pre-generated-content section of the Steamworks Content Survey.
