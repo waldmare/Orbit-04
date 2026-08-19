@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -17,3 +20,29 @@ jobs:
         run: npm ci
       - name: Syntax and gameplay smoke tests
         run: npm test
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+  windows-package:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: Test and create Windows ZIP
+        run: |
+          npm test
+          npm run make
+          node tools/verify-release.mjs
+      - name: Upload verified Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBIT-04-${{ github.sha }}-windows-x64
+          path: out/make/zip/win32/x64/*.zip
+          if-no-files-found: error
+          retention-days: 14

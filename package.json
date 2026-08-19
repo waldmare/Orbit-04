@@ -1,27 +1,44 @@
 {
   "name": "orbit-04",
   "productName": "ORBIT 04",
-  "version": "0.63.1",
+  "version": "0.64.0",
   "description": "Top-down space survival game built with JavaScript, Phaser 3, and Electron.",
   "main": "desktop/main.cjs",
   "private": true,
+  "license": "SEE LICENSE IN LICENSE.md",
+  "author": "Waldemar",
+  "homepage": "https://github.com/waldmare/Orbit-04#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waldmare/Orbit-04.git"
+  },
+  "engines": {
+    "node": ">=22 <25"
+  },
   "scripts": {
     "vendor": "node tools/vendor-phaser.mjs",
+    "check:node": "node tools/check-build-environment.mjs",
+    "branding:build": "node tools/generate-app-icon.mjs",
     "audio:build": "node tools/generate-audio-reforged.mjs",
     "postinstall": "npm run vendor",
     "start": "npm run vendor && electron .",
     "screenshot": "npm run vendor && electron . -- --orbit-capture",
+    "screenshot:steam": "npm run vendor && electron . -- --orbit-steam-capture",
+    "prepackage": "npm run check:node && npm run branding:build",
     "package": "npm run vendor && electron-forge package",
+    "premake": "npm run check:node && npm run branding:build",
     "make": "npm run vendor && electron-forge make",
+    "release:check": "npm test && npm run package && node tools/verify-release.mjs",
     "test:assets": "node tests/assets.mjs",
-    "test": "node --check desktop/main.cjs && node --check visual-engine.js && node --check tools/generate-audio-reforged.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs && npm run test:assets"
+    "test": "node --check desktop/main.cjs && node --check visual-engine.js && node --check tools/check-build-environment.mjs && node --check tools/generate-audio-reforged.mjs && node --check tools/generate-app-icon.mjs && node --check tools/verify-release.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs && npm run test:assets"
   },
   "dependencies": {
     "phaser": "3.90.0"
   },
   "devDependencies": {
-    "@electron-forge/cli": "latest",
-    "@electron-forge/maker-zip": "latest",
-    "electron": "43.2.0"
+    "@electron-forge/cli": "7.11.2",
+    "@electron-forge/maker-zip": "7.11.2",
+    "electron": "43.2.0",
+    "png-to-ico": "3.0.2"
   }
 }

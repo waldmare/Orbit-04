@@ -1,0 +1,13 @@
+"AppBuild"
+{
+    "AppID"        "YOUR_APP_ID"
+    "Desc"         "ORBIT//04 0.64.0 Windows release candidate"
+    "ContentRoot"  "..\\..\\out\\ORBIT-04-win32-x64"
+    "BuildOutput"  "..\\output"
+    "Preview"      "1"
+
+    "Depots"
+    {
+        "YOUR_WINDOWS_DEPOT_ID" "depot_build_windows_TEMPLATE.vdf"
+    }
+}

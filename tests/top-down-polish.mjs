@@ -7,10 +7,12 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=file=>readFileSync(path.join(root,file),'utf8');
 const html=read('index.html'),game=read('game.js'),visuals=read('visual-engine.js'),styles=read('styles.css'),desktop=read('desktop/main.cjs'),docs=read('README.md'),pkg=JSON.parse(read('package.json'));
 
-assert.equal(pkg.version,'0.63.1');
+assert.equal(pkg.version,'0.64.0');
 assert.equal(pkg.dependencies.phaser,'3.90.0');
 assert.equal(pkg.description,'Top-down space survival game built with JavaScript, Phaser 3, and Electron.');
 assert.match(pkg.scripts.screenshot,/--orbit-capture/,'runtime screenshot script is missing');
+assert.match(pkg.scripts['screenshot:steam'],/--orbit-steam-capture/,'Steam screenshot script is missing');
+assert.match(pkg.scripts['release:check'],/verify-release\.mjs/,'release verification script is missing');
 assert.ok(!pkg.dependencies.three,'inactive 3D engine must not ship as a runtime dependency');
 assert.match(html,/<html lang="en">/,'document language metadata is not English');
 assert.match(html,/top-down space survival game built with Phaser 3 and Electron/,'runtime metadata is inaccurate');
@@ -18,7 +20,7 @@ assert.match(html,/vendor\/phaser\.min\.js[\s\S]*visual-engine\.js[\s\S]*game\.j
 assert.doesNotMatch(html,/game-3d\.mjs|styles-3d\.css/,'third-person build is still active');
 assert.doesNotMatch(docs,/visual-direction-concept|ASSET_PROMPTS|ImageGen|OpenAI/,'documentation references non-runtime concept material');
 assert.match(docs,/docs\/runtime-screenshot\.png[\s\S]*automated capture from the active Electron\/WebGL runtime/,'verified runtime screenshot is not documented accurately');
-for(const token of ['--orbit-capture','orbit04-capture','waitForRenderer','capturePage','runtime-screenshot.png','image.isEmpty'])assert.ok(desktop.includes(token),`missing runtime capture safeguard: ${token}`);
+for(const token of ['--orbit-capture','--orbit-steam-capture','orbit04-capture','waitForRenderer','capturePage','runtime-screenshot.png','image.isEmpty','setPermissionRequestHandler','requestSingleInstanceLock'])assert.ok(desktop.includes(token),`missing runtime capture or desktop safeguard: ${token}`);
 
 const vendor=path.join(root,'vendor/phaser.min.js');
 assert.ok(existsSync(vendor)&&statSync(vendor).size>500000,'offline Phaser runtime is missing');
@@ -37,4 +39,4 @@ for(const asset of ['laserSmall_002.ogg','explosionCrunch_004.ogg','forceField_0
 for(const asset of ['music-exploration-spirit.mp3','music-combat-score.mp3','music-boss-xanthos.mp3']){const full=path.join(root,'assets/audio/premium',asset);assert.ok(existsSync(full)&&statSync(full).size>1000000,`missing full-length music track: ${asset}`)}
 for(const id of ['abilityBar','restartRunBtn','damageNumbersSetting','telegraphSetting','hintsSetting','motionSetting','audioMixSetting'])assert.ok(html.includes(`id="${id}"`),`missing QoL control: ${id}`);
 
-console.log('ORBIT 0.63.1 top-down runtime integration: PASS');
+console.log('ORBIT 0.64.0 top-down runtime integration: PASS');

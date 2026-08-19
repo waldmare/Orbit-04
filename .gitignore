@@ -4,3 +4,8 @@ vendor/phaser.min.js
 .DS_Store
 Thumbs.db
 *.log
+steam/output/
+steam/scripts/app_build_*.vdf
+!steam/scripts/app_build_TEMPLATE.vdf
+steam/scripts/depot_build_*.vdf
+!steam/scripts/depot_build_windows_TEMPLATE.vdf
