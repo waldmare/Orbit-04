@@ -1,7 +1,7 @@
 'use strict';
 
 // ORBIT//04 top-down runtime. All game data is stored locally.
-const GAME_VERSION='0.63.0';
+const GAME_VERSION='0.63.1';
 const RUN_TARGET=720;
 const MAX_ENEMIES=700,MAX_FRIENDLY_BULLETS=1300,MAX_ENEMY_BULLETS=900,MAX_PARTICLES=1400;
 const SUPPORT_URL='';

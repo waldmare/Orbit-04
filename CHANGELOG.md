@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.63.1 — Runtime reliability and verified capture
+
+- added automatic recovery from the last valid local save when the primary profile is malformed
+- made save writes resilient to unavailable browser storage without interrupting gameplay
+- added a deterministic Electron/WebGL gameplay capture with renderer, HUD, and scene readiness checks
+- replaced nested bitmap glow and rank layers that appeared as black rectangles at runtime
+- moved glow, engine, and elite indicators to the dedicated vector effects pass
+- selected matte-free player, sniper, and boss assets for the active top-down camera scale
+- added a verified 1440 × 810 runtime screenshot to the technical project documentation
+- did not change enemy statistics, weapon balance, spawn timing, or progression
+
 ## 0.63.0 — Sprite and licensed-audio integration
 
 - added eight role-specific spacecraft sprites with transparent alpha

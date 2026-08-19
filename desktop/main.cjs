@@ -91,11 +91,15 @@ function createWindow() {
             startRun();
             state.time=105;
             state.level=5;
+            state.threat=2;
             state.chain=24;
             state.chainTimer=999;
             state.rush=8;
             state.spawnT=999;
             state.eliteT=999;
+            state.nextBounty=999;
+            state.nextAnomaly=999;
+            state.nextSecret=999;
             const layout=[
               ['scout',false,210,145],['charger',false,755,165],
               ['tank',true,190,395],['gunner',false,770,390],
@@ -105,6 +109,7 @@ function createWindow() {
             updateDynamicBackground(performance.now(),4200);
             hideAll();
             hud.classList.remove('hidden');
+            centerMessage.textContent='';
             draw();
             void document.body.offsetHeight;
             return {mode:state.mode,sector:state.sector.name,difficulty:state.difficulty,enemies:state.enemies.length,visibleScreens:screens.filter(id => $(id).classList.contains('show')),hudHidden:hud.classList.contains('hidden')};

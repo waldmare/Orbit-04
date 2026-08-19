@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.63.0-62e6ff)
+![Version](https://img.shields.io/badge/version-0.63.1-62e6ff)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
 ORBIT//04 is a single-player, top-down space survival game. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a third boss encounter.
 
-Current version: `0.63.0`
+Current version: `0.63.1`
 
 ## Runtime overview
 
@@ -18,7 +18,7 @@ Current version: `0.63.0`
 | Internal resolution | 1440 × 810 |
 | Desktop host | Electron 43 |
 | Game logic | JavaScript running locally in the renderer process |
-| Save data | Browser `localStorage` with manual export and import |
+| Save data | Browser `localStorage` with automatic backup, manual export, and import |
 | Automated checks | Node.js tests on GitHub Actions |
 
 The supported runtime is the top-down Phaser implementation loaded by `index.html`. The repository also contains an inactive third-person prototype; it is not imported by the current game.
@@ -45,12 +45,17 @@ The renderer includes:
 
 - distinct sprites for the player, six standard enemy classes, and the boss
 - aspect-ratio-preserving sprite scaling
-- geometric shadows instead of duplicated sprite silhouettes
-- configurable particles, additive glow, background detail, contrast, and graphics quality
+- matte-free ship textures selected for the active camera scale
+- vector glow, engine trails, elite markers, and telegraphs drawn in a dedicated additive pass
+- configurable particles, background detail, contrast, and graphics quality
 - four runtime background states: deep space, pulsar, gravitational rift, and supernova
 - a vector rendering fallback when the retained sprite engine is unavailable
 
-The current repository does not include a verified screenshot of version 0.63.0. Images that are not captured from the running build are not presented here as gameplay.
+## Runtime screenshot
+
+![ORBIT//04 automated runtime capture](docs/runtime-screenshot.png)
+
+This 1440 × 810 image is an automated capture from the active Electron/WebGL runtime. The capture uses the real HUD, Phaser renderer, background system, ship textures, enemy classes, and gameplay state. Enemy placement and run time are fixed only to make the result reproducible; it is not concept art or a UI mockup.
 
 ## Audio implementation
 
@@ -133,6 +138,14 @@ Run only the asset integrity audit:
 npm.cmd run test:assets
 ```
 
+Capture the documented gameplay scene from the local Electron/WebGL build:
+
+```bat
+npm.cmd run screenshot
+```
+
+The capture command writes `docs/runtime-screenshot.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+
 The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, renderer integration, runtime asset references, media file signatures, image dimensions, and the local Phaser bundle.
 
 ## Package the desktop application
@@ -163,7 +176,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Project status
 
-Version 0.63.0 is a playable development build, not a release candidate. External playtesting, late-run performance measurements, balance telemetry, and packaged desktop validation are still required before a 1.0 release.
+Version 0.63.1 is a playable development build, not a release candidate. External playtesting, late-run performance measurements, balance telemetry, and packaged desktop validation are still required before a 1.0 release.
 
 ## License
 
