@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.63.1-62e6ff)
+![Version](https://img.shields.io/badge/version-0.64.0-62e6ff)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
 ORBIT//04 is a single-player, top-down space survival game. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a third boss encounter.
 
-Current version: `0.63.1`
+Current version: `0.64.0`
 
 ## Runtime overview
 
@@ -19,7 +19,7 @@ Current version: `0.63.1`
 | Desktop host | Electron 43 |
 | Game logic | JavaScript running locally in the renderer process |
 | Save data | Browser `localStorage` with automatic backup, manual export, and import |
-| Automated checks | Node.js tests on GitHub Actions |
+| Automated checks | Node.js tests and Windows packaging on GitHub Actions |
 
 The supported runtime is the top-down Phaser implementation loaded by `index.html`. The repository also contains an inactive third-person prototype; it is not imported by the current game.
 
@@ -80,9 +80,9 @@ The settings screen provides:
 
 ## Requirements
 
-- Node.js 22 is used by CI
+- Node.js 22 or 24 LTS (Node 22 is used by CI)
 - npm
-- Windows, macOS, or Linux supported by the installed Electron version
+- Windows 10 or 11, 64-bit, for the release package
 
 ## Install and run
 
@@ -151,10 +151,10 @@ The suite checks JavaScript syntax, core combat and progression behavior, boss t
 ## Package the desktop application
 
 ```bat
-npm.cmd run package
+npm.cmd run release:check
 ```
 
-Electron Forge writes the packaged application to `out/`. Release validation steps are listed in [STEAM_RELEASE.md](STEAM_RELEASE.md).
+Electron Forge writes the validated Windows application to `out/ORBIT-04-win32-x64/`. Launch `ORBIT-04.exe` from that directory for the final local check. SteamPipe templates, store-capture commands, and the remaining Steamworks steps are documented in [STEAM_RELEASE.md](STEAM_RELEASE.md).
 
 ## Repository layout
 
@@ -174,9 +174,9 @@ tools/                     Asset build and Phaser vendoring scripts
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and pull request requirements. Visual changes must use screenshots captured from the running game. Concept art and mockups must be labeled explicitly.
 
-## Project status
+## Release status
 
-Version 0.63.1 is a playable development build, not a release candidate. External playtesting, late-run performance measurements, balance telemetry, and packaged desktop validation are still required before a 1.0 release.
+Version 0.64.0 is a Windows release-preparation build. The repository can generate and validate the offline desktop package and real 1920 × 1080 gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

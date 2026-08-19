@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.64.0 — Windows and Steam release hardening
+
+- added a project-owned Windows application icon and deterministic ICO build step
+- pinned Electron Forge packaging dependencies instead of resolving moving `latest` versions
+- restricted the declared release package to the tested 64-bit Windows target
+- added single-instance handling, permission denial, webview blocking, packaged DevTools restrictions, and stricter navigation handling
+- added five automated 1920 × 1080 Steam store captures from the real Electron/WebGL runtime
+- added a fail-fast packaged-build validator for the executable, ASAR payload, branding, version, Phaser runtime, and SteamPipe inputs
+- added Windows SteamPipe templates without credentials or fabricated App/depot IDs
+- expanded CI with a Windows package verification artifact
+- documented the real Steamworks upload, store, review, and release gates
+- did not change enemy statistics, weapon balance, spawn timing, or progression
+
 ## 0.63.1 — Runtime reliability and verified capture
 
 - added automatic recovery from the last valid local save when the primary profile is malformed
