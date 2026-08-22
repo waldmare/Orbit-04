@@ -44,11 +44,15 @@ vm.runInContext(`
   if(shift.x>=0||Math.abs(state.p.x-CAMERA_SAFE.right)>.001||Math.abs((travelEnemy.x-state.p.x)-relativeX)>.001||state.worldX===worldBefore) throw new Error('continuous world camera failed');
   if(!Number.isFinite(state.worldX)||!Number.isFinite(state.worldY)) throw new Error('world travel coordinates are invalid');
   if(state.generatedCells.size<20||!state.worldSites.length||!state.worldNodes.length) throw new Error('procedural world did not initialize');
+  generateWorldCell(-8,8); if(!state.worldNodes.some(node=>node.id==='-8:8:archive')) throw new Error('procedural archive signal generation failed');
   const cellsBefore=state.generatedCells.size; state.worldX+=WORLD_CELL_SIZE*3; updateWorldGeneration(); if(state.generatedCells.size<=cellsBefore) throw new Error('procedural world did not expand beyond the starting view');
   state.worldX=worldBefore; updateWorldGeneration(); updateNavigationHud(); if(document.getElementById('navigationSignal').classList.contains('hidden')) throw new Error('exploration navigation signal is hidden');
   state.p.hp=state.p.maxHp*.5; const hpBefore=state.p.hp; if(!collectWorldNode({type:'repair',x:state.p.x,y:state.p.y,color:'#79f0ca',disposition:'boon',collected:false})||state.p.hp<=hpBefore) throw new Error('repair relay failed');
   state.fieldBoostUntil=0; const powerBefore=weaponPower('pulse',state.weapons.pulse); collectWorldNode({type:'flux',x:state.p.x,y:state.p.y,color:'#8de9ff',disposition:'boon',collected:false}); if(weaponPower('pulse',state.weapons.pulse)<=powerBefore) throw new Error('flux amplifier failed');
   collectWorldNode({type:'jammer',x:state.p.x,y:state.p.y,color:'#ff6177',disposition:'hazard',collected:false}); if(state.interferenceUntil<=state.time||state.hazardFinds!==1) throw new Error('world hazard failed');
+  const archivesBefore=save.discoveredArchives.length,archiveStatsBefore=save.stats.archiveFragments; collectWorldNode({type:'archive',x:state.p.x,y:state.p.y,color:'#ead7a7',disposition:'archive',collected:false});
+  if(state.archiveFragments!==1||save.stats.archiveFragments!==archiveStatsBefore+1||save.discoveredArchives.length!==archivesBefore+1) throw new Error('archive fragment recovery failed');
+  const recoveredArchive=ARCHIVE_FRAGMENTS.find(entry=>entry.id===save.discoveredArchives.at(-1)); codexTab='discoveries'; renderCodex(); if(!recoveredArchive||!document.getElementById('codexContent').children.some(card=>card.innerHTML.includes(recoveredArchive.channel)&&card.innerHTML.includes('thematic echo'))) throw new Error('archive fragment Codex entry failed');
   if(Object.keys(ENGINE_ASSETS.backgrounds).length!==4) throw new Error('dynamic background plates missing');
   state.time=106; if(desiredBackground()!=='pulsar') throw new Error('background director did not advance'); state.time=0;
   save.settings.uiScale='XXL'; save.settings.contrast='HIGH'; renderSettings();

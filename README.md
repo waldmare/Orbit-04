@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.68.0-62e6ff)
+![Version](https://img.shields.io/badge/version-0.69.0-62e6ff)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
 ORBIT//04 is a single-player, top-down space survival game. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a third boss encounter.
 
-Current version: `0.68.0`
+Current version: `0.69.0`
 
 ## Runtime overview
 
@@ -34,7 +34,8 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 - projectile grazing, kill chains, Signal Rush, Overdrive, caches, anomalies, and hostile conversion
 - continuous directional travel with camera-safe world scrolling and active-encounter preservation
 - deterministic space generation beyond the starting view, including asteroid fields, wreckage, ion formations, and void sites
-- five exploration signals: repair, combat amplification, salvage, risk/reward relics, and hostile jammers
+- six exploration signals: repair, combat amplification, salvage, archive fragments, risk/reward relics, and hostile jammers
+- 9 persistent literary archive fragments with original, clearly attributed thematic echoes of Bernhard, Hamsun, and Lem's *Solaris*
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
 - keyboard, mouse, and gamepad movement
 - licensed sample playback with automatic context recovery, verified-playback status, mute warnings, and an in-game output check

@@ -127,6 +127,10 @@
       sprite.setDisplaySize(w*scale,h*scale);return sprite;
     }
 
+    strokeFxLine(x1,y1,x2,y2,color,alpha,width){
+      this.fx.lineStyle(width,tintValue(color),alpha);this.fx.beginPath();this.fx.moveTo(x1,y1);this.fx.lineTo(x2,y2);this.fx.strokePath();
+    }
+
     setShip(view,size,tint,hit=false){
       this.fitSprite(view.body,size);
       view.shadow.setDisplaySize(size*.72,size*.34).setPosition(2,4);
@@ -208,7 +212,7 @@
     }
     syncFloaters(s){const source=s.floaters||[];this.use(this.floaters,source.length,(v,i)=>{const f=source[i],life=clamp(f.life/f.maxLife),arrival=clamp((1-life)*5),scale=f.crit?(1.32-.20*easeOutCubic(arrival)):(.82+.18*easeOutBack(arrival));v.root.setPosition(f.x,f.y-3*easeOutCubic(arrival)).setText(f.text).setColor(f.color).setFontSize(f.crit?14:10).setScale(scale).setAlpha(Math.min(1,life*2.4,arrival*2.5))})}
     drawEnergyEffects(s,settings,quality,glowOn){
-      const line=(x1,y1,x2,y2,color,alpha,width)=>{this.fx.lineStyle(width,tintValue(color),alpha);this.fx.beginPath();this.fx.moveTo(x1,y1);this.fx.lineTo(x2,y2);this.fx.strokePath()};
+      const line=(x1,y1,x2,y2,color,alpha,width)=>this.strokeFxLine(x1,y1,x2,y2,color,alpha,width);
       const p=s.p,playerColor=p.hp/p.maxHp<.30?0xff6177:0x8de9ff;
       if(glowOn){
         this.fx.fillStyle(playerColor,quality==='ULTRA'?.11:.075);this.fx.fillCircle(p.x,p.y,quality==='ULTRA'?32:27);
@@ -234,7 +238,7 @@
       for(const death of s.deathFx||[]){const duration=death.maxLife||.55,life=clamp((death.life||0)/duration),progress=1-life,color=tintValue(death.color),boss=!!death.boss,elite=!!death.elite,base=death.r*(boss?2.4:elite?1.9:1.55),flare=Math.sin(Math.min(1,progress*2.2)*Math.PI),ringRadius=base*(.35+progress*1.75),seed=death.seed||0;
         if(glowOn){this.fx.fillStyle(color,life*(boss?.16:elite?.11:.07)*flare).fillCircle(death.x,death.y,base*(.72+progress*.55));this.fx.fillStyle(0xffffff,life*(boss?.24:.16)*flare).fillCircle(death.x,death.y,Math.max(2,base*(.16-progress*.07)))}
         this.fx.lineStyle(boss?3.2:elite?2.2:1.4,color,life*(.72-progress*.22)).strokeCircle(death.x,death.y,ringRadius);if(elite||boss)this.fx.lineStyle(1.2,0xffffff,life*.42).strokeCircle(death.x,death.y,ringRadius*.72);
-        const fragments=quality==='LOW'?(boss?8:4):boss?22:elite?12:7;for(let i=0;i<fragments;i++){const a=seed*TAU+i*2.399+progress*(i%2?1:-1)*.32,distance=base*(.18+progress*(.7+(i%4)*.18)),length=(boss?9:5)*(1-life*.3),x1=death.x+Math.cos(a)*distance,y1=death.y+Math.sin(a)*distance;line(x1,y1,x1-Math.cos(a)*length,y1-Math.sin(a)*length,i%3===0?'#ffffff':death.color,life*(.36+(i%3)*.13),boss?1.8:1.1)}
+        const fragments=quality==='LOW'?(boss?8:4):boss?22:elite?12:7;for(let i=0;i<fragments;i++){const a=seed*TAU+i*2.399+progress*(i%2?1:-1)*.32,distance=base*(.18+progress*(.7+(i%4)*.18)),length=(boss?9:5)*(1-life*.3),x1=death.x+Math.cos(a)*distance,y1=death.y+Math.sin(a)*distance;this.strokeFxLine(x1,y1,x1-Math.cos(a)*length,y1-Math.sin(a)*length,i%3===0?'#ffffff':death.color,life*(.36+(i%3)*.13),boss?1.8:1.1)}
       }
     }
   }

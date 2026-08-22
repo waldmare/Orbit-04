@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.69.0 — Archive fragments and destruction hotfix
+
+- fixed the `ReferenceError: line is not defined` crash triggered by the retained renderer during an enemy destruction animation
+- moved effects-line drawing to an engine-level method shared by energy and destruction effects
+- added a direct renderer regression test that executes a destruction effect instead of relying only on static integration checks
+- added procedurally generated Archive Fragment signals with modest credit, data, score, sound, and visual feedback
+- added 9 persistent Codex discoveries: original thematic echoes after Thomas Bernhard, Knut Hamsun, and Stanisław Lem's *Solaris*
+- labels every literary fragment as original field text rather than presenting it as a verbatim quotation
+- added recovered-archive progress to lifetime statistics and the run summary
+- preserved all ship statistics, enemy balance, spawn timing, weapons, and combat progression
+
 ## 0.68.0 — Motion direction and combat animation pass
 
 - replaced frame-by-frame ship snapping with time-based position, heading, and turn smoothing
