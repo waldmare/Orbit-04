@@ -7,7 +7,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=file=>readFileSync(path.join(root,file),'utf8');
 const html=read('index.html'),game=read('game.js'),visuals=read('visual-engine.js'),styles=read('styles.css'),desktop=read('desktop/main.cjs'),docs=read('README.md'),pkg=JSON.parse(read('package.json'));
 
-assert.equal(pkg.version,'0.67.0');
+assert.equal(pkg.version,'0.68.0');
 assert.equal(pkg.dependencies.phaser,'3.90.0');
 assert.equal(pkg.description,'Top-down space survival game built with JavaScript, Phaser 3, and Electron.');
 assert.match(pkg.scripts.screenshot,/--orbit-capture/,'runtime screenshot script is missing');
@@ -27,8 +27,8 @@ assert.ok(existsSync(vendor)&&statSync(vendor).size>500000,'offline Phaser runti
 const screenshot=path.join(root,'docs/runtime-screenshot.png'),png=readFileSync(screenshot);
 assert.ok(png.length>100000,'verified runtime screenshot is missing or empty');
 assert.equal(png.readUInt32BE(16),1440,'runtime screenshot width must be 1440');assert.equal(png.readUInt32BE(20),810,'runtime screenshot height must be 810');
-for(const token of ['tryPhaseDash','dashCooldown','damageNumber','telegraphs','audioMix','MIXES','musicDuck','SIGNAL RUSH','desiredBackground','licensed-sample-assets-v2','cinematicLayers','selectEnemyType','followWorldCamera','translateWorld','unlockSamples','played===false','testAudioOutput','WORLD_CELL_SIZE','generateWorldCell','collectWorldNode','updateWorldGeneration','NULL JAMMER','FLUX AMPLIFIER'])assert.ok(game.includes(token),`missing runtime integration token: ${token}`);
-for(const token of ['dashEchoes','syncFloaters','settings.telegraphs','player-ship-v3','enemyTexture','fitSprite','syncEnemies','drawEnergyEffects','drawWorldSites','worldNodes'])assert.ok(visuals.includes(token),`missing retained visual system: ${token}`);
+for(const token of ['tryPhaseDash','dashCooldown','damageNumber','telegraphs','audioMix','MIXES','musicDuck','SIGNAL RUSH','desiredBackground','licensed-sample-assets-v2','cinematicLayers','selectEnemyType','followWorldCamera','translateWorld','unlockSamples','played===false','testAudioOutput','WORLD_CELL_SIZE','generateWorldCell','collectWorldNode','updateWorldGeneration','NULL JAMMER','FLUX AMPLIFIER','deathFx','dampValue'])assert.ok(game.includes(token),`missing runtime integration token: ${token}`);
+for(const token of ['dashEchoes','syncFloaters','settings.telegraphs','player-ship-v3','enemyTexture','fitSprite','syncEnemies','drawEnergyEffects','drawWorldSites','worldNodes','smoothValue','smoothAngle','motionScale','easeOutBack','syncDeathFx','enginePulse','spawnScale'])assert.ok(visuals.includes(token),`missing retained visual system: ${token}`);
 assert.match(game,/player-interceptor-v2\.png[\s\S]*enemy-hunter-v2\.png[\s\S]*boss-carrier-v2\.png/,'matte-free ship assets are not wired into the runtime');
 assert.match(visuals,/orbit-glow[^\n]*setVisible\(false\)[\s\S]*drawEnergyEffects[\s\S]*this\.fx\.fillCircle/,'vector glow fallback is not active');
 for(const token of ['abilityBar','ambientDrift','panelArrival','eventImpact','rushField','data-motion','intelLayout','settingsPresets','audioCheckRow','navigationSignal'])assert.ok(styles.includes(token),`missing presentation token: ${token}`);
@@ -40,4 +40,4 @@ for(const asset of ['music-exploration-spirit.mp3','music-combat-score.mp3','mus
 for(const id of ['abilityBar','navigationSignal','navigationSignalText','restartRunBtn','pauseSnapshot','pauseLoadoutBtn','loadoutScreen','loadoutContent','readabilityPresetBtn','cinematicPresetBtn','performancePresetBtn','damageNumbersSetting','telegraphSetting','hintsSetting','motionSetting','audioMixSetting','audioStatusText','testAudioBtn'])assert.ok(html.includes(`id="${id}"`),`missing QoL control: ${id}`);
 for(const token of ['renderRunIntel','renderPauseSnapshot','applySettingsPreset','runObjective','SETTING_PRESETS'])assert.ok(game.includes(token),`missing run-intel or settings-profile token: ${token}`);
 
-console.log('ORBIT 0.67.0 top-down runtime integration: PASS');
+console.log('ORBIT 0.68.0 top-down runtime integration: PASS');

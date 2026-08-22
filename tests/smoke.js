@@ -73,6 +73,8 @@ vm.runInContext(`
   state.chain=14; state.chainTimer=1;
   const rushTarget=spawnEnemy('scout',false,{x:520,y:260}); killEnemy(rushTarget);
   if(state.rush<=0||state.rushActivations!==1||save.stats.signalRushes!==1) throw new Error('SIGNAL RUSH did not activate');
+  if(!state.deathFx.length||state.deathFx[0].maxLife<=0) throw new Error('persistent destruction animation was not created');
+  const destructionLife=state.deathFx[0].life; update(.05); if(state.deathFx[0].life>=destructionLife) throw new Error('destruction animation did not advance');
   draw();
   if(document.getElementById('rushMeter').classList.contains('hidden')) throw new Error('SIGNAL RUSH HUD is hidden');
   state.p.x=100; state.p.y=100; mouse.active=true; mouse.inside=true; mouse.x=200; mouse.y=100;

@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.67.0-62e6ff)
+![Version](https://img.shields.io/badge/version-0.68.0-62e6ff)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
 ORBIT//04 is a single-player, top-down space survival game. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a third boss encounter.
 
-Current version: `0.67.0`
+Current version: `0.68.0`
 
 ## Runtime overview
 
@@ -51,7 +51,11 @@ The renderer includes:
 - distinct sprites for the player, six standard enemy classes, and the boss
 - aspect-ratio-preserving sprite scaling
 - matte-free ship textures selected for the active camera scale
-- vector glow, engine trails, elite markers, and telegraphs drawn in a dedicated additive pass
+- frame-rate-independent position and rotation smoothing for player, hostile, and allied ships
+- thrust-responsive engine plumes, turning bank, dash afterimages, spawn easing, hit recoil, and multi-stage destruction effects
+- animated pickups, exploration signals, orbiting systems, projectile streaks, and depth landmarks
+- damped impact shake and background parallax instead of per-frame random jitter
+- artifact-free vector glow, shields, elite markers, and telegraphs drawn in a dedicated additive pass
 - configurable particles, background detail, contrast, and graphics quality
 - four runtime background states: deep space, pulsar, gravitational rift, and supernova
 - a vector rendering fallback when the retained sprite engine is unavailable

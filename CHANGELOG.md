@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.68.0 — Motion direction and combat animation pass
+
+- replaced frame-by-frame ship snapping with time-based position, heading, and turn smoothing
+- added thrust-responsive dual player engines, hostile and allied engine trails, hull light, shield response, and controlled idle motion
+- expanded Phase Dash from four static echoes to an eight-step eased afterimage sequence
+- added spawn easing, directional hit recoil, elite and boss motion signatures, and readable projectile velocity stretching
+- replaced single-frame enemy removal with persistent expanding rings, light blooms, and deterministic debris trails
+- animated pickups, exploration signals, orbital weapons, world sites, particles, and damage readouts
+- moved glow and rank accents out of nested bitmap overlays to eliminate rectangular WebGL artifacts
+- replaced random camera jitter with a damped procedural impact response
+- added smoothed directional background parallax and speed-sensitive depth zoom
+- made particle drag frame-rate independent and extended automated motion-system coverage
+- preserved all ship statistics, enemy balance, spawn timing, weapons, progression, and rewards
+
 ## 0.67.0 — Procedural field exploration and verified audio
 
 - identified the reported silent output as a persisted `AUDIO: OFF` profile setting and restored audio for the active local profile
