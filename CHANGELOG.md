@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.70.0 — Readability, reward feedback, and mix hierarchy
+
+- replaced the short Archive Fragment popup with a full Archive Reader that pauses combat and remains open until the player dismisses it
+- deferred archive data rewards until the reader closes so level-up screens cannot overlap the recovered text
+- added keyboard, mouse, and gamepad dismissal plus permanent Codex recovery progress
+- reorganized combat HUD values into labeled metrics and shortened the live weapon summary to prevent overflow
+- moved transient notifications away from the exploration navigator and added a dedicated reward ribbon for chains, Signal Rush, Overdrive, signal captures, and boss defeats
+- added an Effect Clarity control with stronger hostile projectile cores, dark separation outlines, priority telegraphs, a player focus ring, and reduced non-critical particle density
+- added audio voice limits for repeated weapon, pickup, kill, graze, and hostile-shot samples
+- rebalanced per-cue levels and added immediate music ducking around archives, rewards, hits, evolutions, and major encounters
+- expanded smoke and integration coverage for persistent archive reading, deferred rewards, reward ribbons, audio limiting, and clarity controls
+- preserved enemy statistics, weapon damage, spawn timing, and progression balance
+
 ## 0.69.0 — Archive fragments and destruction hotfix
 
 - fixed the `ReferenceError: line is not defined` crash triggered by the retained renderer during an enemy destruction animation

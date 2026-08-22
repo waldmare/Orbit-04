@@ -50,8 +50,10 @@ vm.runInContext(`
   state.p.hp=state.p.maxHp*.5; const hpBefore=state.p.hp; if(!collectWorldNode({type:'repair',x:state.p.x,y:state.p.y,color:'#79f0ca',disposition:'boon',collected:false})||state.p.hp<=hpBefore) throw new Error('repair relay failed');
   state.fieldBoostUntil=0; const powerBefore=weaponPower('pulse',state.weapons.pulse); collectWorldNode({type:'flux',x:state.p.x,y:state.p.y,color:'#8de9ff',disposition:'boon',collected:false}); if(weaponPower('pulse',state.weapons.pulse)<=powerBefore) throw new Error('flux amplifier failed');
   collectWorldNode({type:'jammer',x:state.p.x,y:state.p.y,color:'#ff6177',disposition:'hazard',collected:false}); if(state.interferenceUntil<=state.time||state.hazardFinds!==1) throw new Error('world hazard failed');
-  const archivesBefore=save.discoveredArchives.length,archiveStatsBefore=save.stats.archiveFragments; collectWorldNode({type:'archive',x:state.p.x,y:state.p.y,color:'#ead7a7',disposition:'archive',collected:false});
-  if(state.archiveFragments!==1||save.stats.archiveFragments!==archiveStatsBefore+1||save.discoveredArchives.length!==archivesBefore+1) throw new Error('archive fragment recovery failed');
+  const archivesBefore=save.discoveredArchives.length,archiveStatsBefore=save.stats.archiveFragments,archiveXpBefore=state.xp; collectWorldNode({type:'archive',x:state.p.x,y:state.p.y,color:'#ead7a7',disposition:'archive',collected:false});
+  if(state.archiveFragments!==1||save.stats.archiveFragments!==archiveStatsBefore+1||save.discoveredArchives.length!==archivesBefore+1||!state.paused||!state.archiveOpen) throw new Error('archive fragment recovery failed');
+  if(!document.getElementById('archiveScreen').classList.contains('show')||!document.getElementById('archiveQuote').textContent||state.xp!==archiveXpBefore) throw new Error('persistent archive reader failed');
+  closeArchiveFragment(); if(state.paused||state.archiveOpen||document.getElementById('archiveScreen').classList.contains('show')||state.xp!==archiveXpBefore+3) throw new Error('archive reader did not resume the run and bank data');
   const recoveredArchive=ARCHIVE_FRAGMENTS.find(entry=>entry.id===save.discoveredArchives.at(-1)); codexTab='discoveries'; renderCodex(); if(!recoveredArchive||!document.getElementById('codexContent').children.some(card=>card.innerHTML.includes(recoveredArchive.channel)&&card.innerHTML.includes('thematic echo'))) throw new Error('archive fragment Codex entry failed');
   if(Object.keys(ENGINE_ASSETS.backgrounds).length!==4) throw new Error('dynamic background plates missing');
   state.time=106; if(desiredBackground()!=='pulsar') throw new Error('background director did not advance'); state.time=0;
@@ -60,8 +62,9 @@ vm.runInContext(`
   if(!document.getElementById('audioStatusText').textContent.includes('MUTED IN GAME')) throw new Error('audio status did not report disabled output');
   let fallbackStarts=0,sampleAttempts=0; window.AudioContext=class{constructor(){this.state='running';this.sampleRate=8000;this.currentTime=0;this.destination={}}createGain(){return{gain:{value:0,setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){}}}createOscillator(){return{frequency:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){},start(){fallbackStarts++},stop(){}}}createBuffer(){return{getChannelData:()=>new Float32Array(800)}}createBufferSource(){return{connect(){},start(){},stop(){}}}resume(){return Promise.resolve()}};
   AUDIO.attach({sound:{locked:false,pauseOnBlur:true,context:{state:'running'},play(){sampleAttempts++;return false}},cache:{audio:{exists:()=>true}}});
+  save.settings.audio='ON'; AUDIO.sfx('enemyShot'); const gatedSampleCount=sampleAttempts; AUDIO.sfx('enemyShot'); if(sampleAttempts!==gatedSampleCount) throw new Error('repetitive audio voice limiting failed');
   testAudioOutput(); if(save.settings.audio!=='ON'||sampleAttempts===0||fallbackStarts===0||!document.getElementById('audioStatusText').textContent.includes('OUTPUT CONFIRMED')) throw new Error('audio output recovery failed'); save.settings.audio='OFF';
-  if(!applySettingsPreset('READABILITY')||save.settings.enemyHp!=='ALL'||save.settings.motion!=='REDUCED'||save.settings.uiScale!=='XXL') throw new Error('readability profile was not applied');
+  if(!applySettingsPreset('READABILITY')||save.settings.enemyHp!=='ALL'||save.settings.motion!=='REDUCED'||save.settings.uiScale!=='XXL'||save.settings.effectClarity!=='HIGH') throw new Error('readability profile was not applied');
   state.weaponDamage.pulse=120; state.damageDealt=120;
   if(!renderRunIntel()||!document.getElementById('loadoutContent').innerHTML.includes('PULSE CANNON')) throw new Error('run intel did not render the active build');
   pause(true);
@@ -77,6 +80,7 @@ vm.runInContext(`
   state.chain=14; state.chainTimer=1;
   const rushTarget=spawnEnemy('scout',false,{x:520,y:260}); killEnemy(rushTarget);
   if(state.rush<=0||state.rushActivations!==1||save.stats.signalRushes!==1) throw new Error('SIGNAL RUSH did not activate');
+  if(!document.getElementById('rewardRibbon').classList.contains('show')||!document.getElementById('rewardRibbonTitle').textContent.includes('SIGNAL RUSH')) throw new Error('reward milestone ribbon failed');
   if(!state.deathFx.length||state.deathFx[0].maxLife<=0) throw new Error('persistent destruction animation was not created');
   const destructionLife=state.deathFx[0].life; update(.05); if(state.deathFx[0].life>=destructionLife) throw new Error('destruction animation did not advance');
   draw();

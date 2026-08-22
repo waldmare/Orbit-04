@@ -34,6 +34,7 @@
       this.root.add([this.lootLayer,this.trailLayer,this.enemyLayer,this.projectileLayer,this.playerLayer,this.particleLayer]);
       this.siteFx=scene.add.graphics().setDepth(2.7).setScale(scale);
       this.fx=scene.add.graphics().setDepth(3.5).setScale(scale).setBlendMode(Phaser.BlendModes.ADD);
+      this.dangerFx=scene.add.graphics().setDepth(4.2).setScale(scale);
       this.player=this.createPlayer();this.playerLayer.add(this.player.root);
       this.dashEchoes=Array.from({length:8},()=>scene.add.image(0,0,'player-ship-v3').setBlendMode(Phaser.BlendModes.ADD).setTint(0x8de9ff).setVisible(false));this.trailLayer.add(this.dashEchoes);
       this.enemies=this.pool(()=>this.createEnemy());
@@ -143,8 +144,8 @@
 
     sync(gameState,settings={}){
       const now=performance.now()/1000,delta=clamp(now-this.lastSync,1/240,.05);this.lastSync=now;this.delta=delta;this.time=gameState?.time??now;this.motionScale=settings.motion==='REDUCED'?.28:1;
-      const quality=settings.graphics||'HIGH',glowOn=settings.glow!=='OFF',particlesOn=settings.particles!=='OFF';
-      this.fx.clear();this.siteFx.clear();this.menuHalo.setVisible(!gameState||gameState.mode!=='run');
+      const quality=settings.graphics||'HIGH',glowOn=settings.glow!=='OFF',particlesOn=settings.particles!=='OFF',clarity=settings.effectClarity||'HIGH';
+      this.fx.clear();this.dangerFx.clear();this.siteFx.clear();this.menuHalo.setVisible(!gameState||gameState.mode!=='run');
       if(!gameState||gameState.mode!=='run'){
         const x=this.width*.5+Math.sin(this.time*.35)*18,y=this.height*.56+Math.sin(this.time*.55)*6,size=quality==='LOW'?88:102;
         this.resetMotion(this.player,null,x,y,-Math.PI/2);const m=this.player.motion;m.x=smoothValue(m.x,x,4,delta);m.y=smoothValue(m.y,y,4,delta);m.angle=smoothAngle(m.angle,-Math.PI/2,5,delta);this.player.root.setPosition(m.x,m.y).setRotation(m.angle+Math.PI/2);
@@ -160,9 +161,9 @@
       this.player.plumeL.setVisible(true).setAlpha((.28+.58*thrust)*enginePulse).setDisplaySize(5.2+thrust*2.4,18+thrust*23+dashPower*28);this.player.plumeR.setVisible(true).setAlpha((.28+.58*thrust)*(1.05-enginePulse*.18)).setDisplaySize(5.2+thrust*2.4,18+thrust*22+dashPower*26);
       this.player.glow.setVisible(false);this.player.hullGlow.setVisible(false);this.player.shadow.setVisible(false);this.player.shield.setVisible(false);
       for(let i=0;i<this.dashEchoes.length;i++){const echo=this.dashEchoes[i],trail=(i+1)/(this.dashEchoes.length+1),fade=1-trail;if(dashActive){const eased=trail*trail*(3-2*trail);echo.setVisible(true).setPosition(p.x+(p.dashFromX-p.x)*eased,p.y+(p.dashFromY-p.y)*eased).setRotation(pm.angle+Math.PI/2).setDisplaySize(52*(.92+fade*.13),52*(.92+fade*.13)).setAlpha(dashPower*fade*.31).setTint(i%2?0x8dffd6:0x8de9ff)}else echo.setVisible(false)}
-      const shake=(gameState.shake||0)*this.motionScale;this.shakePhase+=delta*(20+shake*1.4);const shakeEnvelope=shake*clamp(shake/8,.25,1);this.root.setPosition(Math.sin(this.shakePhase*1.07)*shakeEnvelope*.34,Math.cos(this.shakePhase*1.43)*shakeEnvelope*.27);this.fx.setPosition(this.root.x*this.scale,this.root.y*this.scale);
-      this.drawWorldSites(gameState,quality);this.syncEnemies(gameState,settings);this.syncAllies(gameState);this.syncProjectiles(gameState);
-      this.syncLoot(gameState);this.syncOrbitals(gameState);this.syncParticles(gameState,particlesOn);this.syncFloaters(gameState);this.drawEnergyEffects(gameState,settings,quality,glowOn);this.syncDeathFx(gameState,quality,glowOn);
+      const shake=(gameState.shake||0)*this.motionScale;this.shakePhase+=delta*(20+shake*1.4);const shakeEnvelope=shake*clamp(shake/8,.25,1);this.root.setPosition(Math.sin(this.shakePhase*1.07)*shakeEnvelope*.34,Math.cos(this.shakePhase*1.43)*shakeEnvelope*.27);this.fx.setPosition(this.root.x*this.scale,this.root.y*this.scale);this.dangerFx.setPosition(this.root.x*this.scale,this.root.y*this.scale);
+      this.drawWorldSites(gameState,quality);this.syncEnemies(gameState,settings);this.syncAllies(gameState);this.syncProjectiles(gameState,clarity);
+      this.syncLoot(gameState);this.syncOrbitals(gameState);this.syncParticles(gameState,particlesOn,clarity);this.syncFloaters(gameState);this.drawEnergyEffects(gameState,settings,quality,glowOn);this.syncDeathFx(gameState,quality,glowOn);this.drawDangerReadability(gameState,settings);
     }
 
     hideCombatPools(){for(const pool of [this.enemies,this.allies,this.friendlyBullets,this.hostileBullets,this.loot,this.particles,this.floaters,this.drones,this.blades,this.mines])this.use(pool,0,()=>{})}
@@ -183,9 +184,10 @@
     syncAllies(s){
       this.use(this.allies,s.allies.length,(v,i)=>{const a=s.allies[i],target=s.enemies.find(e=>!e.dead),targetAngle=target?Math.atan2(target.y-a.y,target.x-a.x):-Math.PI/2,size=Math.max(25,(a.r||9)*3),texture=enemyTexture[a.type]||enemyTexture.scout,m=v.motion;this.resetMotion(v,a,a.x,a.y,targetAngle);m.x=smoothValue(m.x,a.x,18,this.delta);m.y=smoothValue(m.y,a.y,18,this.delta);m.angle=smoothAngle(m.angle,targetAngle,9,this.delta);m.spawn=clamp(m.spawn+this.delta*2.4);const scale=easeOutBack(m.spawn),pulse=.5+.5*Math.sin(this.time*9+m.id);v.root.setPosition(m.x,m.y+Math.sin(this.time*2+m.id)*.45*this.motionScale).setScale(scale).setAlpha(easeOutCubic(m.spawn));v.body.setTexture(texture).clearTint().setTint(0x8dffd6).setRotation(m.angle+Math.PI/2);this.fitSprite(v.body,size);v.plume.setVisible(true).setPosition(-Math.cos(m.angle)*size*.30,-Math.sin(m.angle)*size*.30).setRotation(m.angle+Math.PI/2).setDisplaySize(Math.max(3,size*.09),size*(.34+.10*pulse)).setAlpha(.45)});
     }
-    syncProjectiles(s){
-      this.use(this.friendlyBullets,s.bullets.length,(v,i)=>{const b=s.bullets[i],speed=Math.hypot(b.vx||0,b.vy||0),pulse=.92+.08*Math.sin(this.time*32+i*.7);v.root.setPosition(b.x,b.y).setRotation(speed?Math.atan2(b.vy,b.vx):0).setDisplaySize((Math.max(11,b.r*4.8)+Math.min(13,speed*.018))*pulse,Math.max(3,b.r*1.7)).setTint(tintValue(b.color)).setAlpha(.90+.08*pulse)});
-      this.use(this.hostileBullets,s.enemyBullets.length,(v,i)=>{const b=s.enemyBullets[i],speed=Math.hypot(b.vx||0,b.vy||0),pulse=.90+.10*Math.sin(this.time*25+i*.91);v.root.setPosition(b.x,b.y).setRotation(speed?Math.atan2(b.vy,b.vx):0).setDisplaySize((Math.max(10,b.r*4.2)+Math.min(10,speed*.016))*pulse,Math.max(3.5,b.r*1.75)).setTint(0xff657b).setAlpha(.90+.08*pulse)});
+    syncProjectiles(s,clarity='HIGH'){
+      const highClarity=clarity==='HIGH';
+      this.use(this.friendlyBullets,s.bullets.length,(v,i)=>{const b=s.bullets[i],speed=Math.hypot(b.vx||0,b.vy||0),pulse=.92+.08*Math.sin(this.time*32+i*.7);v.root.setPosition(b.x,b.y).setRotation(speed?Math.atan2(b.vy,b.vx):0).setDisplaySize((Math.max(11,b.r*4.8)+Math.min(13,speed*.018))*pulse,Math.max(2.7,b.r*1.55)).setTint(tintValue(b.color)).setAlpha(highClarity?.66:.90+.08*pulse)});
+      this.use(this.hostileBullets,s.enemyBullets.length,(v,i)=>{const b=s.enemyBullets[i],speed=Math.hypot(b.vx||0,b.vy||0),pulse=.90+.10*Math.sin(this.time*25+i*.91);v.root.setPosition(b.x,b.y).setRotation(speed?Math.atan2(b.vy,b.vx):0).setDisplaySize((Math.max(12,b.r*4.8)+Math.min(12,speed*.018))*pulse,Math.max(4.2,b.r*2)).setTint(0xff405e).setAlpha(1)});
     }
     drawWorldSites(s,quality){
       const sites=(s.worldSites||[]).filter(site=>site.active);this.siteFx.setVisible(true);
@@ -207,8 +209,8 @@
       this.use(this.blades,bl.length,(v,i)=>{const b=bl[i],pulse=.94+.08*Math.sin(this.time*12+i);v.root.setPosition(b.x,b.y).setDisplaySize((b.evolved?22:18)*pulse,(b.evolved?22:18)*pulse).setTint(b.evolved?0xffffff:0xbd9cff).setRotation(b.a+this.time*3.2).setAlpha(.88+.08*pulse)});
       this.use(this.mines,s.mines.length,(v,i)=>{const m=s.mines[i],pulse=.88+.12*Math.sin(this.time*4.8+i);v.root.setPosition(m.x,m.y+Math.sin(this.time*1.8+i)*.8*this.motionScale).setDisplaySize(19*pulse,19*pulse).setTint(0xbd9cff).setRotation(-this.time*.8+i).setAlpha(.88+.08*pulse)});
     }
-    syncParticles(s,on){
-      const source=on?s.particles:[];this.use(this.particles,source.length,(v,i)=>{const q=source[i],life=clamp((q.life||0)*2),speed=Math.hypot(q.vx||0,q.vy||0),length=5+life*5+Math.min(8,speed*.035),width=3+life*4;v.root.setPosition(q.x,q.y).setRotation(speed>2?Math.atan2(q.vy,q.vx):0).setDisplaySize(length,width).setTint(tintValue(q.color)).setAlpha(life*.66)});
+    syncParticles(s,on,clarity='HIGH'){
+      const source=on?s.particles:[],stride=clarity==='HIGH'?2:1,count=Math.ceil(source.length/stride),alpha=clarity==='HIGH'?.42:clarity==='BALANCED'?.55:.66;this.use(this.particles,count,(v,i)=>{const q=source[i*stride],life=clamp((q.life||0)*2),speed=Math.hypot(q.vx||0,q.vy||0),length=5+life*5+Math.min(8,speed*.035),width=3+life*4;v.root.setPosition(q.x,q.y).setRotation(speed>2?Math.atan2(q.vy,q.vx):0).setDisplaySize(length,width).setTint(tintValue(q.color)).setAlpha(life*alpha)});
     }
     syncFloaters(s){const source=s.floaters||[];this.use(this.floaters,source.length,(v,i)=>{const f=source[i],life=clamp(f.life/f.maxLife),arrival=clamp((1-life)*5),scale=f.crit?(1.32-.20*easeOutCubic(arrival)):(.82+.18*easeOutBack(arrival));v.root.setPosition(f.x,f.y-3*easeOutCubic(arrival)).setText(f.text).setColor(f.color).setFontSize(f.crit?14:10).setScale(scale).setAlpha(Math.min(1,life*2.4,arrival*2.5))})}
     drawEnergyEffects(s,settings,quality,glowOn){
@@ -240,6 +242,13 @@
         this.fx.lineStyle(boss?3.2:elite?2.2:1.4,color,life*(.72-progress*.22)).strokeCircle(death.x,death.y,ringRadius);if(elite||boss)this.fx.lineStyle(1.2,0xffffff,life*.42).strokeCircle(death.x,death.y,ringRadius*.72);
         const fragments=quality==='LOW'?(boss?8:4):boss?22:elite?12:7;for(let i=0;i<fragments;i++){const a=seed*TAU+i*2.399+progress*(i%2?1:-1)*.32,distance=base*(.18+progress*(.7+(i%4)*.18)),length=(boss?9:5)*(1-life*.3),x1=death.x+Math.cos(a)*distance,y1=death.y+Math.sin(a)*distance;this.strokeFxLine(x1,y1,x1-Math.cos(a)*length,y1-Math.sin(a)*length,i%3===0?'#ffffff':death.color,life*(.36+(i%3)*.13),boss?1.8:1.1)}
       }
+    }
+    drawDangerReadability(s,settings){
+      const high=settings.effectClarity==='HIGH',p=s.p;
+      for(const b of s.enemyBullets||[]){const radius=(b.r||3)+(high?2.8:2);this.dangerFx.fillStyle(0x020307,.92).fillCircle(b.x,b.y,radius);this.dangerFx.fillStyle(0xff3657,1).fillCircle(b.x,b.y,Math.max(2.2,(b.r||3)+.8));this.dangerFx.fillStyle(0xffffff,.96).fillCircle(b.x,b.y,high?1.25:.9)}
+      if(high){const radius=22,pulse=.65+.35*Math.sin(this.time*5);this.dangerFx.lineStyle(2.6,0x01070c,.82).strokeCircle(p.x,p.y,radius);this.dangerFx.lineStyle(1,0x8de9ff,.42+.18*pulse).strokeCircle(p.x,p.y,radius+1)}
+      if(settings.telegraphs==='OFF')return;
+      for(const e of s.enemies||[]){if(e.dead)continue;const ranged=e.type==='gunner'||e.type==='sniper'||e.boss;if(ranged&&e.shootT>0&&e.shootT<.42){const alpha=clamp((.42-e.shootT)/.42),color=e.boss?0xff3657:e.type==='sniper'?0xffc35c:0xff6e85;this.dangerFx.lineStyle(high?4:3,0x020307,.62*alpha).beginPath().moveTo(e.x,e.y).lineTo(p.x,p.y).strokePath();this.dangerFx.lineStyle(high?1.5:1.1,color,.82*alpha).beginPath().moveTo(e.x,e.y).lineTo(p.x,p.y).strokePath();this.dangerFx.lineStyle(1.2,color,.48*alpha).strokeCircle(p.x,p.y,15+alpha*8)}if(e.type==='charger'&&e.burst<=0&&e.chargeT>0&&e.chargeT<.58){const alpha=clamp((.58-e.chargeT)/.58);this.dangerFx.lineStyle(4,0x020307,.62*alpha).strokeCircle(e.x,e.y,e.r+10+alpha*10);this.dangerFx.lineStyle(1.6,0xffbd61,.90*alpha).strokeCircle(e.x,e.y,e.r+10+alpha*10)}}
     }
   }
 

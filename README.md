@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.69.0-62e6ff)
+![Version](https://img.shields.io/badge/version-0.70.0-62e6ff)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
 ORBIT//04 is a single-player, top-down space survival game. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a third boss encounter.
 
-Current version: `0.69.0`
+Current version: `0.70.0`
 
 ## Runtime overview
 
@@ -36,6 +36,8 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 - deterministic space generation beyond the starting view, including asteroid fields, wreckage, ion formations, and void sites
 - six exploration signals: repair, combat amplification, salvage, archive fragments, risk/reward relics, and hostile jammers
 - 9 persistent literary archive fragments with original, clearly attributed thematic echoes of Bernhard, Hamsun, and Lem's *Solaris*
+- a persistent, pausing Archive Reader with manual dismissal and deferred data rewards
+- tiered reward ribbons for chains, Signal Rush, Overdrive, captured signals, and boss defeats
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
 - keyboard, mouse, and gamepad movement
 - licensed sample playback with automatic context recovery, verified-playback status, mute warnings, and an in-game output check
@@ -69,7 +71,7 @@ This 1440 × 810 image is an automated capture from the active Electron/WebGL ru
 
 ## Audio implementation
 
-Gameplay sound effects use selected files from Kenney's Sci-Fi Sounds package. Music uses three Mixkit tracks assigned to exploration, combat, and boss states. The runtime crossfades between those states and applies separate sound-effect and music volume controls.
+Gameplay sound effects use selected files from Kenney's Sci-Fi Sounds package. Music uses three Mixkit tracks assigned to exploration, combat, and boss states. The runtime crossfades between those states, limits repetitive combat voices, gives major rewards priority, and briefly ducks music around important cues. Music and sound-effect volume remain independently adjustable.
 
 License and source information is listed in [THIRD_PARTY.md](THIRD_PARTY.md).
 
@@ -86,6 +88,7 @@ The settings screen provides:
 - full and reduced motion modes
 - three interface scales
 - particle, graphics, glow, background, and contrast controls
+- High, Balanced, and Cinematic effect-clarity modes with hostile projectile outlining and priority telegraphs
 - three dynamic-range profiles with independent music and sound-effect volume
 - curated Readability, Cinematic, Performance, and Defaults profiles with individually editable controls
 

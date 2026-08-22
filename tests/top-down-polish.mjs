@@ -7,7 +7,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=file=>readFileSync(path.join(root,file),'utf8');
 const html=read('index.html'),game=read('game.js'),visuals=read('visual-engine.js'),styles=read('styles.css'),desktop=read('desktop/main.cjs'),docs=read('README.md'),pkg=JSON.parse(read('package.json'));
 
-assert.equal(pkg.version,'0.69.0');
+assert.equal(pkg.version,'0.70.0');
 assert.equal(pkg.dependencies.phaser,'3.90.0');
 assert.equal(pkg.description,'Top-down space survival game built with JavaScript, Phaser 3, and Electron.');
 assert.match(pkg.scripts.screenshot,/--orbit-capture/,'runtime screenshot script is missing');
@@ -27,22 +27,23 @@ assert.ok(existsSync(vendor)&&statSync(vendor).size>500000,'offline Phaser runti
 const screenshot=path.join(root,'docs/runtime-screenshot.png'),png=readFileSync(screenshot);
 assert.ok(png.length>100000,'verified runtime screenshot is missing or empty');
 assert.equal(png.readUInt32BE(16),1440,'runtime screenshot width must be 1440');assert.equal(png.readUInt32BE(20),810,'runtime screenshot height must be 810');
-for(const token of ['tryPhaseDash','dashCooldown','damageNumber','telegraphs','audioMix','MIXES','musicDuck','SIGNAL RUSH','desiredBackground','licensed-sample-assets-v2','cinematicLayers','selectEnemyType','followWorldCamera','translateWorld','unlockSamples','played===false','testAudioOutput','WORLD_CELL_SIZE','generateWorldCell','collectWorldNode','updateWorldGeneration','NULL JAMMER','FLUX AMPLIFIER','ARCHIVE_FRAGMENTS','discoveredArchives','deathFx','dampValue'])assert.ok(game.includes(token),`missing runtime integration token: ${token}`);
-for(const token of ['dashEchoes','syncFloaters','settings.telegraphs','player-ship-v3','enemyTexture','fitSprite','syncEnemies','drawEnergyEffects','drawWorldSites','worldNodes','smoothValue','smoothAngle','motionScale','easeOutBack','syncDeathFx','strokeFxLine','enginePulse','spawnScale'])assert.ok(visuals.includes(token),`missing retained visual system: ${token}`);
+for(const token of ['tryPhaseDash','dashCooldown','damageNumber','telegraphs','effectClarity','audioMix','MIXES','musicDuck','VOICE_COOLDOWNS','DUCK_LEVELS','rewardCue','SIGNAL RUSH','desiredBackground','licensed-sample-assets-v2','cinematicLayers','selectEnemyType','followWorldCamera','translateWorld','unlockSamples','played===false','testAudioOutput','WORLD_CELL_SIZE','generateWorldCell','collectWorldNode','openArchiveFragment','closeArchiveFragment','updateWorldGeneration','NULL JAMMER','FLUX AMPLIFIER','ARCHIVE_FRAGMENTS','discoveredArchives','deathFx','dampValue'])assert.ok(game.includes(token),`missing runtime integration token: ${token}`);
+for(const token of ['dashEchoes','syncFloaters','settings.telegraphs','player-ship-v3','enemyTexture','fitSprite','syncEnemies','drawEnergyEffects','drawDangerReadability','dangerFx','drawWorldSites','worldNodes','smoothValue','smoothAngle','motionScale','easeOutBack','syncDeathFx','strokeFxLine','enginePulse','spawnScale'])assert.ok(visuals.includes(token),`missing retained visual system: ${token}`);
 assert.match(game,/player-interceptor-v2\.png[\s\S]*enemy-hunter-v2\.png[\s\S]*boss-carrier-v2\.png/,'matte-free ship assets are not wired into the runtime');
 assert.match(visuals,/orbit-glow[^\n]*setVisible\(false\)[\s\S]*drawEnergyEffects[\s\S]*this\.fx\.fillCircle/,'vector glow fallback is not active');
-for(const token of ['abilityBar','ambientDrift','panelArrival','eventImpact','rushField','data-motion','intelLayout','settingsPresets','audioCheckRow','navigationSignal'])assert.ok(styles.includes(token),`missing presentation token: ${token}`);
+for(const token of ['abilityBar','ambientDrift','panelArrival','eventImpact','rushField','data-motion','intelLayout','settingsPresets','audioCheckRow','navigationSignal','archivePanel','rewardRibbon','hudMetric'])assert.ok(styles.includes(token),`missing presentation token: ${token}`);
 
 for(const asset of ['laserSmall_002.ogg','explosionCrunch_004.ogg','forceField_001.ogg','laserLarge_001.ogg','lowFrequency_explosion_001.ogg']){
   const full=path.join(root,'assets/audio/premium/kenney-sci-fi-sounds',asset);assert.ok(existsSync(full)&&statSync(full).size>7000,`missing licensed audio asset: ${asset}`);
 }
 for(const asset of ['music-exploration-spirit.mp3','music-combat-score.mp3','music-boss-xanthos.mp3']){const full=path.join(root,'assets/audio/premium',asset);assert.ok(existsSync(full)&&statSync(full).size>1000000,`missing full-length music track: ${asset}`)}
-for(const id of ['abilityBar','navigationSignal','navigationSignalText','restartRunBtn','pauseSnapshot','pauseLoadoutBtn','loadoutScreen','loadoutContent','readabilityPresetBtn','cinematicPresetBtn','performancePresetBtn','damageNumbersSetting','telegraphSetting','hintsSetting','motionSetting','audioMixSetting','audioStatusText','testAudioBtn'])assert.ok(html.includes(`id="${id}"`),`missing QoL control: ${id}`);
+for(const id of ['abilityBar','navigationSignal','navigationSignalText','rewardRibbon','rewardRibbonTitle','archiveScreen','archiveQuote','archiveContinueBtn','restartRunBtn','pauseSnapshot','pauseLoadoutBtn','loadoutScreen','loadoutContent','readabilityPresetBtn','cinematicPresetBtn','performancePresetBtn','damageNumbersSetting','telegraphSetting','hintsSetting','motionSetting','effectClaritySetting','audioMixSetting','audioStatusText','testAudioBtn'])assert.ok(html.includes(`id="${id}"`),`missing QoL control: ${id}`);
 for(const token of ['renderRunIntel','renderPauseSnapshot','applySettingsPreset','runObjective','SETTING_PRESETS'])assert.ok(game.includes(token),`missing run-intel or settings-profile token: ${token}`);
 
 await import(pathToFileURL(path.join(root,'visual-engine.js')).href);
 const fx={fillStyle(){return this},fillCircle(){return this},lineStyle(){return this},strokeCircle(){return this},beginPath(){return this},moveTo(){return this},lineTo(){return this},strokePath(){return this}};
-const renderer=Object.create(globalThis.OrbitVisualEngine.prototype);renderer.fx=fx;renderer.time=1;renderer.motionScale=1;
+const renderer=Object.create(globalThis.OrbitVisualEngine.prototype);renderer.fx=fx;renderer.dangerFx=fx;renderer.time=1;renderer.motionScale=1;
 assert.doesNotThrow(()=>renderer.syncDeathFx({deathFx:[{x:40,y:30,r:9,color:'#ff7893',life:.3,maxLife:.55,seed:.2}]},'HIGH',true),'destruction renderer must not reference a method-local line helper');
+assert.doesNotThrow(()=>renderer.drawDangerReadability({p:{x:60,y:60},enemyBullets:[{x:80,y:70,r:3}],enemies:[{x:120,y:80,r:9,type:'sniper',shootT:.2,dead:false}]},{effectClarity:'HIGH',telegraphs:'ON'}),'danger readability layer must render projectiles and telegraphs');
 
-console.log('ORBIT 0.69.0 top-down runtime integration: PASS');
+console.log('ORBIT 0.70.0 top-down runtime integration: PASS');

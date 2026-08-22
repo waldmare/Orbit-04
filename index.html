@@ -26,6 +26,7 @@
     <div id="xpbar"><div id="xpfill"></div><div id="xptext"></div></div>
   </div>
   <div id="centerMessage"></div>
+  <div id="rewardRibbon" aria-live="polite"><b id="rewardRibbonTitle"></b><span id="rewardRibbonDetail"></span></div>
   <div id="toastStack"></div>
 
   <section id="titleScreen" class="overlay show">
@@ -76,6 +77,19 @@
         <div id="rerollInfo" class="tiny"></div>
         <div class="menuRow"><button id="skipBtn">SKIP + SALVAGE</button><button id="rerollBtn">REROLL</button></div>
       </div>
+    </div>
+  </section>
+
+  <section id="archiveScreen" class="overlay archiveOverlay" role="dialog" aria-modal="true" aria-labelledby="archiveChannel">
+    <div class="panel archivePanel">
+      <div class="archiveHeader">
+        <div><span id="archiveStatus" class="archiveStatus">NEW ARCHIVE</span><h1 id="archiveChannel">ARCHIVE FRAGMENT</h1></div>
+        <div id="archiveProgress" class="tag"></div>
+      </div>
+      <blockquote id="archiveQuote"></blockquote>
+      <div id="archiveNote" class="archiveNote"></div>
+      <div id="archiveReward" class="archiveReward"></div>
+      <div class="archiveFooter"><span>Saved permanently in CODEX / DISCOVERY</span><button id="archiveContinueBtn" class="primary">CONTINUE <b>ENTER</b></button></div>
     </div>
   </section>
 
@@ -168,6 +182,7 @@
         <div class="settingRow"><div><b>UI SCALE</b><div class="tiny">Size of menus, descriptions and the combat HUD.</div></div><button id="uiScaleSetting"></button></div>
         <div class="settingRow"><div><b>PARTICLES</b><div class="tiny">Visual debris density.</div></div><button id="particleSetting"></button></div>
         <div class="settingRow"><div><b>GRAPHICS PRESET</b><div class="tiny">Geometry detail and space-fog density.</div></div><button id="graphicsSetting"></button></div>
+        <div class="settingRow"><div><b>EFFECT CLARITY</b><div class="tiny">HIGH separates hostile fire, player fire and ambient effects.</div></div><button id="effectClaritySetting"></button></div>
         <div class="settingRow"><div><b>GLOW FX</b><div class="tiny">Additive weapon, ship and hostile lighting.</div></div><button id="glowSetting"></button></div>
         <div class="settingRow"><div><b>SPACE BACKGROUND</b><div class="tiny">FULL, SIMPLE or OFF for maximum clarity.</div></div><button id="backgroundSetting"></button></div>
         <div class="settingRow"><div><b>CONTRAST</b><div class="tiny">HIGH improves HUD and object separation.</div></div><button id="contrastSetting"></button></div>
