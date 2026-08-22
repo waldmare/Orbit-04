@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.65.0-62e6ff)
+![Version](https://img.shields.io/badge/version-0.66.0-62e6ff)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
 ORBIT//04 is a single-player, top-down space survival game. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a third boss encounter.
 
-Current version: `0.65.0`
+Current version: `0.66.0`
 
 ## Runtime overview
 
@@ -32,8 +32,10 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 - optional Ascension mode after completing the base run
 - persistent credits, research upgrades, frame mastery, operations, achievements, and Codex data
 - projectile grazing, kill chains, Signal Rush, Overdrive, caches, anomalies, and hostile conversion
+- continuous directional travel with camera-safe world scrolling and active-encounter preservation
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
 - keyboard, mouse, and gamepad movement
+- licensed sample playback with automatic context recovery and an in-game audio output check
 - local save export, import, and reset controls
 
 Detailed balance targets are documented in [BALANCE.md](BALANCE.md). Historical changes are recorded in [CHANGELOG.md](CHANGELOG.md).
@@ -179,7 +181,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.65.0 is a Windows release-preparation build with in-run build telemetry and curated display profiles. The repository can generate and validate the offline desktop package and real 1920 × 1080 gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.66.0 is a Windows release-preparation build with continuous combat-field travel, corrected early encounter composition, audio context recovery, in-run build telemetry, and curated display profiles. The repository can generate and validate the offline desktop package and real 1920 × 1080 gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.66.0 — Continuous travel and encounter correction
+
+- reduced the Tank selection ceiling from 79% to 14% during the 0:25–0:55 early-run window
+- preserved the established post-0:55 composition and all existing hostile statistics, boss timing, weapon balance, and progression
+- replaced hard arena-edge clamping with continuous directional travel and a stable camera-safe zone
+- preserved the relative positions of enemies, projectiles, pickups, hazards, allies, and combat effects while the world scrolls
+- added distant-entity cleanup outside the active encounter radius to prevent long-session accumulation
+- repaired licensed sample fallback when Phaser reports a failed or locked playback attempt
+- added explicit Phaser and fallback audio-context recovery on pointer and keyboard input
+- added an Audio Output Check control with live playback status to Settings
+- expanded automated coverage for encounter composition, continuous travel, audio status, and output recovery
+
 ## 0.65.0 — Run intelligence and interface profiles
 
 - added an in-run intelligence panel for weapon contribution, modules, synergies, doctrines, protocols, artifacts, and mission conditions

@@ -29,6 +29,13 @@ Difficulty should come primarily from:
 
 It should not come primarily from excessive enemy HP.
 
+## 0.66 encounter correction
+
+- Tanks may enter the standard encounter pool after 0:25, but their selection ceiling is limited to 14% until 0:55.
+- The previous early window selected Tanks for 79% of ordinary spawns, which created unintended low-level durability pressure.
+- After 0:55, the established Charger and Tank composition remains unchanged.
+- Enemy hull, damage, speed, elite timing, boss timing, weapon output, XP, and progression values are unchanged in this correction.
+
 ## 0.30 changes
 
 ### Hostiles
