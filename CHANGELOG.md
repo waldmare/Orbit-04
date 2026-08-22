@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.65.0 — Run intelligence and interface profiles
+
+- added an in-run intelligence panel for weapon contribution, modules, synergies, doctrines, protocols, artifacts, and mission conditions
+- added live objective, frame, build, hull, and transmission telemetry to the pause screen
+- added direct keyboard access to Run Intel with Tab or B and a predictable return-to-pause flow
+- added curated Readability, Cinematic, Performance, and Defaults setting profiles
+- kept every profile control individually editable and identified custom configurations explicitly
+- expanded automated coverage for the new runtime panels and setting profiles
+- did not change enemy statistics, weapon balance, spawn timing, or progression
+
 ## 0.64.0 — Windows and Steam release hardening
 
 - added a project-owned Windows application icon and deterministic ICO build step

@@ -7,7 +7,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=file=>readFileSync(path.join(root,file),'utf8');
 const html=read('index.html'),game=read('game.js'),visuals=read('visual-engine.js'),styles=read('styles.css'),desktop=read('desktop/main.cjs'),docs=read('README.md'),pkg=JSON.parse(read('package.json'));
 
-assert.equal(pkg.version,'0.64.0');
+assert.equal(pkg.version,'0.65.0');
 assert.equal(pkg.dependencies.phaser,'3.90.0');
 assert.equal(pkg.description,'Top-down space survival game built with JavaScript, Phaser 3, and Electron.');
 assert.match(pkg.scripts.screenshot,/--orbit-capture/,'runtime screenshot script is missing');
@@ -31,12 +31,13 @@ for(const token of ['tryPhaseDash','dashCooldown','damageNumber','telegraphs','a
 for(const token of ['dashEchoes','syncFloaters','settings.telegraphs','player-ship-v3','enemyTexture','fitSprite','syncEnemies','drawEnergyEffects'])assert.ok(visuals.includes(token),`missing retained visual system: ${token}`);
 assert.match(game,/player-interceptor-v2\.png[\s\S]*enemy-hunter-v2\.png[\s\S]*boss-carrier-v2\.png/,'matte-free ship assets are not wired into the runtime');
 assert.match(visuals,/orbit-glow[^\n]*setVisible\(false\)[\s\S]*drawEnergyEffects[\s\S]*this\.fx\.fillCircle/,'vector glow fallback is not active');
-for(const token of ['abilityBar','ambientDrift','panelArrival','eventImpact','rushField','data-motion'])assert.ok(styles.includes(token),`missing presentation token: ${token}`);
+for(const token of ['abilityBar','ambientDrift','panelArrival','eventImpact','rushField','data-motion','intelLayout','settingsPresets'])assert.ok(styles.includes(token),`missing presentation token: ${token}`);
 
 for(const asset of ['laserSmall_002.ogg','explosionCrunch_004.ogg','forceField_001.ogg','laserLarge_001.ogg','lowFrequency_explosion_001.ogg']){
   const full=path.join(root,'assets/audio/premium/kenney-sci-fi-sounds',asset);assert.ok(existsSync(full)&&statSync(full).size>7000,`missing licensed audio asset: ${asset}`);
 }
 for(const asset of ['music-exploration-spirit.mp3','music-combat-score.mp3','music-boss-xanthos.mp3']){const full=path.join(root,'assets/audio/premium',asset);assert.ok(existsSync(full)&&statSync(full).size>1000000,`missing full-length music track: ${asset}`)}
-for(const id of ['abilityBar','restartRunBtn','damageNumbersSetting','telegraphSetting','hintsSetting','motionSetting','audioMixSetting'])assert.ok(html.includes(`id="${id}"`),`missing QoL control: ${id}`);
+for(const id of ['abilityBar','restartRunBtn','pauseSnapshot','pauseLoadoutBtn','loadoutScreen','loadoutContent','readabilityPresetBtn','cinematicPresetBtn','performancePresetBtn','damageNumbersSetting','telegraphSetting','hintsSetting','motionSetting','audioMixSetting'])assert.ok(html.includes(`id="${id}"`),`missing QoL control: ${id}`);
+for(const token of ['renderRunIntel','renderPauseSnapshot','applySettingsPreset','runObjective','SETTING_PRESETS'])assert.ok(game.includes(token),`missing run-intel or settings-profile token: ${token}`);
 
-console.log('ORBIT 0.64.0 top-down runtime integration: PASS');
+console.log('ORBIT 0.65.0 top-down runtime integration: PASS');

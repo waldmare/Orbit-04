@@ -1,7 +1,7 @@
 'use strict';
 
 // ORBIT//04 top-down runtime. All game data is stored locally.
-const GAME_VERSION='0.64.0';
+const GAME_VERSION='0.65.0';
 const RUN_TARGET=720;
 const MAX_ENEMIES=700,MAX_FRIENDLY_BULLETS=1300,MAX_ENEMY_BULLETS=900,MAX_PARTICLES=1400;
 const SUPPORT_URL='';
@@ -42,7 +42,7 @@ const ENGINE_ASSETS={
 let phaserScene=null,spaceBg=null,spaceBgNext=null,celestialG=null,backgroundDirector=null,ambientEmitter=null,bgG=null,nebulaG=null,glowG=null,worldG=null,overlayG=null,visualEngine=null,engineReady=false;
 const MENU_STARS=Array.from({length:155},()=>({x:Math.random()*W,y:Math.random()*H,z:.4+Math.random()*2.7,phase:Math.random()*Math.PI*2}));
 const hexColor=c=>{try{return Phaser.Display.Color.HexStringToColor(c||'#ffffff').color}catch(_e){return 0xffffff}};
-const screens=['titleScreen','levelScreen','doctrineScreen','ascendScreen','pauseScreen','researchScreen','operationsScreen','achievementsScreen','codexScreen','settingsScreen','gameOverScreen'];
+const screens=['titleScreen','levelScreen','doctrineScreen','ascendScreen','pauseScreen','loadoutScreen','researchScreen','operationsScreen','achievementsScreen','codexScreen','settingsScreen','gameOverScreen'];
 const hud=$('hud'),hudLeft=$('hudLeft'),hudRight=$('hudRight'),hudSub=$('hudSub'),xpFill=$('xpfill'),xpText=$('xptext'),centerMessage=$('centerMessage');
 const bossBar=$('bossBar'),bossFill=$('bossFill'),bossLabel=$('bossLabel'),rushMeter=$('rushMeter'),rushFill=$('rushFill'),rushLabel=$('rushLabel'),dashWidget=$('dashWidget'),dashStatus=$('dashStatus'),dashCharge=$('dashCharge'),toastStack=$('toastStack');
 $('versionText').textContent=GAME_VERSION;
@@ -360,9 +360,18 @@ function renderCodex(){
 }
 const SETTING_CYCLES={playerHp:['OFF','HUD','BAR','BOTH'],enemyHp:['OFF','ELITES','ALL'],xpReadout:['OFF','VALUE','PERCENT','BOTH'],damageNumbers:['CRITS','ALL','OFF'],telegraphs:['ON','OFF'],hints:['ON','OFF'],mouse:['HOLD','FOLLOW','OFF'],shake:['ON','OFF'],flash:['ON','OFF'],motion:['FULL','REDUCED'],uiScale:['LARGE','XL','XXL'],particles:['HIGH','LOW','OFF'],graphics:['ULTRA','HIGH','MEDIUM','LOW'],glow:['ON','OFF'],background:['FULL','SIMPLE','OFF'],contrast:['NORMAL','HIGH'],audio:['ON','OFF'],audioMix:['CINEMA','BALANCED','NIGHT'],sfxVolume:['100%','75%','50%','25%'],musicVolume:['100%','70%','40%','OFF']};
 const SETTING_BUTTONS={playerHp:'playerHpSetting',enemyHp:'enemyHpSetting',xpReadout:'xpSetting',damageNumbers:'damageNumbersSetting',telegraphs:'telegraphSetting',hints:'hintsSetting',mouse:'mouseSetting',shake:'shakeSetting',flash:'flashSetting',motion:'motionSetting',uiScale:'uiScaleSetting',particles:'particleSetting',graphics:'graphicsSetting',glow:'glowSetting',background:'backgroundSetting',contrast:'contrastSetting',audio:'audioSetting',audioMix:'audioMixSetting',sfxVolume:'sfxVolumeSetting',musicVolume:'musicVolumeSetting'};
+const SETTING_PRESETS={
+  READABILITY:{label:'READABILITY',values:{playerHp:'BOTH',enemyHp:'ALL',xpReadout:'BOTH',damageNumbers:'CRITS',telegraphs:'ON',shake:'OFF',flash:'OFF',motion:'REDUCED',uiScale:'XXL',particles:'LOW',graphics:'HIGH',glow:'ON',background:'SIMPLE',contrast:'HIGH',audioMix:'NIGHT'}},
+  CINEMATIC:{label:'CINEMATIC',values:{playerHp:'BOTH',enemyHp:'ELITES',xpReadout:'BOTH',damageNumbers:'CRITS',telegraphs:'ON',shake:'ON',flash:'ON',motion:'FULL',uiScale:'XL',particles:'HIGH',graphics:'ULTRA',glow:'ON',background:'FULL',contrast:'NORMAL',audioMix:'CINEMA'}},
+  PERFORMANCE:{label:'PERFORMANCE',values:{playerHp:'BOTH',enemyHp:'ELITES',xpReadout:'BOTH',damageNumbers:'CRITS',telegraphs:'ON',shake:'OFF',flash:'OFF',motion:'REDUCED',uiScale:'LARGE',particles:'OFF',graphics:'LOW',glow:'OFF',background:'SIMPLE',contrast:'HIGH',audioMix:'BALANCED'}},
+  DEFAULTS:{label:'DEFAULTS',values:{...DEFAULT_SETTINGS}}
+};
+const PRESET_BUTTONS={READABILITY:'readabilityPresetBtn',CINEMATIC:'cinematicPresetBtn',PERFORMANCE:'performancePresetBtn',DEFAULTS:'defaultsPresetBtn'};
 function applyDisplaySettings(){wrap.dataset.uiScale=save.settings.uiScale||'XL';wrap.dataset.contrast=save.settings.contrast||'HIGH';wrap.dataset.motion=save.settings.motion||'FULL';AUDIO.setMix()}
-function renderSettings(){applyDisplaySettings();for(const [k,id] of Object.entries(SETTING_BUTTONS))$(id).textContent=save.settings[k]}
+function matchingSettingsPreset(){return Object.entries(SETTING_PRESETS).find(([_id,preset])=>Object.entries(preset.values).every(([key,value])=>save.settings[key]===value))?.[0]||''}
+function renderSettings(){applyDisplaySettings();for(const [k,id] of Object.entries(SETTING_BUTTONS))$(id).textContent=save.settings[k];const active=matchingSettingsPreset();$('settingsPresetStatus').textContent=active?`${SETTING_PRESETS[active].label} ACTIVE`:'CUSTOM';for(const [id,buttonId] of Object.entries(PRESET_BUTTONS))$(buttonId).classList.toggle('selected',id===active)}
 function cycleSetting(key){const a=SETTING_CYCLES[key],i=Math.max(0,a.indexOf(save.settings[key]));save.settings[key]=a[(i+1)%a.length];persist(false);renderSettings();AUDIO.sfx('ui')}
+function applySettingsPreset(id){const preset=SETTING_PRESETS[id];if(!preset)return false;Object.assign(save.settings,preset.values);persist(false);renderSettings();AUDIO.sfx('ui');toast(`${preset.label} PROFILE`,'Settings applied. Individual controls remain editable.');return true}
 function openOverlay(id){if(state?.mode==='run'&&!state.paused&&!state.choosing)pause(true);show(id);AUDIO.sfx('ui')}
 function closeOverlay(id){hide(id);AUDIO.sfx('ui')}
 
@@ -370,14 +379,63 @@ $('difficultyBtn').onclick=()=>{AUDIO.sfx('ui');nextDifficulty()};$('contractBtn
 $('researchBtn').onclick=()=>{renderResearch();openOverlay('researchScreen')};$('operationsBtn').onclick=()=>{renderOperations();openOverlay('operationsScreen')};$('achievementsBtn').onclick=()=>{renderAchievements();openOverlay('achievementsScreen')};$('codexBtn').onclick=()=>{renderCodex();openOverlay('codexScreen')};
 $('settingsBtn').onclick=()=>{renderSettings();openOverlay('settingsScreen')};$('pauseSettingsBtn').onclick=()=>{renderSettings();show('settingsScreen')};$('settingsBackBtn').onclick=()=>closeOverlay('settingsScreen');
 for(const [k,id] of Object.entries(SETTING_BUTTONS))$(id).onclick=()=>cycleSetting(k);
+for(const [id,buttonId] of Object.entries(PRESET_BUTTONS))$(buttonId).onclick=()=>applySettingsPreset(id);
 for(const b of document.querySelectorAll('[data-close]'))b.onclick=()=>closeOverlay(b.dataset.close);
 $('codexStatsTab').onclick=()=>{codexTab='stats';renderCodex()};$('codexWeaponsTab').onclick=()=>{codexTab='weapons';renderCodex()};$('codexEnemiesTab').onclick=()=>{codexTab='enemies';renderCodex()};$('codexDiscoveryTab').onclick=()=>{codexTab='discoveries';renderCodex()};
 $('exportSaveBtn').onclick=exportSave;$('importSaveBtn').onclick=importSave;$('resetSaveBtn').onclick=()=>{if(confirm('Reset all ORBIT//04 progress? This cannot be undone.')){save=deepProfile();persist();renderSettings();toast('SAVE RESET')}};
 if(SUPPORT_URL)$('supportBtn').onclick=()=>open(SUPPORT_URL,'_blank','noopener');
 
+// ---------- RUN INTEL ----------
+const numberText=value=>Math.floor(value||0).toLocaleString('en-US');
+function runObjective(){
+  const boss=state?.enemies?.find(enemy=>enemy.boss&&!enemy.dead);
+  if(boss)return`ACTIVE SIGNATURE · ${boss.bossName} · PHASE ${boss.phase||1}`;
+  if(state?.bounty)return`SIGNAL WINDOW · ${Math.max(0,state.bounty.until-state.time).toFixed(1)} SEC`;
+  if(state?.endless)return`ASCENSION ${state.ascension} · NEXT SIGNATURE ${fmtTime(Math.max(0,state.nextEndlessBoss-state.time))}`;
+  const next=[{stage:1,at:210,name:'SENTINEL'},{stage:2,at:450,name:'WARDEN'},{stage:3,at:RUN_TARGET,name:'NULL CARRIER'}].find(item=>item.stage>state.bossStage);
+  return next?`NEXT SIGNATURE · ${next.name} · T-${fmtTime(Math.max(0,next.at-state.time))}`:'ORBIT STABILIZATION IN PROGRESS';
+}
+function intelItems(items,empty='NO ACTIVE SYSTEMS'){
+  if(!items.length)return`<div class="intelEmpty">${empty}</div>`;
+  return items.map(item=>`<div class="intelItem"><div><b>${item.name}</b>${item.tag?`<span class="intelBadge">${item.tag}</span>`:''}</div><p>${item.desc}</p>${item.meta?`<small>${item.meta}</small>`:''}</div>`).join('');
+}
+function renderPauseSnapshot(){
+  if(!state||state.mode!=='run')return;
+  const frame=SHIPS[state.p.frame],systems=Object.keys(state.weapons).length,links=Object.keys(state.synergies).length;
+  $('pauseSnapshot').innerHTML=`<div><span>TRANSMISSION</span><b>${fmtTime(state.time)}</b></div><div><span>FRAME</span><b>${frame.name} · LV ${state.level}</b></div><div><span>HULL</span><b>${Math.ceil(state.p.hp)} / ${Math.ceil(state.p.maxHp)}</b></div><div><span>BUILD</span><b>${systems} SYSTEM${systems===1?'':'S'} · ${links} LINK${links===1?'':'S'}</b></div><div class="pauseObjective"><span>CURRENT PRIORITY</span><b>${runObjective()}</b></div>`;
+}
+function renderRunIntel(){
+  if(!state||state.mode!=='run')return false;
+  const frame=SHIPS[state.p.frame],damageTotal=Math.max(1,state.damageDealt||0);
+  $('loadoutSummary').textContent=`${frame.name} · ${state.sector.name} · ${state.difficulty}`;
+  $('loadoutMetrics').innerHTML=`<div class="intelMetric"><span>TIME</span><b>${fmtTime(state.time)}</b></div><div class="intelMetric"><span>LEVEL</span><b>${state.level}</b></div><div class="intelMetric"><span>HULL</span><b>${Math.ceil(state.p.hp)} / ${Math.ceil(state.p.maxHp)}</b></div><div class="intelMetric"><span>KILLS</span><b>${numberText(state.kills)}</b></div><div class="intelMetric"><span>DAMAGE</span><b>${numberText(state.damageDealt)}</b></div><div class="intelMetric"><span>SCORE</span><b>${numberText(state.score)}</b></div>`;
+  const weapons=Object.entries(state.weapons).sort((a,b)=>(state.weaponDamage[b[0]]||0)-(state.weaponDamage[a[0]]||0)).map(([id,weapon])=>{const meta=WEAPON_META[id],damage=state.weaponDamage[id]||0,status=weapon.evolved?`EVO${weapon.overcharge?` +${weapon.overcharge}`:''}`:`LV ${weapon.level}`;return{name:weapon.evolved?meta.evo:meta.name,tag:status,desc:meta.desc,meta:`${numberText(damage)} DAMAGE · ${Math.round(damage/damageTotal*100)}% SHARE`}});
+  const modules=Object.entries(state.passives).filter(([_id,level])=>level>0).map(([id,level])=>({name:PASSIVES[id].name,tag:`LV ${level}`,desc:PASSIVES[id].desc(level)}));
+  const links=Object.keys(state.synergies).map(id=>({name:SYNERGIES[id].name,tag:'LINK',desc:SYNERGIES[id].desc}));
+  const doctrines=Object.keys(state.doctrines).map(id=>({name:DOCTRINES[id].name,tag:'DOCTRINE',desc:DOCTRINES[id].desc}));
+  const special=[...Object.keys(state.protocols).map(id=>({name:PROTOCOLS[id].name,tag:'PROTOCOL',desc:PROTOCOLS[id].desc})),...Object.keys(state.artifacts).map(id=>({name:ARTIFACTS[id].name,tag:'ARTIFACT',desc:ARTIFACTS[id].desc}))];
+  const mission=[{name:state.difficulty,tag:'DIFFICULTY',desc:state.diff.desc},{name:state.sector.name,tag:'SECTOR',desc:state.sector.desc}];
+  if(state.contractId!=='NONE')mission.push({name:state.contract.name,tag:'CONTRACT',desc:state.contract.desc});
+  mission.push({name:'CURRENT PRIORITY',tag:'LIVE',desc:runObjective(),meta:`${state.rerolls} REROLL${state.rerolls===1?'':'S'} · ${state.skips} SKIP${state.skips===1?'':'S'} · +${state.runCredits} CR`});
+  $('loadoutContent').innerHTML=`<section class="intelSection intelWeapons"><h3>WEAPON SYSTEMS <span>${weapons.length}</span></h3>${intelItems(weapons,'NO WEAPON TELEMETRY')}</section><section class="intelSection"><h3>MODULES <span>${modules.length}</span></h3>${intelItems(modules)}</section><section class="intelSection"><h3>ACTIVE LINKS <span>${links.length+doctrines.length}</span></h3>${intelItems([...links,...doctrines],'NO LINKS ESTABLISHED')}</section><section class="intelSection"><h3>SPECIAL SYSTEMS <span>${special.length}</span></h3>${intelItems(special,'NO PROTOCOLS OR ARTIFACTS')}</section><section class="intelSection intelMission"><h3>MISSION CONDITIONS</h3>${intelItems(mission)}</section>`;
+  return true;
+}
+function openRunIntel(){if(!state||state.mode!=='run'||state.choosing||state.ceremony||state.gameOver)return false;if(!state.paused)pause(true);renderRunIntel();show('loadoutScreen');AUDIO.sfx('ui');return true}
+function closeRunIntel(){hide('loadoutScreen');if(state?.mode==='run'&&state.paused&&!state.gameOver)show('pauseScreen');AUDIO.sfx('ui')}
+$('pauseLoadoutBtn').onclick=openRunIntel;$('loadoutBackBtn').onclick=closeRunIntel;
+
 // ---------- INPUT ----------
 const keys={},touch={active:false,startX:0,startY:0,x:0,y:0},mouse={active:false,inside:false,x:W/2,y:H/2};let gamepadPauseLatch=false,gamepadUiOverlay='',gamepadUiMoveLatch=false,gamepadUiALatch=false,gamepadUiBLatch=false;
-addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=true;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='escape'&&$('settingsScreen').classList.contains('show')){hide('settingsScreen');return}if((k==='p'||k==='escape')&&state?.mode==='run'&&!state.choosing&&!$('settingsScreen').classList.contains('show'))togglePause();if(k==='shift'&&!e.repeat)tryPhaseDash();if(k==='r'&&state?.gameOver)startRun();if(k==='f')toggleFullscreen();if(k==='m'){save.settings.audio=save.settings.audio==='ON'?'OFF':'ON';persist(false);renderSettings();AUDIO.sfx('ui')}});
+addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();keys[k]=true;
+  if(['arrowup','arrowdown','arrowleft','arrowright',' ','tab'].includes(k))e.preventDefault();
+  if(k==='escape'&&$('loadoutScreen').classList.contains('show')){closeRunIntel();return}
+  if(k==='escape'&&$('settingsScreen').classList.contains('show')){hide('settingsScreen');return}
+  if((k==='tab'||k==='b')&&state?.mode==='run'&&!state.choosing&&!$('settingsScreen').classList.contains('show')){$('loadoutScreen').classList.contains('show')?closeRunIntel():openRunIntel();return}
+  if((k==='p'||k==='escape')&&state?.mode==='run'&&!state.choosing&&!$('settingsScreen').classList.contains('show'))togglePause();
+  if(k==='shift'&&!e.repeat)tryPhaseDash();if(k==='r'&&state?.gameOver)startRun();if(k==='f')toggleFullscreen();
+  if(k==='m'){save.settings.audio=save.settings.audio==='ON'?'OFF':'ON';persist(false);renderSettings();AUDIO.sfx('ui')}
+});
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);addEventListener('blur',()=>{mouse.active=false;if(state?.mode==='run'&&!state.paused&&!state.choosing)pause(true)});
 function pointerToCanvas(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*(W/r.width),y:(e.clientY-r.top)*(H/r.height)}}
 canvas.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'){mouse.inside=true;const p=pointerToCanvas(e);mouse.x=p.x;mouse.y=p.y}});
@@ -389,11 +447,11 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 function toggleFullscreen(){document.fullscreenElement?document.exitFullscreen():$('wrap').requestFullscreen?.()}
 
 function pollGamepadPause(){const gps=navigator.getGamepads?.()||[],gp=gps.find(Boolean),pressed=!!(gp&&(gp.buttons[9]?.pressed||gp.buttons[8]?.pressed));if(pressed&&!gamepadPauseLatch&&state?.mode==='run'&&!state.choosing&&!$('settingsScreen').classList.contains('show'))togglePause();gamepadPauseLatch=pressed}
-function visibleOverlay(){return document.querySelector?.('.overlay.show')||null}
+function visibleOverlay(){const overlays=[...(document.querySelectorAll?.('.overlay.show')||[])];return overlays.at(-1)||null}
 function gamepadUiButtons(overlay){return overlay?[...overlay.querySelectorAll('button')].filter(b=>!b.disabled&&!b.classList.contains('hidden')&&b.offsetParent!==null):[]}
 function focusGamepadDefault(overlay,buttons){if(!buttons.length)return;const preferred=buttons.find(b=>b.classList.contains('primary'))||buttons.find(b=>b.classList.contains('selected'))||buttons[0];preferred.focus?.({preventScroll:true});preferred.scrollIntoView?.({block:'nearest',inline:'nearest'})}
 function moveGamepadFocus(buttons,dx,dy){if(!buttons.length)return;let cur=document.activeElement;if(!buttons.includes(cur)){focusGamepadDefault(visibleOverlay(),buttons);return}const r=cur.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let best=null,bestScore=Infinity;for(const b of buttons){if(b===cur)continue;const q=b.getBoundingClientRect(),x=q.left+q.width/2,y=q.top+q.height/2,vx=x-cx,vy=y-cy;if(dx&&Math.sign(vx)!==Math.sign(dx)||dy&&Math.sign(vy)!==Math.sign(dy))continue;const primary=dx?Math.abs(vx):Math.abs(vy),cross=dx?Math.abs(vy):Math.abs(vx),score=primary+cross*2.4;if(primary<3||score>=bestScore)continue;best=b;bestScore=score}if(!best){const i=buttons.indexOf(cur),step=dx<0||dy<0?-1:1;best=buttons[(i+step+buttons.length)%buttons.length]}best.focus?.({preventScroll:true});best.scrollIntoView?.({block:'nearest',inline:'nearest'});AUDIO.sfx('ui')}
-function gamepadBack(overlay){if(!overlay)return;const back=overlay.querySelector('[data-close], #settingsBackBtn, #resumeBtn');if(back&&!back.disabled){back.click();back.focus?.({preventScroll:true})}}
+function gamepadBack(overlay){if(!overlay)return;const back=overlay.querySelector('[data-close], #loadoutBackBtn, #settingsBackBtn, #resumeBtn');if(back&&!back.disabled){back.click();back.focus?.({preventScroll:true})}}
 function pollGamepadUi(){const gps=navigator.getGamepads?.()||[],gp=gps.find(Boolean),overlay=visibleOverlay();if(!gp||!overlay){gamepadUiOverlay='';gamepadUiMoveLatch=gamepadUiALatch=gamepadUiBLatch=false;return}const buttons=gamepadUiButtons(overlay);if(gamepadUiOverlay!==overlay.id){gamepadUiOverlay=overlay.id;focusGamepadDefault(overlay,buttons)}const ax=gp.axes?.[0]||0,ay=gp.axes?.[1]||0,left=gp.buttons[14]?.pressed||ax<-.62,right=gp.buttons[15]?.pressed||ax>.62,up=gp.buttons[12]?.pressed||ay<-.62,down=gp.buttons[13]?.pressed||ay>.62,moving=left||right||up||down;if(moving&&!gamepadUiMoveLatch)moveGamepadFocus(buttons,(right?1:0)-(left?1:0),(down?1:0)-(up?1:0));gamepadUiMoveLatch=!!moving;const a=!!gp.buttons[0]?.pressed,b=!!gp.buttons[1]?.pressed;if(a&&!gamepadUiALatch){const active=document.activeElement;if(buttons.includes(active)){active.click();AUDIO.sfx('ui')}}if(b&&!gamepadUiBLatch)gamepadBack(overlay);gamepadUiALatch=a;gamepadUiBLatch=b}
 function moveInput(){let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);const gps=navigator.getGamepads?.()||[];const gp=gps.find(Boolean);if(gp){const ax=Math.abs(gp.axes[0]||0)>.16?gp.axes[0]:0,ay=Math.abs(gp.axes[1]||0)>.16?gp.axes[1]:0;dx+=ax+(gp.buttons[15]?.pressed?1:0)-(gp.buttons[14]?.pressed?1:0);dy+=ay+(gp.buttons[13]?.pressed?1:0)-(gp.buttons[12]?.pressed?1:0);}if(touch.active){const tx=touch.x-touch.startX,ty=touch.y-touch.startY,l=Math.hypot(tx,ty);if(l>8){dx+=tx/Math.max(45,l);dy+=ty/Math.max(45,l)}}const mouseDriving=save.settings.mouse==='FOLLOW'&&mouse.inside||save.settings.mouse==='HOLD'&&mouse.active;if(mouseDriving&&state?.p){const tx=mouse.x-state.p.x,ty=mouse.y-state.p.y,l=Math.hypot(tx,ty);if(l>10){dx+=tx/l;dy+=ty/l}}return{dx,dy}}
 
@@ -563,7 +621,7 @@ function continueAscension(){hide('ascendScreen');state.clearedBase=true;state.e
 $('bankRunBtn').onclick=bankAscension;$('ascendRunBtn').onclick=continueAscension;
 
 // ---------- PAUSE / RUN END ----------
-function pause(on=true){if(!state||state.choosing||state.ceremony||state.gameOver)return;AUDIO.sfx(on?'pause':'resume');AUDIO.pauseMusic(on);state.paused=on;$('pauseBankBtn').classList.toggle('hidden',!state.endless);if(on)show('pauseScreen');else hide('pauseScreen');if(!on)state.last=performance.now()}
+function pause(on=true){if(!state||state.choosing||state.ceremony||state.gameOver)return;AUDIO.sfx(on?'pause':'resume');AUDIO.pauseMusic(on);state.paused=on;$('pauseBankBtn').classList.toggle('hidden',!state.endless);if(on){renderPauseSnapshot();show('pauseScreen')}else{hide('pauseScreen');hide('loadoutScreen')}if(!on)state.last=performance.now()}
 function togglePause(){pause(!state.paused)}$('resumeBtn').onclick=()=>pause(false);$('pauseBankBtn').onclick=()=>{if(state?.endless)finishRun(true)};$('menuBtn').onclick=()=>{if(confirm('Abort this run? Current run rewards will be banked, but the run counts as a loss.'))finishRun(false,true)};
 $('restartRunBtn').onclick=()=>{if(state?.mode==='run'&&confirm('Restart this run? Current run progress will be discarded.'))startRun()};
 function runGrade(){const ratio=state.score/(state.difficulty==='BLACKOUT'?125000:state.difficulty==='HARDLINE'?95000:70000);if((state.victory||state.clearedBase)&&ratio>=1.25)return'S';if((state.victory||state.clearedBase)&&ratio>=.85)return'A';if(state.victory||state.clearedBase)return'B';if(state.time>=480)return'C';return'D'}

@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.64.0-62e6ff)
+![Version](https://img.shields.io/badge/version-0.65.0-62e6ff)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
 ORBIT//04 is a single-player, top-down space survival game. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a third boss encounter.
 
-Current version: `0.64.0`
+Current version: `0.65.0`
 
 ## Runtime overview
 
@@ -32,6 +32,7 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 - optional Ascension mode after completing the base run
 - persistent credits, research upgrades, frame mastery, operations, achievements, and Codex data
 - projectile grazing, kill chains, Signal Rush, Overdrive, caches, anomalies, and hostile conversion
+- live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
 - keyboard, mouse, and gamepad movement
 - local save export, import, and reset controls
 
@@ -77,6 +78,7 @@ The settings screen provides:
 - three interface scales
 - particle, graphics, glow, background, and contrast controls
 - three dynamic-range profiles with independent music and sound-effect volume
+- curated Readability, Cinematic, Performance, and Defaults profiles with individually editable controls
 
 ## Requirements
 
@@ -118,6 +120,7 @@ The install step runs `postinstall`, which copies the pinned Phaser runtime to `
 | Left stick or D-pad | Move with a gamepad |
 | `Shift` | Phase Dash |
 | `P` or `Esc` | Pause or resume |
+| `Tab` or `B` | Open or close Run Intel during a run |
 | `M` | Toggle audio |
 | `F` | Toggle fullscreen |
 | `R` | Restart after a completed or failed run |
@@ -176,7 +179,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.64.0 is a Windows release-preparation build. The repository can generate and validate the offline desktop package and real 1920 × 1080 gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.65.0 is a Windows release-preparation build with in-run build telemetry and curated display profiles. The repository can generate and validate the offline desktop package and real 1920 × 1080 gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

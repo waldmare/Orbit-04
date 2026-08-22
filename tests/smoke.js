@@ -43,8 +43,15 @@ vm.runInContext(`
   state.time=106; if(desiredBackground()!=='pulsar') throw new Error('background director did not advance'); state.time=0;
   save.settings.uiScale='XXL'; save.settings.contrast='HIGH'; renderSettings();
   if(document.getElementById('wrap').dataset.uiScale!=='XXL'||document.getElementById('wrap').dataset.contrast!=='HIGH') throw new Error('display settings were not applied');
+  if(!applySettingsPreset('READABILITY')||save.settings.enemyHp!=='ALL'||save.settings.motion!=='REDUCED'||save.settings.uiScale!=='XXL') throw new Error('readability profile was not applied');
+  state.weaponDamage.pulse=120; state.damageDealt=120;
+  if(!renderRunIntel()||!document.getElementById('loadoutContent').innerHTML.includes('PULSE CANNON')) throw new Error('run intel did not render the active build');
   pause(true);
   if(!state.paused||!document.getElementById('pauseScreen').classList.contains('show')) throw new Error('pause screen did not open');
+  if(!document.getElementById('pauseSnapshot').innerHTML.includes('CURRENT PRIORITY')) throw new Error('pause snapshot did not render');
+  if(!openRunIntel()||!document.getElementById('loadoutScreen').classList.contains('show')) throw new Error('run intel did not open');
+  closeRunIntel();
+  if(document.getElementById('loadoutScreen').classList.contains('show')) throw new Error('run intel did not close');
   pause(false);
   if(state.paused||document.getElementById('pauseScreen').classList.contains('show')) throw new Error('run did not resume');
   if(save.settings.mouse!=='HOLD') throw new Error('mouse default setting mismatch');

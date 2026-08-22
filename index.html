@@ -98,7 +98,18 @@
   <section id="pauseScreen" class="overlay">
     <div class="panel smallPanel centered">
       <h1>PAUSED</h1><p class="muted">Transmission suspended.</p>
-      <div class="menuRow centered"><button id="resumeBtn" class="primary">RESUME</button><button id="pauseBankBtn" class="hidden">BANK ASCENSION</button><button id="restartRunBtn">RESTART RUN</button><button id="pauseSettingsBtn">SETTINGS</button><button id="menuBtn">ABORT RUN</button></div>
+      <div id="pauseSnapshot" class="pauseSnapshot"></div>
+      <div class="menuRow centered"><button id="resumeBtn" class="primary">RESUME</button><button id="pauseLoadoutBtn">RUN INTEL</button><button id="pauseBankBtn" class="hidden">BANK ASCENSION</button><button id="restartRunBtn">RESTART RUN</button><button id="pauseSettingsBtn">SETTINGS</button><button id="menuBtn">ABORT RUN</button></div>
+    </div>
+  </section>
+
+  <section id="loadoutScreen" class="overlay">
+    <div class="panel widePanel intelPanel">
+      <div class="headerSplit"><div><h1>RUN INTEL</h1><h2>ACTIVE BUILD / MISSION TELEMETRY</h2></div><div id="loadoutSummary" class="tag"></div></div>
+      <div id="loadoutMetrics" class="intelMetrics"></div>
+      <div id="loadoutContent" class="intelLayout"></div>
+      <div class="intelHelp">TAB / B — OPEN INTEL &nbsp;·&nbsp; ESC — RETURN TO PAUSE</div>
+      <div class="menuRow"><button id="loadoutBackBtn" class="primary">BACK TO PAUSE</button></div>
     </div>
   </section>
 
@@ -138,6 +149,10 @@
   <section id="settingsScreen" class="overlay">
     <div class="panel settingsPanel">
       <h1>SETTINGS</h1><h2>DISPLAY / AUDIO / DATA</h2>
+      <div class="settingsPresets">
+        <div><b>CURATED PROFILES</b><div id="settingsPresetStatus" class="tiny">CUSTOM</div></div>
+        <div class="presetButtons"><button id="readabilityPresetBtn">READABILITY</button><button id="cinematicPresetBtn">CINEMATIC</button><button id="performancePresetBtn">PERFORMANCE</button><button id="defaultsPresetBtn">DEFAULTS</button></div>
+      </div>
       <div class="settingsList">
         <div class="settingRow"><div><b>PLAYER HP</b><div class="tiny">HUD value and/or bar above frame.</div></div><button id="playerHpSetting"></button></div>
         <div class="settingRow"><div><b>ENEMY HP</b><div class="tiny">Hostile health bars.</div></div><button id="enemyHpSetting"></button></div>
