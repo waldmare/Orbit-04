@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.67.0 — Procedural field exploration and verified audio
+
+- identified the reported silent output as a persisted `AUDIO: OFF` profile setting and restored audio for the active local profile
+- changed the Settings status from asset-loaded inference to confirmed playback reporting
+- added explicit muted-state warnings, playback attempt telemetry, renderer mute detection, and asset load-error logging
+- added deterministic space generation beyond the starting view with asteroid, wreck, ion, and void landmarks
+- added Repair Relay, Flux Amplifier, Salvage Probe, Unstable Relic, and Null Jammer field signals
+- added clear benefit, risk/reward, and hazard color language with directional navigation and distance readouts
+- added temporary Flux weapon amplification and Null Jammer movement interference without changing baseline ship or weapon statistics
+- added exploration distance, field-signal, and triggered-hazard run telemetry
+- expanded smoke and integration coverage for world expansion, beneficial pickups, hazards, navigation, and confirmed audio fallback
+
 ## 0.66.0 — Continuous travel and encounter correction
 
 - reduced the Tank selection ceiling from 79% to 14% during the 0:25–0:55 early-run window

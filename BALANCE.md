@@ -36,6 +36,18 @@ It should not come primarily from excessive enemy HP.
 - After 0:55, the established Charger and Tank composition remains unchanged.
 - Enemy hull, damage, speed, elite timing, boss timing, weapon output, XP, and progression values are unchanged in this correction.
 
+## 0.67 exploration signals
+
+| Signal | Classification | Effect |
+|---|---|---|
+| Repair Relay | Benefit | Restores 18% maximum hull and clears nearby hostile fire; grants 6 CR at full hull |
+| Flux Amplifier | Benefit | Grants +25% weapon output for 18 seconds and immediately refreshes Phase Dash |
+| Salvage Probe | Benefit | Grants 12 CR and 6 data |
+| Unstable Relic | Risk / reward | Grants 24 CR and +25% weapon output for 22 seconds, but causes hull damage and a hostile echo |
+| Null Jammer | Hazard | Reduces movement by 28% for 14 seconds, delays Phase Dash, damages the hull, and emits a hostile signal |
+
+Exploration effects are temporary or event-scoped. Baseline frame statistics, weapon values, enemy growth, boss timing, and progression remain unchanged.
+
 ## 0.30 changes
 
 ### Hostiles
