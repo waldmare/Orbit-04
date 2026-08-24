@@ -32,6 +32,31 @@ function engineTexture(){
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=texture.magFilter=THREE.LinearFilter;return texture;
 }
 
+function pickupIconTexture(kind){
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=128;const context=canvas.getContext('2d');context.translate(64,64);context.lineCap='round';context.lineJoin='round';
+  const path=points=>{context.beginPath();context.moveTo(points[0][0],points[0][1]);for(let index=1;index<points.length;index++)context.lineTo(points[index][0],points[index][1]);context.closePath()};
+  path([[0,-55],[44,-26],[44,26],[0,55],[-44,26],[-44,-26]]);context.fillStyle='rgba(5,8,9,.88)';context.fill();context.lineWidth=4;context.strokeStyle='rgba(255,255,255,.58)';context.stroke();
+  context.fillStyle='rgba(255,255,255,.18)';context.strokeStyle='rgba(255,255,255,.96)';context.lineWidth=7;
+  if(kind==='orb'){
+    path([[0,-31],[28,0],[0,31],[-28,0]]);context.fill();context.stroke();context.beginPath();context.arc(0,0,8,0,TAU);context.fillStyle='#fff';context.fill();
+  }else if(kind==='cache'){
+    context.fillRect(-31,-24,62,48);context.strokeRect(-31,-24,62,48);context.beginPath();context.moveTo(-31,-7);context.lineTo(31,-7);context.moveTo(0,-24);context.lineTo(0,24);context.stroke();context.fillStyle='#fff';context.fillRect(-7,-13,14,13);
+  }else if(kind==='repair'){
+    context.beginPath();context.moveTo(-9,-34);context.lineTo(9,-34);context.lineTo(9,-9);context.lineTo(34,-9);context.lineTo(34,9);context.lineTo(9,9);context.lineTo(9,34);context.lineTo(-9,34);context.lineTo(-9,9);context.lineTo(-34,9);context.lineTo(-34,-9);context.lineTo(-9,-9);context.closePath();context.fill();context.stroke();
+  }else if(kind==='flux'){
+    path([[8,-37],[-25,5],[-5,5],[-14,36],[27,-12],[6,-12]]);context.fill();context.stroke();
+  }else if(kind==='salvage'){
+    for(const [y,width] of [[-23,48],[0,62],[23,42]]){context.fillRect(-width/2,y-7,width,14);context.strokeRect(-width/2,y-7,width,14)}
+  }else if(kind==='archive'){
+    context.beginPath();context.moveTo(0,-27);context.quadraticCurveTo(-15,-36,-34,-29);context.lineTo(-34,28);context.quadraticCurveTo(-14,21,0,31);context.quadraticCurveTo(14,21,34,28);context.lineTo(34,-29);context.quadraticCurveTo(15,-36,0,-27);context.closePath();context.fill();context.stroke();context.beginPath();context.moveTo(0,-27);context.lineTo(0,31);context.stroke();
+  }else if(kind==='relic'){
+    path([[0,-38],[31,0],[0,38],[-31,0]]);context.fill();context.stroke();context.beginPath();context.arc(0,0,10,0,TAU);context.stroke();context.fillStyle='#fff';context.beginPath();context.arc(0,0,3.5,0,TAU);context.fill();
+  }else{
+    path([[0,-38],[36,31],[-36,31]]);context.fill();context.stroke();context.beginPath();context.moveTo(0,-18);context.lineTo(0,9);context.stroke();context.fillStyle='#fff';context.beginPath();context.arc(0,22,4.5,0,TAU);context.fill();
+  }
+  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;texture.generateMipmaps=true;texture.name=`pickup-${kind}`;return texture;
+}
+
 function configureTexture(texture,maxAnisotropy=8){texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;texture.generateMipmaps=true;texture.anisotropy=Math.max(1,Math.min(16,maxAnisotropy));return texture}
 
 export class OrbitThreeVisualEngine{
@@ -44,6 +69,7 @@ export class OrbitThreeVisualEngine{
     this.loader=new THREE.TextureLoader();this.glowTexture=radialTexture();this.engineTexture=engineTexture();this.textures={
       player:this.load('assets/visuals/player-last-ark-v1.png'),muzzle:this.load('assets/visuals/weapon-muzzle-premium-v1.png'),projectile:this.load('assets/visuals/weapon-projectile-premium-v1.png')
     };
+    this.pickupTextures={};for(const kind of ['orb','cache','repair','flux','salvage','archive','relic','jammer'])this.pickupTextures[kind]=pickupIconTexture(kind);
     for(const [key,path] of Object.entries(enemyTexture))this.textures[`enemy-${key}`]=this.load(path);
     this.world=new THREE.Group();this.scene.add(this.world);
     this.playerGlow=this.sprite(this.glowTexture,THREE.AdditiveBlending);this.playerTrail=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.playerEngineLeft=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.playerEngineRight=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.player=this.sprite(this.textures.player);this.world.add(this.playerTrail,this.playerEngineLeft,this.playerEngineRight,this.playerGlow,this.player);
@@ -96,11 +122,11 @@ export class OrbitThreeVisualEngine{
   }
 
   syncPlayer(state,settings,glow){
-    const p=state.p,m=this.playerMotion,targetAngle=p.moving?Math.atan2(p._lastMoveY||0,p._lastMoveX||0):m.angle;if(!m.ready){Object.assign(m,{ready:true,x:p.x,y:p.y,angle:targetAngle,bank:0,thrust:0,velocity:0})}
-    const beforeX=m.x,beforeY=m.y,beforeAngle=m.angle;m.x=smoothValue(m.x,p.x,24,this.delta);m.y=smoothValue(m.y,p.y,24,this.delta);m.angle=smoothAngle(m.angle,targetAngle,p.moving?11:5.5,this.delta);const turn=Math.atan2(Math.sin(m.angle-beforeAngle),Math.cos(m.angle-beforeAngle))/Math.max(this.delta,.001);m.bank=smoothValue(m.bank,clamp(turn*.018,-.15,.15)*this.motionScale,9,this.delta);m.velocity=smoothValue(m.velocity,Math.hypot(m.x-beforeX,m.y-beforeY)/Math.max(this.delta,.001),8,this.delta);m.thrust=smoothValue(m.thrust,p.moving?1:.18,7,this.delta);
+    const p=state.p,m=this.playerMotion,targetAngle=-Math.PI/2;if(!m.ready){Object.assign(m,{ready:true,x:p.x,y:p.y,angle:targetAngle,bank:0,thrust:0,velocity:0})}
+    const beforeX=m.x,beforeY=m.y;m.x=smoothValue(m.x,p.x,24,this.delta);m.y=smoothValue(m.y,p.y,24,this.delta);m.angle=smoothAngle(m.angle,targetAngle,8,this.delta);const strafe=p.moving?clamp(p._lastMoveX||0,-1,1):0;m.bank=smoothValue(m.bank,-strafe*.16*this.motionScale,8.5,this.delta);m.velocity=smoothValue(m.velocity,Math.hypot(m.x-beforeX,m.y-beforeY)/Math.max(this.delta,.001),8,this.delta);m.thrust=smoothValue(m.thrust,p.moving?1:.18,7,this.delta);
     const kick=clamp((p.weaponKick||0)/.12),dash=clamp((p.dashFx||0)/.32),pulse=.88+.12*Math.sin(this.time*(p.hp/p.maxHp<.3?8:2.1)),hover=Math.sin(this.time*2.1)*.42*this.motionScale;
     const x=m.x-Math.cos(p.weaponAngle??m.angle)*kick*4.5,y=m.y+hover-Math.sin(p.weaponAngle??m.angle)*kick*4.5,breath=1+Math.sin(this.time*1.55)*.006*this.motionScale;
-    const turnCompression=1-Math.min(.075,Math.abs(m.bank)*.48);this.player.visible=true;this.placeSprite(this.player,x,y,54*turnCompression*(1+kick*.025+dash*.05)/breath,81*(1-kick*.035+dash*.018)*breath,m.angle+Math.PI/2,5,1,p.hitFlash>0?'#ffffff':'#d7ddd7');
+    const turnCompression=1-Math.min(.075,Math.abs(m.bank)*.48),visualYaw=m.bank*.28;this.player.visible=true;this.placeSprite(this.player,x,y,54*turnCompression*(1+kick*.025+dash*.05)/breath,81*(1-kick*.035+dash*.018)*breath,m.angle+Math.PI/2+visualYaw,5,1,p.hitFlash>0?'#ffffff':'#d7ddd7');
     this.playerGlow.visible=glow;this.placeSprite(this.playerGlow,x,y,88+kick*20+dash*28,88+kick*20+dash*28,0,3,(p.hp/p.maxHp<.3?.18:.10)*pulse+(dash*.08),p.hp/p.maxHp<.3?'#b04450':'#b9ad79');
     const backX=-Math.cos(m.angle),backY=-Math.sin(m.angle),sideX=-Math.sin(m.angle),sideY=Math.cos(m.angle),trailLength=22+m.thrust*32+dash*50,trailX=x+backX*(25+trailLength*.48),trailY=y+backY*(25+trailLength*.48),enginePulse=.82+.12*Math.sin(this.time*25)+.06*Math.sin(this.time*41);
     this.playerTrail.visible=glow;this.placeSprite(this.playerTrail,trailX,trailY,trailLength*1.16,14+m.thrust*5,m.angle,2,(.10+.13*m.thrust+.12*dash)*enginePulse,'#829d98');
@@ -126,7 +152,8 @@ export class OrbitThreeVisualEngine{
 
   syncLoot(state,quality){
     const items=[...state.orbs.map(item=>({item,type:'orb'})),...state.caches.map(item=>({item,type:'cache'})),...(state.worldNodes||[]).filter(item=>item.active&&!item.collected).map(item=>({item,type:'signal'}))];
-    this.use(this.pools.loot,items.length,()=>this.mesh(this.flatMaterial('#ffffff',THREE.AdditiveBlending)),(mesh,i)=>{const {item,type}=items[i],signal=type==='signal',cache=type==='cache',size=signal?14:cache?10:item.r>4?7:4.5,color=signal?item.color:cache?(item.rarity==='OMEGA'?'#ffffff':item.rarity==='RARE'?'#d5b46c':'#9caaa3'):(item.r>4?'#d3b36c':'#8eb5a6');mesh.position.set(item.x,item.y+Math.sin(this.time*2+i)*1.2,6);mesh.rotation.z=this.time*(signal?.45:1.1)+Math.PI/4;mesh.scale.set(size,size,1);mesh.material.color.set(color);mesh.material.opacity=.92});
+    const signalColors={repair:'#84b894',flux:'#78aeb8',salvage:'#b09a6f',archive:'#c8b98f',relic:'#9480a0',jammer:'#b85c66'};
+    this.use(this.pools.loot,items.length,()=>this.sprite(this.pickupTextures.orb),(sprite,i)=>{const {item,type}=items[i],signal=type==='signal',cache=type==='cache',kind=signal?(item.type||'jammer'):cache?'cache':'orb',texture=this.pickupTextures[kind]||this.pickupTextures.orb,size=signal?(item.disposition==='hazard'?34:31):cache?26:item.r>4?20:16,color=signal?(signalColors[kind]||item.color):cache?(item.rarity==='PARADOX'?'#a98bc0':item.rarity==='OMEGA'?'#e5e0d3':item.rarity==='RARE'?'#c3a362':'#83a7a3'):(item.r>4?'#c1a56f':'#79aa9e'),pulse=.96+.055*Math.sin(this.time*(signal?2.1:3.2)+i),rotation=kind==='orb'?this.time*.24+i*.31:Math.sin(this.time*.72+i)*.025;if(sprite.material.map!==texture){sprite.material.map=texture;sprite.material.needsUpdate=true}sprite.userData.pickupKind=kind;this.placeSprite(sprite,item.x,item.y+Math.sin(this.time*(signal?1.45:2.2)+i)*((signal?2.2:1.0)*this.motionScale),size*pulse,size*pulse,rotation,6,.96,color)});
   }
 
   syncOrbitals(state){
@@ -164,7 +191,7 @@ export class OrbitThreeVisualEngine{
     this.use(this.pools.bars,bars.length,()=>this.mesh(this.flatMaterial()),(mesh,i)=>{const bar=bars[i];mesh.position.set(bar.x,bar.y,10);mesh.scale.set(bar.width,bar.height,1);mesh.material.color.set(bar.color);mesh.material.opacity=bar.alpha});
   }
 
-  destroy(){this.resizeObserver?.disconnect();this.renderer.dispose();for(const texture of Object.values(this.textures))texture.dispose();this.glowTexture.dispose()}
+  destroy(){this.resizeObserver?.disconnect();this.renderer.dispose();for(const texture of Object.values(this.textures))texture.dispose();for(const texture of Object.values(this.pickupTextures))texture.dispose();this.glowTexture.dispose();this.engineTexture.dispose()}
 }
 
 export const rendererName=`Three.js r${THREE.REVISION} top-down`;

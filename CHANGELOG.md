@@ -7,6 +7,8 @@
 - corrected player banking so it changes the apparent hull profile without rotating the vessel away from its travel direction
 - changed hostile and allied facing to follow measured travel instead of continuously pointing at an attack target
 - increased the combat-scale silhouettes and retuned engine trails for clearer motion reads without changing collision sizes or balance
+- stabilized the player hull in its forward orientation and replaced full movement-axis rotation with restrained strafe lean
+- replaced generic square pickups with eight semantic glyphs covering experience, caches, support signals, archives, relics, and hazards
 - expanded the real Electron smoke test with render-buffer and directional-heading assertions
 
 ## 0.88.1 — Three.js Motion Parity

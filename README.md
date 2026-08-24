@@ -72,6 +72,8 @@ The renderer includes:
 - mipmapped texture sampling with hardware-aware anisotropy for stable detail during rotation
 - frame-rate-independent position and rotation smoothing for player, hostile, and allied ships
 - movement-derived hostile and allied headings, with shortest-path turns and silhouette compression used for banking instead of corrupting the facing angle
+- a stable forward-facing player hull with restrained lateral lean and engine response instead of full-axis rotation during WASD movement
+- semantic, color-coded pickup silhouettes for experience, caches, repair, combat flux, salvage, archives, relics, and jammers
 - organic breathing, undulation, and asymmetric locomotion for alien bodies instead of spacecraft engine plumes
 - directional weapon recoil, generated transparent muzzle plates, per-weapon projectile silhouettes, hostile firing flashes, beam lines, turning response, and dash afterimages
 - animated pickups, exploration signals, orbiting systems, projectile streaks, and depth landmarks
