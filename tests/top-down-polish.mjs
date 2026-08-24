@@ -7,7 +7,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=file=>readFileSync(path.join(root,file),'utf8');
 const html=read('index.html'),game=read('game.js'),visuals=read('visual-engine.js'),threeVisuals=read('three-visual-engine.mjs'),threeLoader=read('three-engine-loader.js'),prototype3d=read('game-3d.mjs'),styles=read('styles.css'),desktop=read('desktop/main.cjs'),docs=read('README.md'),pkg=JSON.parse(read('package.json'));
 
-assert.equal(pkg.version,'0.88.0');
+assert.equal(pkg.version,'0.88.1');
 assert.equal(pkg.dependencies.phaser,'3.90.0');
 assert.equal(pkg.description,'Top-down survival game about the last human vessel in an alien-conquered universe.');
 assert.match(pkg.scripts.screenshot,/--orbit-capture/,'runtime screenshot script is missing');
@@ -21,22 +21,22 @@ assert.match(html,/vendor\/phaser\.min\.js[\s\S]*three-engine-loader\.js[\s\S]*v
 assert.match(html,/id="gameThree"[\s\S]*Three\.js presentation layer/,'active Three.js canvas is missing');
 assert.doesNotMatch(html,/game-3d\.mjs|styles-3d\.css/,'third-person build is still active');
 assert.doesNotMatch(docs,/visual-direction-concept|ASSET_PROMPTS|ImageGen|OpenAI/,'documentation references non-runtime concept material');
-assert.match(docs,/version 0\.88\.0 Last Ark runtime capture[\s\S]*captured from the active 0\.88\.0 Electron\/Three\.js WebGL build/,'current runtime screenshot is not labeled accurately');
-for(const token of ['--orbit-capture','--orbit-menu-capture','--orbit-steam-capture','orbit04-capture','waitForRenderer','capturePage','runtime-screenshot-v0.88.0.png','launch-hangar-v0.88.0.png','horizontalOverflow','image.isEmpty','setPermissionRequestHandler','requestSingleInstanceLock'])assert.ok(desktop.includes(token),`missing runtime capture or desktop safeguard: ${token}`);
+assert.match(docs,/version 0\.88\.1 Last Ark runtime capture[\s\S]*captured from the active 0\.88\.1 Electron\/Three\.js WebGL build/,'current runtime screenshot is not labeled accurately');
+for(const token of ['--orbit-capture','--orbit-menu-capture','--orbit-steam-capture','orbit04-capture','waitForRenderer','capturePage','runtime-screenshot-v0.88.1.png','launch-hangar-v0.88.1.png','horizontalOverflow','image.isEmpty','setPermissionRequestHandler','requestSingleInstanceLock'])assert.ok(desktop.includes(token),`missing runtime capture or desktop safeguard: ${token}`);
 
 const vendor=path.join(root,'vendor/phaser.min.js');
 assert.ok(existsSync(vendor)&&statSync(vendor).size>500000,'offline Phaser runtime is missing');
 for(const file of ['three.module.min.js','three.core.min.js']){const threeVendor=path.join(root,'vendor',file);assert.ok(existsSync(threeVendor)&&statSync(threeVendor).size>300000,`offline Three.js module is missing: ${file}`)}
-const screenshot=path.join(root,'docs/runtime-screenshot-v0.88.0.png'),png=readFileSync(screenshot);
+const screenshot=path.join(root,'docs/runtime-screenshot-v0.88.1.png'),png=readFileSync(screenshot);
 assert.ok(png.length>100000,'verified runtime screenshot is missing or empty');
 assert.equal(png.readUInt32BE(16),1440,'runtime screenshot width must be 1440');assert.equal(png.readUInt32BE(20),810,'runtime screenshot height must be 810');
-const menuScreenshot=path.join(root,'docs/launch-hangar-v0.88.0.png'),menuPng=readFileSync(menuScreenshot);
+const menuScreenshot=path.join(root,'docs/launch-hangar-v0.88.1.png'),menuPng=readFileSync(menuScreenshot);
 assert.ok(menuPng.length>100000,'verified launch hangar screenshot is missing or empty');
 assert.equal(menuPng.readUInt32BE(16),1440,'launch hangar screenshot width must be 1440');assert.equal(menuPng.readUInt32BE(20),810,'launch hangar screenshot height must be 810');
 for(const token of ['tryPhaseDash','dashCooldown','damageNumber','telegraphs','effectClarity','audioMix','MIXES','musicDuck','VOICE_COOLDOWNS','DUCK_LEVELS','rewardCue','SIGNAL RUSH','desiredBackground','licensed-sample-assets-v2','cinematicLayers','materialLayers','selectEnemyType','followWorldCamera','translateWorld','unlockSamples','played===false','testAudioOutput','WORLD_CELL_SIZE','generateWorldCell','collectWorldNode','openArchiveFragment','closeArchiveFragment','updateWorldGeneration','CHOIR SPORE','MOURNING FIELD','ARCHIVE_FRAGMENTS','LEGACY_ARCHIVE_ID_MAP','normalizeArchiveIds','discoveredArchives','deathFx','dampValue','THE CONQUEROR','ARK ARCHIVE','renderShipCanvas','renderFrameBrief','SYNERGY_REQUIREMENTS','renderBuildCompass','offerConnection','upgradePulse','processPendingLevel','salvageSweep','updatePriorityHud','NEW DRAW','XP TO NEXT SYSTEM','targetPriority','drawFreshOffers','togglePinnedOffer','updateEvolutionTracker','SIGNAL_FILTERS','cycleSignalFilter','recordUpgrade','handleWindowBlur','FIELD_DIRECTIVES','checkFieldDirective','directivesCompleted','cycleUnlockedOption','nextContract','cinematic-webgl-fallback','antialiasGL:true','desynchronized:true','deltaHistory:20'])assert.ok(game.includes(token),`missing runtime integration token: ${token}`);
 for(const name of ['Thomas Bernhard','Knut Hamsun','Stanisław Lem','Harry Haller','Hermann Hesse','William Faulkner','Fyodor Dostoevsky'])assert.ok(!game.includes(name),`archive data must not attribute original writing to ${name}`);
 for(const token of ['dashEchoes','syncFloaters','settings.telegraphs','player-ship-v3','enemyTexture','fitSprite','syncEnemies','drawEnergyEffects','drawDangerReadability','dangerFx','drawWorldSites','worldNodes','smoothValue','smoothAngle','motionScale','easeOutBack','syncDeathFx','strokeFxLine','enginePulse','spawnScale','orbit-life-core','lifeCore','organicPhase','setupPremiumPipeline','updatePremiumPipeline','addColorMatrix','addBloom'])assert.ok(visuals.includes(token),`missing retained visual system: ${token}`);
-for(const token of ['WebGLRenderer','OrthographicCamera','ACESFilmicToneMapping','SRGBColorSpace','DoubleSide','premultipliedAlpha:true','three-r185-topdown','syncPlayer','syncEnemies','syncAllies','syncProjectiles','syncOrbitals','syncTransientFx','syncDeathFx','syncFloaters','weapon-muzzle-premium-v1.png','weapon-projectile-premium-v1.png','pools={enemies','weaponKick','dashFx','AdditiveBlending'])assert.ok(threeVisuals.includes(token),`missing active Three.js presentation feature: ${token}`);
+for(const token of ['WebGLRenderer','OrthographicCamera','ACESFilmicToneMapping','SRGBColorSpace','DoubleSide','premultipliedAlpha:true','three-r185-topdown','smoothValue','smoothAngle','smoothMotion','motionFor','playerEngineLeft','playerEngineRight','playerTrail','allyTrails','engineTexture','syncPlayer','syncEnemies','syncAllies','syncProjectiles','syncOrbitals','syncTransientFx','syncDeathFx','syncFloaters','weapon-muzzle-premium-v1.png','weapon-projectile-premium-v1.png','pools={enemies','weaponKick','dashFx','AdditiveBlending'])assert.ok(threeVisuals.includes(token),`missing active Three.js presentation feature: ${token}`);
 assert.match(threeLoader,/import\('\.\/three-visual-engine\.mjs'\)/,'deferred Three.js loader is not wired');
 for(const source of [html,game,prototype3d]){
   assert.doesNotMatch(source,/[ąćęłńóśźż]/i,'runtime source still contains Polish diacritics');
@@ -59,4 +59,4 @@ const renderer=Object.create(globalThis.OrbitVisualEngine.prototype);renderer.fx
 assert.doesNotThrow(()=>renderer.syncDeathFx({deathFx:[{x:40,y:30,r:9,color:'#ff7893',life:.3,maxLife:.55,seed:.2}]},'HIGH',true),'destruction renderer must not reference a method-local line helper');
 assert.doesNotThrow(()=>renderer.drawDangerReadability({p:{x:60,y:60},enemyBullets:[{x:80,y:70,r:3}],enemies:[{x:120,y:80,r:9,type:'sniper',shootT:.2,dead:false}]},{effectClarity:'HIGH',telegraphs:'ON'}),'danger readability layer must render projectiles and telegraphs');
 
-console.log('ORBIT 0.88.0 Three.js combat presentation and English runtime: PASS');
+console.log('ORBIT 0.88.1 Three.js motion and combat presentation: PASS');

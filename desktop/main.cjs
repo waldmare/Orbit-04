@@ -176,7 +176,7 @@ async function captureMenu(win) {
   const image = await win.capturePage(undefined, { stayHidden: true });
   const size = image.getSize();
   if (image.isEmpty() || size.width !== 1440 || size.height !== 810) throw new Error(`launch hangar capture invalid: ${JSON.stringify(size)}`);
-  const output = path.join(__dirname, '..', 'docs', 'launch-hangar-v0.88.0.png');
+  const output = path.join(__dirname, '..', 'docs', 'launch-hangar-v0.88.1.png');
   await mkdir(path.dirname(output), { recursive: true });
   await writeFile(output, image.toPNG());
   console.log(`[menu-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
@@ -192,7 +192,7 @@ async function runAutomatedCapture(win) {
     return;
   }
   const preset = STEAM_CAPTURE_PRESETS[1];
-  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.88.0.png');
+  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.88.1.png');
   await captureScene(win, preset, output, { width: 1440, height: 810 });
 }
 
@@ -243,15 +243,18 @@ function createWindow() {
       if (smokeMode && rendererState.boot === 'ok') {
         const setup = await win.webContents.executeJavaScript(`(() => {
           save.settings.audio='OFF'; save.settings.damageNumbers='ALL'; startRun();
-          keys.d=true; const dashed=tryPhaseDash(); keys.d=false;
-          const enemy=spawnEnemy('gunner',false,{x:state.p.x+120,y:state.p.y}); enemy.shootT=.1;
+          keys.d=true; const dashed=tryPhaseDash();
+          const enemy=spawnEnemy('scout',false,{x:state.p.x+220,y:state.p.y}); enemy.smokeProbe=true;
           damageEnemy(enemy,10,false,'smoke',false);
-          return {dashed,floaters:state.floaters.length,dashCooldown:state.p.dashCooldown};
+          enemy.hp=enemy.maxHp=1e6;
+          draw();
+          return {dashed,floaters:state.floaters.length,dashCooldown:state.p.dashCooldown,playerStart:{x:state.p.x,y:state.p.y},playerVisualStart:{x:visualEngine?.player?.position?.x||0,y:visualEngine?.player?.position?.y||0},enemyStart:{x:enemy.x,y:enemy.y}};
         })()`);
         await delay(900);
-        const gameplay = await win.webContents.executeJavaScript(`({mode:state.mode,time:state.time,enemies:state.enemies.length,dashCooldown:state.p.dashCooldown,floaterPool:visualEngine?.floaters?.items?.length||0})`);
+        const gameplay = await win.webContents.executeJavaScript(`(() => {keys.d=false;const enemy=state.enemies.find(item=>item.smokeProbe),active=state.enemies.filter(item=>!item.dead),enemyIndex=active.indexOf(enemy),enemyVisual=visualEngine?.pools?.enemies?.[enemyIndex]?.position;return {mode:state.mode,time:state.time,enemies:state.enemies.length,dashCooldown:state.p.dashCooldown,floaterPool:visualEngine?.pools?.floaters?.length||0,player:{x:state.p.x,y:state.p.y},playerVisual:{x:visualEngine?.player?.position?.x||0,y:visualEngine?.player?.position?.y||0},enemy:{x:enemy?.x||0,y:enemy?.y||0},enemyVisual:{x:enemyVisual?.x||0,y:enemyVisual?.y||0}}})()`);
         console.log(`[gameplay-smoke] ${JSON.stringify({ ...setup, ...gameplay })}`);
-        if (!setup.dashed || setup.floaters < 1 || gameplay.mode !== 'run' || gameplay.time <= 0 || gameplay.enemies < 1 || gameplay.floaterPool < 1) process.exitCode = 1;
+        const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+        if (!setup.dashed || setup.floaters < 1 || gameplay.mode !== 'run' || gameplay.time <= 0 || gameplay.enemies < 1 || gameplay.floaterPool < 1 || distance(gameplay.player,setup.playerStart)<40 || distance(gameplay.playerVisual,setup.playerVisualStart)<30 || distance(gameplay.enemy,setup.enemyStart)<5 || distance(gameplay.enemyVisual,setup.enemyStart)<3 || distance(gameplay.enemyVisual,gameplay.enemy)>30) process.exitCode = 1;
         return app.exit(process.exitCode || 0);
       }
       if (captureMode && rendererState.boot === 'ok') {

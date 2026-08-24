@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.88.1 — Three.js Motion Parity
+
+- restored frame-rate-independent interpolation for the player, hostile organisms, and allied vessels
+- added direction-aware rotation, turn banking, movement anticipation, idle motion, organic breathing, charge deformation, and spawn easing
+- added layered player and allied thrust trails with velocity, dash, and reduced-motion scaling
+- anchored hostile glows and health bars to interpolated render positions instead of raw simulation coordinates
+- expanded the real Electron smoke test to measure player simulation travel, rendered player travel, hostile simulation travel, and rendered hostile travel
+- preserved movement speed, controls, enemy behavior, weapon output, progression, and save compatibility
+
 ## 0.88.0 — Three.js Combat Presentation
 
 - moved the active player, enemy, projectile, pickup, signal, health-bar, and combat-effect presentation to a pooled Three.js r185 WebGL layer

@@ -1,7 +1,7 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.88.0-b39a63)
+![Version](https://img.shields.io/badge/version-0.88.1-b39a63)
 ![Three.js](https://img.shields.io/badge/Three.js-r185-b39a63)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90%20host-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
@@ -9,7 +9,7 @@
 
 ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.88.0`
+Current version: `0.88.1`
 
 ## Runtime overview
 
@@ -82,13 +82,13 @@ The renderer includes:
 
 ## Runtime screenshot
 
-![ORBIT//04 version 0.88.0 studio launch hangar](docs/launch-hangar-v0.88.0.png)
+![ORBIT//04 version 0.88.1 studio launch hangar](docs/launch-hangar-v0.88.1.png)
 
 The launch hangar capture shows the selected runtime frame silhouette, compact frame bay, comparable ratings, and mission configuration at the same 1440 × 810 presentation used by the desktop build.
 
-![ORBIT//04 version 0.88.0 Last Ark runtime capture](docs/runtime-screenshot-v0.88.0.png)
+![ORBIT//04 version 0.88.1 Last Ark runtime capture](docs/runtime-screenshot-v0.88.1.png)
 
-This 1440 × 810 image was captured from the active 0.88.0 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
+This 1440 × 810 image was captured from the active 0.88.1 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
 
 ## Audio implementation
 
@@ -183,7 +183,7 @@ Capture the documented gameplay scene from the local Electron/WebGL build:
 npm.cmd run screenshot
 ```
 
-The capture command writes `docs/runtime-screenshot-v0.88.0.png` only after the Three.js presentation engine, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+The capture command writes `docs/runtime-screenshot-v0.88.1.png` only after the Three.js presentation engine, gameplay state, HUD, and enemy scene pass runtime readiness checks.
 
 Capture the launch hangar and verify that it has no horizontal overflow:
 
@@ -223,7 +223,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.88.0 moves the active top-down combat presentation to Three.js r185, adds dedicated weapon-fire animation and transparent projectile assets, and removes the remaining Polish runtime copy. Phaser remains the simulation, audio, environment, and compatibility host during the staged migration. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.88.1 completes the first motion-parity pass for the Three.js presentation layer with interpolated ship movement, turn banking, thrust response, organic hostile locomotion, spawn easing, and renderer-level movement regression checks. Phaser remains the simulation, audio, environment, and compatibility host during the staged migration. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 
