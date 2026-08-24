@@ -40,22 +40,44 @@
       </div>
 
       <div class="menuColumns">
-        <div>
-          <h2>FRAME</h2>
+        <div class="hangar">
+          <div id="frameStage" class="frameStage">
+            <div class="frameVisual">
+              <canvas id="framePreview" width="520" height="300" aria-label="Selected frame preview"></canvas>
+              <span class="frameVisualLabel">ACTIVE FRAME</span>
+              <span id="frameAvailability" class="frameAvailability"></span>
+            </div>
+            <div class="frameBrief">
+              <div class="frameHeading">
+                <div><span id="frameRole" class="frameRole"></span><h2 id="frameName"></h2></div>
+                <span id="frameMastery" class="frameMastery"></span>
+              </div>
+              <p id="frameDescription" class="frameDescription"></p>
+              <div class="frameStats" aria-label="Selected frame statistics">
+                <div><span>HULL <b id="frameHullValue"></b></span><i><em id="frameHullBar"></em></i></div>
+                <div><span>SPEED <b id="frameSpeedValue"></b></span><i><em id="frameSpeedBar"></em></i></div>
+                <div><span>OUTPUT <b id="frameOutputValue"></b></span><i><em id="frameOutputBar"></em></i></div>
+              </div>
+              <div class="frameLoadout">
+                <div><span>STARTING SYSTEM</span><b id="frameWeapon"></b><small id="frameWeaponDesc"></small></div>
+                <div><span>FRAME TRAIT</span><b id="frameTrait"></b><small id="frameTraitDesc"></small></div>
+              </div>
+            </div>
+          </div>
+          <div class="rosterHeading"><h2>FRAME BAY</h2><span id="frameRosterCount"></span></div>
           <div id="shipGrid" class="shipGrid"></div>
         </div>
         <div class="sideMenu">
           <h2>RUN CONFIG</h2>
-          <div class="settingRow compact"><span>DIFFICULTY</span><button id="difficultyBtn"></button></div>
-          <div id="difficultyDesc" class="tiny blockText"></div>
-          <div class="settingRow compact"><span>SECTOR</span><button id="sectorBtn"></button></div>
-          <div id="sectorDesc" class="tiny blockText"></div>
-          <div class="settingRow compact"><span>CONTRACT</span><button id="contractBtn"></button></div>
-          <div id="contractDesc" class="tiny blockText"></div>
-          <div class="metaLine"><span>RESEARCH</span><b id="researchLevelText">0</b></div>
-          <div class="metaLine"><span>OPERATIONS</span><b id="operationCountText">0/0</b></div>
-          <div class="metaLine"><span>ACHIEVEMENTS</span><b id="achievementCountText">0/0</b></div>
-          <div class="metaLine"><span>LIFETIME KILLS</span><b id="lifetimeKillsText">0</b></div>
+          <div class="runOption difficultyOption"><div><span>DIFFICULTY</span><button id="difficultyBtn"></button></div><p id="difficultyDesc"></p></div>
+          <div class="runOption sectorOption"><div><span>SECTOR</span><button id="sectorBtn"></button></div><p id="sectorDesc"></p></div>
+          <div class="runOption contractOption"><div><span>CONTRACT</span><button id="contractBtn"></button></div><p id="contractDesc"></p></div>
+          <div class="profileSummary">
+            <div><span>RESEARCH</span><b id="researchLevelText">0</b></div>
+            <div><span>OPERATIONS</span><b id="operationCountText">0/0</b></div>
+            <div><span>ACHIEVEMENTS</span><b id="achievementCountText">0/0</b></div>
+            <div><span>LIFETIME KILLS</span><b id="lifetimeKillsText">0</b></div>
+          </div>
           <div class="menuStack">
             <button id="startBtn" class="primary">START RUN</button>
             <button id="researchBtn">RESEARCH</button>
@@ -91,10 +113,10 @@
         <div><span id="archiveStatus" class="archiveStatus">RECOVERED VOICE</span><h1 id="archiveChannel">LAST WORD</h1></div>
         <div id="archiveProgress" class="tag"></div>
       </div>
-      <blockquote id="archiveQuote"></blockquote>
+      <p id="archiveQuote" class="archiveText"></p>
       <div id="archiveNote" class="archiveNote"></div>
       <div id="archiveReward" class="archiveReward"></div>
-      <div class="archiveFooter"><span>Preserved in the ark memory / authorial echo, not a quotation</span><button id="archiveContinueBtn" class="primary">CONTINUE <b>ENTER</b></button></div>
+      <div class="archiveFooter"><span>Preserved crew record / source identity unavailable</span><button id="archiveContinueBtn" class="primary">CONTINUE <b>ENTER</b></button></div>
     </div>
   </section>
 

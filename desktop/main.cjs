@@ -4,8 +4,9 @@ const path = require('node:path');
 
 const smokeMode = process.argv.includes('--orbit-smoke');
 const runtimeCaptureMode = process.argv.includes('--orbit-capture');
+const menuCaptureMode = process.argv.includes('--orbit-menu-capture');
 const steamCaptureMode = process.argv.includes('--orbit-steam-capture');
-const captureMode = runtimeCaptureMode || steamCaptureMode;
+const captureMode = runtimeCaptureMode || menuCaptureMode || steamCaptureMode;
 const automatedMode = smokeMode || captureMode;
 const entryFile = path.join(__dirname, '..', 'index.html');
 const iconFile = path.join(__dirname, '..', 'assets', 'branding', 'orbit-app-icon.ico');
@@ -141,7 +142,38 @@ async function captureScene(win, preset, destination, expectedSize) {
   console.log(`[runtime-capture] ${JSON.stringify({ ...setup, path: destination, size })}`);
 }
 
+async function captureMenu(win) {
+  const setup = await win.webContents.executeJavaScript(`(() => {
+    save.settings.uiScale='XL';
+    save.settings.motion='REDUCED';
+    applyDisplaySettings();
+    toMenu();
+    renderMenu();
+    void document.body.offsetHeight;
+    return {
+      version:GAME_VERSION,
+      selected:save.selected,
+      frames:Object.keys(SHIPS).length,
+      visibleScreens:screens.filter(id => $(id).classList.contains('show')),
+      horizontalOverflow:$('titleScreen').querySelector('.titlePanel').scrollWidth>$('titleScreen').querySelector('.titlePanel').clientWidth
+    };
+  })()`);
+  if (setup.frames !== 10 || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'titleScreen' || setup.horizontalOverflow) {
+    throw new Error(`launch hangar not ready: ${JSON.stringify(setup)}`);
+  }
+  await delay(700);
+  await win.capturePage(undefined, { stayHidden: true });
+  const image = await win.capturePage(undefined, { stayHidden: true });
+  const size = image.getSize();
+  if (image.isEmpty() || size.width !== 1440 || size.height !== 810) throw new Error(`launch hangar capture invalid: ${JSON.stringify(size)}`);
+  const output = path.join(__dirname, '..', 'docs', 'launch-hangar-v0.86.0.png');
+  await mkdir(path.dirname(output), { recursive: true });
+  await writeFile(output, image.toPNG());
+  console.log(`[menu-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
+}
+
 async function runAutomatedCapture(win) {
+  if (menuCaptureMode) return captureMenu(win);
   if (steamCaptureMode) {
     const output = path.join(__dirname, '..', 'steam', 'store', 'screenshots');
     for (const preset of STEAM_CAPTURE_PRESETS) {
@@ -150,7 +182,7 @@ async function runAutomatedCapture(win) {
     return;
   }
   const preset = STEAM_CAPTURE_PRESETS[1];
-  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.85.0.png');
+  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.86.0.png');
   await captureScene(win, preset, output, { width: 1440, height: 810 });
 }
 

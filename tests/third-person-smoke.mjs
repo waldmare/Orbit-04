@@ -11,7 +11,7 @@ const pkg=JSON.parse(read('package.json'));
 
 assert.match(html,/type="module" src="game-3d\.mjs"/,'Three.js entrypoint is not active');
 assert.doesNotMatch(html,/<script[^>]+(?:phaser|visual-engine|game\.js)/i,'legacy renderer is still loaded');
-assert.equal(pkg.version,'0.85.0');
+assert.equal(pkg.version,'0.86.0');
 assert.ok(pkg.dependencies.three,'Three.js dependency is missing');
 assert.ok(!pkg.dependencies.phaser,'Phaser must not be an active dependency');
 

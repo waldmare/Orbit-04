@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.85.0-b8c2bc)
+![Version](https://img.shields.io/badge/version-0.86.0-b39a63)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-proprietary-f4ba68)
 
 ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.85.0`
+Current version: `0.86.0`
 
 ## Runtime overview
 
@@ -26,6 +26,7 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 ## Implemented game systems
 
 - 10 configurations of the single ORBIT//04 ark, each with individual statistics, a starting weapon, and a trait
+- a focused launch hangar with an authentic vector preview of every frame, three comparable ratings, and compact deployment choices
 - 11 automatic weapon systems rethemed around grief, survival instinct, memory, and absence
 - concise level-up cards that expose immediate impact and one nearest evolution or synergy without presenting the full build graph at once
 - 3 difficulty levels, 4 sectors, and 4 optional run contracts
@@ -36,7 +37,7 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 - continuous directional travel with camera-safe world scrolling and active-encounter preservation
 - deterministic conquered-universe generation beyond the starting view, including ash fields, wreckage, alien formations, and void sites
 - six exploration signals: repair, combat amplification, salvage, archive fragments, risk/reward relics, and hostile jammers
-- 18 persistent field notes with original, clearly labeled thematic echoes after Bernhard, Hamsun, Harry Haller in Hesse's *Steppenwolf*, Faulkner, Lem's *Solaris*, and Dostoevsky; none are presented as verbatim quotations
+- 18 persistent in-world crew records written for ORBIT//04, with no quotation or attribution to real authors or published works
 - a persistent, pausing Archive Reader with manual dismissal and deferred data rewards
 - tiered reward ribbons for chains, Signal Rush, Overdrive, captured signals, and boss defeats
 - an off-screen priority compass for bosses, Echo Hunters, and timed signal targets
@@ -77,9 +78,13 @@ The renderer includes:
 
 ## Runtime screenshot
 
-![ORBIT//04 version 0.85.0 Last Ark runtime capture](docs/runtime-screenshot-v0.85.0.png)
+![ORBIT//04 version 0.86.0 focused launch hangar](docs/launch-hangar-v0.86.0.png)
 
-This 1440 × 810 image was captured from the active 0.85.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
+The launch hangar capture shows the selected runtime frame silhouette, compact frame bay, comparable ratings, and mission configuration at the same 1440 × 810 presentation used by the desktop build.
+
+![ORBIT//04 version 0.86.0 Last Ark runtime capture](docs/runtime-screenshot-v0.86.0.png)
+
+This 1440 × 810 image was captured from the active 0.86.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
 
 ## Audio implementation
 
@@ -174,7 +179,13 @@ Capture the documented gameplay scene from the local Electron/WebGL build:
 npm.cmd run screenshot
 ```
 
-The capture command writes `docs/runtime-screenshot-v0.85.0.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+The capture command writes `docs/runtime-screenshot-v0.86.0.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+
+Capture the launch hangar and verify that it has no horizontal overflow:
+
+```bat
+npm.cmd run screenshot:menu
+```
 
 The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, renderer integration, runtime asset references, media file signatures, image dimensions, and the local Phaser bundle.
 
@@ -206,7 +217,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.85.0 adds a focused Field Directive layer that gives each run one secondary route through existing exploration and combat systems without introducing another currency or menu. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.86.0 replaces the dense launch grid with a focused frame hangar, adds restrained decayed-color accents, and removes all real-author attribution from the original in-world archive records. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

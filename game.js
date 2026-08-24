@@ -1,7 +1,7 @@
 'use strict';
 
 // ORBIT//04 top-down runtime. All game data is stored locally.
-const GAME_VERSION='0.85.0';
+const GAME_VERSION='0.86.0';
 const RUN_TARGET=720;
 const MAX_ENEMIES=700,MAX_FRIENDLY_BULLETS=1300,MAX_ENEMY_BULLETS=900,MAX_PARTICLES=1400;
 const SUPPORT_URL='';
@@ -30,27 +30,27 @@ const WORLD_NODE_TYPES={
   repair:{name:'LIFE-SUPPORT BEACON',color:'#c7cec8',disposition:'boon'},flux:{name:'MOURNING FIELD',color:'#d8dad4',disposition:'boon'},salvage:{name:'BLACK-BOX SALVAGE',color:'#bcae91',disposition:'boon'},
   archive:{name:'LAST WORD',color:'#d7c9aa',disposition:'archive'},relic:{name:'GRIEF RELIC',color:'#aaa1ac',disposition:'risk'},jammer:{name:'CHOIR SPORE',color:'#b06066',disposition:'hazard'}
 };
-// Original field text with explicit literary attribution. These are thematic
-// homages, not verbatim quotations from the named authors or works.
+// Original in-world writing created for ORBIT//04. Archive records do not quote,
+// imitate, or claim attribution to real authors or published works.
 const ARCHIVE_FRAGMENTS=[
-  {id:'bernhard_01',channel:'BERNHARD ECHO 01',text:'Every procedure survived the people it had been written to protect.',note:'Original field note · thematic echo after Thomas Bernhard · not a quotation.'},
-  {id:'bernhard_02',channel:'BERNHARD ECHO 02',text:'The ship remained efficient; only its reason for efficiency had disappeared.',note:'Original field note · thematic echo after Thomas Bernhard · not a quotation.'},
-  {id:'bernhard_03',channel:'BERNHARD ECHO 03',text:'We repeated the diagnosis until repetition became the disease.',note:'Original field note · thematic echo after Thomas Bernhard · not a quotation.'},
-  {id:'hamsun_01',channel:'HAMSUN ECHO 01',text:'Hunger gave the empty dark a direction and the body a law.',note:'Original field note · thematic echo after Knut Hamsun · not a quotation.'},
-  {id:'hamsun_02',channel:'HAMSUN ECHO 02',text:'The last human sound aboard was someone breathing behind a closed door.',note:'Original field note · thematic echo after Knut Hamsun · not a quotation.'},
-  {id:'hamsun_03',channel:'HAMSUN ECHO 03',text:'Distance became measurable only when there was nowhere left to arrive.',note:'Original field note · thematic echo after Knut Hamsun · not a quotation.'},
-  {id:'solaris_01',channel:'SOLARIS ECHO 01',text:'The alien did not answer us. It arranged our memories and waited.',note:'Original field note · thematic echo after Stanisław Lem’s Solaris · not a quotation.'},
-  {id:'solaris_02',channel:'SOLARIS ECHO 02',text:'We mistook recognition for contact because solitude had made us credulous.',note:'Original field note · thematic echo after Stanisław Lem’s Solaris · not a quotation.'},
-  {id:'solaris_03',channel:'SOLARIS ECHO 03',text:'The ocean learned our faces; we never learned what it wanted.',note:'Original field note · thematic echo after Stanisław Lem’s Solaris · not a quotation.'},
-  {id:'haller_01',channel:'HALLER DOSSIER 01',text:'The crew divided itself into acceptable selves and locked the rest below deck.',note:'Original field note · thematic echo after Harry Haller in Hermann Hesse’s Steppenwolf · not a quotation.'},
-  {id:'haller_02',channel:'HALLER DOSSIER 02',text:'Civilization ended quietly; the animal in us remained awake.',note:'Original field note · thematic echo after Harry Haller in Hermann Hesse’s Steppenwolf · not a quotation.'},
-  {id:'haller_03',channel:'HALLER DOSSIER 03',text:'There are corridors in the mind that no navigation chart survives.',note:'Original field note · thematic echo after Harry Haller in Hermann Hesse’s Steppenwolf · not a quotation.'},
-  {id:'faulkner_01',channel:'FAULKNER ECHO 01',text:'The dead did not leave us. They became the grammar of every order.',note:'Original field note · thematic echo after William Faulkner · not a quotation.'},
-  {id:'faulkner_02',channel:'FAULKNER ECHO 02',text:'Time aboard the ship did not pass; it accumulated.',note:'Original field note · thematic echo after William Faulkner · not a quotation.'},
-  {id:'faulkner_03',channel:'FAULKNER ECHO 03',text:'Home was a word we preserved after its last location burned.',note:'Original field note · thematic echo after William Faulkner · not a quotation.'},
-  {id:'dostoevsky_01',channel:'DOSTOEVSKY ECHO 01',text:'A person can endure almost any darkness once he decides it was chosen.',note:'Original field note · thematic echo after Fyodor Dostoevsky · not a quotation.'},
-  {id:'dostoevsky_02',channel:'DOSTOEVSKY ECHO 02',text:'Guilt survived the species more faithfully than its monuments.',note:'Original field note · thematic echo after Fyodor Dostoevsky · not a quotation.'},
-  {id:'dostoevsky_03',channel:'DOSTOEVSKY ECHO 03',text:'The final confession was addressed to nobody and transmitted anyway.',note:'Original field note · thematic echo after Fyodor Dostoevsky · not a quotation.'}
+  {id:'bernhard_01',channel:'BRIDGE RECORD 04-A',text:'Every procedure survived the people it had been written to protect.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'bernhard_02',channel:'SYSTEMS RECORD 04-B',text:'The ship remained efficient; only its reason for efficiency had disappeared.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'bernhard_03',channel:'MEDICAL RECORD 04-C',text:'We repeated the diagnosis until repetition became the disease.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'hamsun_01',channel:'SURVIVOR LOG 07-A',text:'Hunger gave the empty dark a direction and the body a law.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'hamsun_02',channel:'SURVIVOR LOG 07-B',text:'The last human sound aboard was someone breathing behind a closed door.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'hamsun_03',channel:'NAVIGATION LOG 07-C',text:'Distance became measurable only when there was nowhere left to arrive.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'solaris_01',channel:'SIGNAL ANALYSIS 12-A',text:'The alien did not answer us. It arranged our memories and waited.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'solaris_02',channel:'SIGNAL ANALYSIS 12-B',text:'We mistook recognition for contact because solitude had made us credulous.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'solaris_03',channel:'SIGNAL ANALYSIS 12-C',text:'The ocean learned our faces; we never learned what it wanted.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'haller_01',channel:'CREW ASSESSMENT 09-A',text:'The crew divided itself into acceptable selves and locked the rest below deck.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'haller_02',channel:'CREW ASSESSMENT 09-B',text:'Civilization ended quietly; the animal in us remained awake.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'haller_03',channel:'CREW ASSESSMENT 09-C',text:'There are corridors in the mind that no navigation chart survives.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'faulkner_01',channel:'MEMORY CORE 02-A',text:'The dead did not leave us. They became the grammar of every order.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'faulkner_02',channel:'MEMORY CORE 02-B',text:'Time aboard the ship did not pass; it accumulated.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'faulkner_03',channel:'MEMORY CORE 02-C',text:'Home was a word we preserved after its last location burned.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'dostoevsky_01',channel:'FINAL TRANSMISSION 01-A',text:'A person can endure almost any darkness once he decides it was chosen.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'dostoevsky_02',channel:'FINAL TRANSMISSION 01-B',text:'Guilt survived the species more faithfully than its monuments.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'dostoevsky_03',channel:'FINAL TRANSMISSION 01-C',text:'The final confession was addressed to nobody and transmitted anyway.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'}
 ];
 const ENGINE_ASSETS={
   backgrounds:{deep:'assets/visuals/background-dead-universe-v1.png',pulsar:'assets/visuals/background-dead-universe-v1.png',rift:'assets/visuals/background-alien-veil-v1.png',supernova:'assets/visuals/background-alien-veil-v1.png'},
@@ -187,16 +187,16 @@ const CONTRACTS={
   FRAGILE:{name:'GLASS ORBIT',desc:'Maximum hull -25%, crit +8%. +50% score / +25% credits.',hp:1,damage:1,speed:1.05,spawn:1.08,score:1.50,credits:1.25,heal:1,hull:.75,crit:.08}
 };
 const SHIPS={
-  striker:{name:'WATCHKEEPER',cost:0,desc:'Balanced ORBIT//04 configuration. The default for keeping the ark alive.',trait:'ADAPTIVE BUS',traitDesc:'+2% weapon output per equipped system.',hp:88,speed:222,armor:0,damage:1,fire:1,crit:.04,weapon:'pulse'},
-  bastion:{name:'CENOTAPH',cost:260,desc:'Armored ORBIT//04 configuration. Slow, heavy, built to remember every impact.',trait:'REACTIVE PLATING',traitDesc:'First hit every 10 sec deals 55% less damage.',hp:124,speed:180,armor:.10,damage:1.07,fire:.95,crit:.02,weapon:'rail'},
-  wraith:{name:'PENITENT',cost:460,desc:'Fast ORBIT//04 configuration. Fragile hull and ruthless target selection.',trait:'EXECUTION LOGIC',traitDesc:'+20% damage against hostiles below 35% hull.',hp:70,speed:258,armor:0,damage:.97,fire:1.08,crit:.12,weapon:'missile'},
-  specter:{name:'ORPHAN',cost:720,desc:'Extreme-mobility ORBIT//04 configuration. Minimal protection, no escort.',trait:'SLIPSTREAM',traitDesc:'Grazes feed a short OVERDRIVE pulse.',hp:60,speed:288,armor:0,damage:.94,fire:1.13,crit:.14,weapon:'arc'},
-  bulwark:{name:'ARK',cost:980,desc:'Carrier configuration protecting the final human population.',trait:'SURVIVOR BUS',traitDesc:'+1 drone and +1 converted organism capacity.',hp:110,speed:194,armor:.07,damage:1.09,fire:.98,crit:.03,weapon:'drone'},
-  oracle:{name:'WITNESS',cost:1250,desc:'Signal-warfare configuration that turns alien reflexes against the swarm.',trait:'FALSE NERVE',traitDesc:'Conversion chance +25%.',hp:78,speed:228,armor:.02,damage:1.02,fire:1.02,crit:.06,weapon:'beam',startPassive:'iff'},
-  vector:{name:'LAST LIGHT',cost:1600,desc:'Unstable reactor configuration. Small hull, catastrophic output.',trait:'CHAIN REACTOR',traitDesc:'OVERDRIVE milestones emit a free Dead Sun pulse.',hp:58,speed:266,armor:0,damage:1.20,fire:1.09,crit:.10,weapon:'nova'},
-  talon:{name:'HUNGER',cost:2050,desc:'Close-range configuration that survives by moving toward the threat.',trait:'POINT BLANK',traitDesc:'+22% damage to hostiles within 150 units.',hp:76,speed:238,armor:.02,damage:1.08,fire:1.04,crit:.06,weapon:'flak'},
-  halo:{name:'MOURNER',cost:2500,desc:'High-speed configuration surrounded by a permanent ring of blades.',trait:'CIRCUMFERENCE',traitDesc:'Orbiting Teeth output +28% while moving.',hp:68,speed:278,armor:0,damage:1.00,fire:1.10,crit:.08,weapon:'blade'},
-  event:{name:'ABSENCE',cost:3200,desc:'Heavy singularity configuration that removes matter from occupied space.',trait:'DEEP WELL',traitDesc:'Absence radius +22% and pull +25%.',hp:100,speed:202,armor:.06,damage:1.13,fire:.97,crit:.04,weapon:'rift'}
+  striker:{name:'WATCHKEEPER',role:'ADAPTIVE GUNSHIP',cost:0,desc:'Balanced ORBIT//04 configuration. The default for keeping the ark alive.',trait:'ADAPTIVE BUS',traitDesc:'+2% weapon output per equipped system.',hp:88,speed:222,armor:0,damage:1,fire:1,crit:.04,weapon:'pulse'},
+  bastion:{name:'CENOTAPH',role:'ARMORED LANCER',cost:260,desc:'Armored ORBIT//04 configuration. Slow, heavy, built to remember every impact.',trait:'REACTIVE PLATING',traitDesc:'First hit every 10 sec deals 55% less damage.',hp:124,speed:180,armor:.10,damage:1.07,fire:.95,crit:.02,weapon:'rail'},
+  wraith:{name:'PENITENT',role:'MISSILE INTERCEPTOR',cost:460,desc:'Fast ORBIT//04 configuration. Fragile hull and ruthless target selection.',trait:'EXECUTION LOGIC',traitDesc:'+20% damage against hostiles below 35% hull.',hp:70,speed:258,armor:0,damage:.97,fire:1.08,crit:.12,weapon:'missile'},
+  specter:{name:'ORPHAN',role:'GRAZE SKIRMISHER',cost:720,desc:'Extreme-mobility ORBIT//04 configuration. Minimal protection, no escort.',trait:'SLIPSTREAM',traitDesc:'Grazes feed a short OVERDRIVE pulse.',hp:60,speed:288,armor:0,damage:.94,fire:1.13,crit:.14,weapon:'arc'},
+  bulwark:{name:'ARK',role:'DRONE CARRIER',cost:980,desc:'Carrier configuration protecting the final human population.',trait:'SURVIVOR BUS',traitDesc:'+1 drone and +1 converted organism capacity.',hp:110,speed:194,armor:.07,damage:1.09,fire:.98,crit:.03,weapon:'drone'},
+  oracle:{name:'WITNESS',role:'SIGNAL CONVERTER',cost:1250,desc:'Signal-warfare configuration that turns alien reflexes against the swarm.',trait:'FALSE NERVE',traitDesc:'Conversion chance +25%.',hp:78,speed:228,armor:.02,damage:1.02,fire:1.02,crit:.06,weapon:'beam',startPassive:'iff'},
+  vector:{name:'LAST LIGHT',role:'NOVA REACTOR',cost:1600,desc:'Unstable reactor configuration. Small hull, catastrophic output.',trait:'CHAIN REACTOR',traitDesc:'OVERDRIVE milestones emit a free Dead Sun pulse.',hp:58,speed:266,armor:0,damage:1.20,fire:1.09,crit:.10,weapon:'nova'},
+  talon:{name:'HUNGER',role:'CLOSE-RANGE BRAWLER',cost:2050,desc:'Close-range configuration that survives by moving toward the threat.',trait:'POINT BLANK',traitDesc:'+22% damage to hostiles within 150 units.',hp:76,speed:238,armor:.02,damage:1.08,fire:1.04,crit:.06,weapon:'flak'},
+  halo:{name:'MOURNER',role:'ORBITAL BLADE',cost:2500,desc:'High-speed configuration surrounded by a permanent ring of blades.',trait:'CIRCUMFERENCE',traitDesc:'Orbiting Teeth output +28% while moving.',hp:68,speed:278,armor:0,damage:1.00,fire:1.10,crit:.08,weapon:'blade'},
+  event:{name:'ABSENCE',role:'GRAVITY CRUISER',cost:3200,desc:'Heavy singularity configuration that removes matter from occupied space.',trait:'DEEP WELL',traitDesc:'Absence radius +22% and pull +25%.',hp:100,speed:202,armor:.06,damage:1.13,fire:.97,crit:.04,weapon:'rift'}
 };
 const WEAPON_META={
   pulse:{name:'LAST SIGNAL',evo:'LAST CHORUS',req:'overclock',desc:'A disciplined stream of the ark’s remaining conventional ammunition.'},
@@ -373,16 +373,55 @@ function checkMetaAchievements(){
 }
 
 // ---------- MENU / SETTINGS ----------
+const HANGAR_PALETTES={
+  striker:{main:'#d0d1c4',edge:'#788980',accent:'#a0aa78'},bastion:{main:'#cbc5ad',edge:'#7c755b',accent:'#b3995e'},
+  wraith:{main:'#c2b8b5',edge:'#785c5a',accent:'#995a53'},specter:{main:'#bbb8aa',edge:'#626955',accent:'#87936a'},
+  bulwark:{main:'#c5c8b7',edge:'#65735e',accent:'#809064'},oracle:{main:'#c5c1b5',edge:'#6c7a75',accent:'#829894'},
+  vector:{main:'#c7b9aa',edge:'#805b4d',accent:'#a66c50'},talon:{main:'#c7bea8',edge:'#79664c',accent:'#a88958'},
+  halo:{main:'#c0b7bc',edge:'#705e69',accent:'#8f7380'},event:{main:'#bcbeb4',edge:'#59665f',accent:'#768a78'}
+};
+const hangarShipPalette=id=>HANGAR_PALETTES[id]||HANGAR_PALETTES.striker;
+function renderShipCanvas(canvas,id,large=false,locked=false){
+  if(!canvas||typeof canvas.getContext!=='function')return false;
+  const ctx=canvas.getContext('2d');if(!ctx)return false;
+  const cssWidth=canvas.clientWidth||(large?520:150),cssHeight=canvas.clientHeight||(large?300:78),dpr=Math.min(2,window.devicePixelRatio||1);
+  canvas.width=Math.round(cssWidth*dpr);canvas.height=Math.round(cssHeight*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssWidth,cssHeight);
+  const pal=hangarShipPalette(id),hex=(value,alpha)=>{const raw=value.replace('#','');const n=parseInt(raw.length===3?raw.split('').map(x=>x+x).join(''):raw,16);return `rgba(${n>>16},${n>>8&255},${n&255},${alpha})`};
+  const seed=[...id].reduce((sum,ch)=>sum+ch.charCodeAt(0),0),cx=cssWidth*(large?.48:.5),cy=cssHeight*(large?.52:.42),scale=large?5.2:1.22;
+  const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,large?cssHeight*.48:cssHeight*.65);glow.addColorStop(0,hex(pal.accent,locked?.05:.18));glow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,cssWidth,cssHeight);
+  ctx.save();ctx.strokeStyle=hex(pal.accent,locked?.08:.20);ctx.lineWidth=large?1.2:.7;for(const radius of large?[62,102]:[23]){ctx.beginPath();ctx.arc(cx,cy,radius,Math.PI*.12,Math.PI*1.63);ctx.stroke()}ctx.restore();
+  const stars=large?24:7;for(let i=0;i<stars;i++){const x=(seed*31+i*79)%Math.max(1,Math.floor(cssWidth)),y=(seed*17+i*47)%Math.max(1,Math.floor(cssHeight));ctx.fillStyle=i%5===0?hex(pal.accent,locked?.09:.34):'rgba(210,216,206,.16)';ctx.fillRect(x,y,i%6===0?1.5:1,i%6===0?1.5:1)}
+  const shape=SHIP_SHAPES[id]||SHIP_SHAPES.striker,points=shape.map(([x,y])=>[cx+x*scale,cy+y*scale]);
+  const path=pts=>{ctx.beginPath();pts.forEach(([x,y],index)=>index?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath()};
+  ctx.save();ctx.shadowColor=hex(pal.accent,locked?.05:.46);ctx.shadowBlur=large?28:10;path(points);ctx.fillStyle=locked?'rgba(76,79,74,.72)':hex(pal.main,.96);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle=locked?'rgba(132,136,129,.42)':hex(pal.edge,.92);ctx.lineWidth=large?1.8:1;ctx.stroke();ctx.restore();
+  const panel=(coords,fill)=>{path(coords.map(([x,y])=>[cx+x*scale,cy+y*scale]));ctx.fillStyle=fill;ctx.fill()};
+  panel([[-2,-2],[-7,-3],[-12,4],[-6,6]],locked?'rgba(90,93,87,.48)':hex(pal.edge,.62));panel([[2,-2],[7,-3],[12,4],[6,6]],locked?'rgba(90,93,87,.48)':hex(pal.edge,.62));
+  panel([[0,-13],[4,-4],[2,1],[-2,1],[-4,-4]],locked?'rgba(120,122,115,.55)':hex(pal.accent,.94));
+  ctx.strokeStyle=locked?'rgba(185,185,175,.18)':'rgba(255,255,246,.33)';ctx.lineWidth=large?1.2:.65;ctx.beginPath();ctx.moveTo(cx,cy-9*scale);ctx.lineTo(cx,cy+10*scale);ctx.stroke();
+  const flame=ctx.createLinearGradient(cx,cy+13*scale,cx,cy+24*scale);flame.addColorStop(0,locked?'rgba(110,111,105,.35)':hex(pal.main,.9));flame.addColorStop(.5,locked?'rgba(88,89,83,.22)':hex(pal.accent,.62));flame.addColorStop(1,'rgba(0,0,0,0)');panel([[0,13],[-2.6,19],[0,24],[2.6,19]],flame);
+  return true;
+}
+function renderFrameBrief(id){
+  const s=SHIPS[id]||SHIPS.striker,w=WEAPON_META[s.weapon],mastery=masteryLevel(id),pal=hangarShipPalette(id);
+  $('frameStage').style['--frame-accent']=pal.accent;$('frameStage').style['--frame-edge']=pal.edge;
+  $('frameName').textContent=s.name;$('frameRole').textContent=s.role;$('frameDescription').textContent=s.desc;$('frameMastery').textContent=`MASTERY M${mastery}`;$('frameMastery').style.color=masteryColor(mastery);
+  $('frameWeapon').textContent=w.name;$('frameWeaponDesc').textContent=w.desc;$('frameTrait').textContent=s.trait;$('frameTraitDesc').textContent=s.traitDesc;$('frameAvailability').textContent='READY FOR DEPLOYMENT';
+  $('frameHullValue').textContent=s.hp;$('frameSpeedValue').textContent=s.speed;$('frameOutputValue').textContent=`${Math.round(s.damage*100)}%`;
+  $('frameHullBar').style.width=`${clamp(s.hp/130*100,8,100)}%`;$('frameSpeedBar').style.width=`${clamp(s.speed/300*100,8,100)}%`;$('frameOutputBar').style.width=`${clamp(s.damage/1.25*100,8,100)}%`;
+  $('frameRosterCount').textContent=`${save.unlocked.length} / ${Object.keys(SHIPS).length} UNLOCKED`;renderShipCanvas($('framePreview'),id,true,false);
+}
 function renderMenu(){
   $('saveLine').textContent=`${save.credits} CR · BEST ${Math.floor(save.bestScore)}`;
   $('researchLevelText').textContent=researchLevels();$('achievementCountText').textContent=`${save.achievements.length}/${Object.keys(ACHIEVEMENTS).length}`;$('lifetimeKillsText').textContent=save.totalKills;$('operationCountText').textContent=`${save.claimedOperations.length}/${Object.keys(OPERATIONS).length}${readyOperations().length?` · ${readyOperations().length} READY`:''}`;
   const d=DIFFICULTIES[save.difficulty]||DIFFICULTIES.STANDARD;$('difficultyBtn').textContent=d.name;$('difficultyDesc').textContent=d.desc;const contract=CONTRACTS[save.contract]||CONTRACTS.NONE;$('contractBtn').textContent=contract.name;$('contractDesc').textContent=contract.desc;const sector=SECTORS[save.sector]||SECTORS.AURORA;$('sectorBtn').textContent=sector.name;$('sectorDesc').textContent=sector.desc;
+  const selectedId=save.unlocked.includes(save.selected)&&SHIPS[save.selected]?save.selected:'striker';if(save.selected!==selectedId)save.selected=selectedId;renderFrameBrief(selectedId);
   const grid=$('shipGrid');grid.innerHTML='';
   for(const [id,s] of Object.entries(SHIPS)){
     const unlocked=save.unlocked.includes(id),selected=save.selected===id;const b=document.createElement('button');b.className=`shipCard${selected?' selected':''}`;
     const cost=id==='oracle'&&save.achievements.includes('iff_friend')?Math.floor(s.cost*.7):s.cost;
-    const mastery=masteryLevel(id);b.innerHTML=`<div><div class="shipName">${s.name}</div><div class="tiny" style="margin-top:5px">${s.desc}</div></div><div><div class="stat"><span>HULL</span><span>${s.hp}</span></div><div class="stat"><span>SPEED</span><span>${s.speed}</span></div><div class="stat"><span>START</span><span>${WEAPON_META[s.weapon].name}</span></div><div class="stat"><span>TRAIT</span><span>${s.trait}</span></div><div class="tiny" style="margin-top:4px">${s.traitDesc}</div><div class="stat"><span>MASTERY</span><span style="color:${masteryColor(mastery)}">M${mastery}</span></div>${unlocked?'':`<div class="shipLock">UNLOCK — ${cost} CR</div>`}</div>`;
+    const mastery=masteryLevel(id);b.style['--ship-accent']=hangarShipPalette(id).accent;b.setAttribute('aria-label',`${s.name}, ${s.role}${unlocked?', unlocked':`, locked, ${cost} credits`}`);b.innerHTML=`<canvas class="shipThumb" width="150" height="68" aria-hidden="true"></canvas><span class="shipCardTop"><b class="shipName">${s.name}</b><i style="color:${masteryColor(mastery)}">M${mastery}</i></span><span class="shipCardRole">${s.role}</span><span class="shipCardStatus">${selected?'ACTIVE':unlocked?'AVAILABLE':`${cost} CR`}</span>`;
     b.onclick=()=>{AUDIO.sfx('ui');if(!unlocked){if(save.credits>=cost){save.credits-=cost;save.unlocked.push(id);save.selected=id;persist();checkMetaAchievements()}else toast('INSUFFICIENT CREDITS',`${cost-save.credits} CR required.`);return}save.selected=id;persist()};grid.appendChild(b);
+    renderShipCanvas(b.querySelector('canvas'),id,false,!unlocked);
   }
   $('startBtn').disabled=!save.unlocked.includes(save.selected);
   if(SUPPORT_URL&&BUILD_TARGET==='web')$('supportBtn').classList.remove('hidden');else $('supportBtn').classList.add('hidden');

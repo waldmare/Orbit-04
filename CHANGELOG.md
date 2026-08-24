@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.86.0 — Focused Launch Hangar
+
+- replaced the dense full-detail frame grid with one large selected-frame presentation and a compact visual frame bay
+- added authentic vector previews for all ten playable configurations using their runtime silhouettes and individual hull palettes
+- reduced comparison noise to hull, speed, output, starting system, and one concrete frame trait
+- reorganized difficulty, sector, contract, profile progress, and launch actions to fit without horizontal scrolling at the target resolution
+- introduced restrained rotten olive, oxidized metal, old gold, dried blood, and ashen-blue accents while preserving the depressive dark-space direction
+- removed all real-author names and literary-work references from Archive records
+- reframed all eighteen Archive entries as original, fictional ORBIT//04 crew records with no external quotation or attribution
+- preserved archive discovery IDs so existing save files retain every recovered record
+
 ## 0.85.0 — Field Directives
 
 - added one deterministic secondary directive per run instead of a stack of simultaneous checklist objectives
@@ -56,8 +67,8 @@
 - replaced the colorful space plates with two ashen, low-saturation environment backgrounds and restrained celestial animation
 - renamed all ship configurations, weapons, evolutions, passive modules, sectors, world signals, enemy classes, and bosses around the last-human premise
 - replaced the active soundtrack with three licensed dark-ambient tracks and preserved adaptive exploration, combat, and boss crossfades
-- expanded the persistent literary field notes from 9 to 18 across Bernhard, Hamsun, Haller/Hesse, Faulkner, Lem, and Dostoevsky influences
-- labels every field note as original writing and explicitly states that it is not a quotation
+- expanded the persistent fictional crew archive from 9 to 18 original in-world records
+- kept archive records separate from real authors and published works
 - reserved red for danger cues while moving navigation, progression, and interface effects into a graphite, ash, bone, and tarnished-silver palette
 - preserved enemy health, movement, damage, spawn composition, weapon output, progression, and reward balance
 
@@ -80,8 +91,8 @@
 - moved effects-line drawing to an engine-level method shared by energy and destruction effects
 - added a direct renderer regression test that executes a destruction effect instead of relying only on static integration checks
 - added procedurally generated Archive Fragment signals with modest credit, data, score, sound, and visual feedback
-- added 9 persistent Codex discoveries: original thematic echoes after Thomas Bernhard, Knut Hamsun, and Stanisław Lem's *Solaris*
-- labels every literary fragment as original field text rather than presenting it as a verbatim quotation
+- added 9 persistent Codex discoveries containing original in-world crew records
+- presented every fragment as fictional ORBIT//04 archive material
 - added recovered-archive progress to lifetime statistics and the run summary
 - preserved all ship statistics, enemy balance, spawn timing, weapons, and combat progression
 
