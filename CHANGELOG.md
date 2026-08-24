@@ -9,7 +9,7 @@
 - introduced restrained rotten olive, oxidized metal, old gold, dried blood, and ashen-blue accents while preserving the depressive dark-space direction
 - removed all real-author names and literary-work references from Archive records
 - reframed all eighteen Archive entries as original, fictional ORBIT//04 crew records with no external quotation or attribution
-- preserved archive discovery IDs so existing save files retain every recovered record
+- migrated legacy archive discovery IDs to neutral record keys so existing save files retain every recovered entry
 
 ## 0.85.0 — Field Directives
 

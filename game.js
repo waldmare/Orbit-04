@@ -30,27 +30,36 @@ const WORLD_NODE_TYPES={
   repair:{name:'LIFE-SUPPORT BEACON',color:'#c7cec8',disposition:'boon'},flux:{name:'MOURNING FIELD',color:'#d8dad4',disposition:'boon'},salvage:{name:'BLACK-BOX SALVAGE',color:'#bcae91',disposition:'boon'},
   archive:{name:'LAST WORD',color:'#d7c9aa',disposition:'archive'},relic:{name:'GRIEF RELIC',color:'#aaa1ac',disposition:'risk'},jammer:{name:'CHOIR SPORE',color:'#b06066',disposition:'hazard'}
 };
-// Original in-world writing created for ORBIT//04. Archive records do not quote,
-// imitate, or claim attribution to real authors or published works.
+// Original in-world writing created for ORBIT//04. Current Archive records do
+// not quote or claim attribution to real authors or published works.
+const LEGACY_ARCHIVE_ID_MAP={
+  bernhard_01:'bridge_04a',bernhard_02:'systems_04b',bernhard_03:'medical_04c',
+  hamsun_01:'survivor_07a',hamsun_02:'survivor_07b',hamsun_03:'navigation_07c',
+  solaris_01:'signal_12a',solaris_02:'signal_12b',solaris_03:'signal_12c',
+  haller_01:'crew_09a',haller_02:'crew_09b',haller_03:'crew_09c',
+  faulkner_01:'memory_02a',faulkner_02:'memory_02b',faulkner_03:'memory_02c',
+  dostoevsky_01:'transmission_01a',dostoevsky_02:'transmission_01b',dostoevsky_03:'transmission_01c'
+};
+const normalizeArchiveIds=ids=>[...new Set(ids.map(id=>LEGACY_ARCHIVE_ID_MAP[id]||id))];
 const ARCHIVE_FRAGMENTS=[
-  {id:'bernhard_01',channel:'BRIDGE RECORD 04-A',text:'Every procedure survived the people it had been written to protect.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'bernhard_02',channel:'SYSTEMS RECORD 04-B',text:'The ship remained efficient; only its reason for efficiency had disappeared.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'bernhard_03',channel:'MEDICAL RECORD 04-C',text:'We repeated the diagnosis until repetition became the disease.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'hamsun_01',channel:'SURVIVOR LOG 07-A',text:'Hunger gave the empty dark a direction and the body a law.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'hamsun_02',channel:'SURVIVOR LOG 07-B',text:'The last human sound aboard was someone breathing behind a closed door.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'hamsun_03',channel:'NAVIGATION LOG 07-C',text:'Distance became measurable only when there was nowhere left to arrive.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'solaris_01',channel:'SIGNAL ANALYSIS 12-A',text:'The alien did not answer us. It arranged our memories and waited.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'solaris_02',channel:'SIGNAL ANALYSIS 12-B',text:'We mistook recognition for contact because solitude had made us credulous.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'solaris_03',channel:'SIGNAL ANALYSIS 12-C',text:'The ocean learned our faces; we never learned what it wanted.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'haller_01',channel:'CREW ASSESSMENT 09-A',text:'The crew divided itself into acceptable selves and locked the rest below deck.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'haller_02',channel:'CREW ASSESSMENT 09-B',text:'Civilization ended quietly; the animal in us remained awake.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'haller_03',channel:'CREW ASSESSMENT 09-C',text:'There are corridors in the mind that no navigation chart survives.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'faulkner_01',channel:'MEMORY CORE 02-A',text:'The dead did not leave us. They became the grammar of every order.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'faulkner_02',channel:'MEMORY CORE 02-B',text:'Time aboard the ship did not pass; it accumulated.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'faulkner_03',channel:'MEMORY CORE 02-C',text:'Home was a word we preserved after its last location burned.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'dostoevsky_01',channel:'FINAL TRANSMISSION 01-A',text:'A person can endure almost any darkness once he decides it was chosen.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'dostoevsky_02',channel:'FINAL TRANSMISSION 01-B',text:'Guilt survived the species more faithfully than its monuments.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
-  {id:'dostoevsky_03',channel:'FINAL TRANSMISSION 01-C',text:'The final confession was addressed to nobody and transmitted anyway.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'}
+  {id:'bridge_04a',channel:'BRIDGE RECORD 04-A',text:'Every procedure survived the people it had been written to protect.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'systems_04b',channel:'SYSTEMS RECORD 04-B',text:'The ship remained efficient; only its reason for efficiency had disappeared.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'medical_04c',channel:'MEDICAL RECORD 04-C',text:'We repeated the diagnosis until repetition became the disease.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'survivor_07a',channel:'SURVIVOR LOG 07-A',text:'Hunger gave the empty dark a direction and the body a law.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'survivor_07b',channel:'SURVIVOR LOG 07-B',text:'The last human sound aboard was someone breathing behind a closed door.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'navigation_07c',channel:'NAVIGATION LOG 07-C',text:'Distance became measurable only when there was nowhere left to arrive.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'signal_12a',channel:'SIGNAL ANALYSIS 12-A',text:'The alien did not answer us. It arranged our memories and waited.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'signal_12b',channel:'SIGNAL ANALYSIS 12-B',text:'We mistook recognition for contact because solitude had made us credulous.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'signal_12c',channel:'SIGNAL ANALYSIS 12-C',text:'The ocean learned our faces; we never learned what it wanted.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'crew_09a',channel:'CREW ASSESSMENT 09-A',text:'The crew divided itself into acceptable selves and locked the rest below deck.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'crew_09b',channel:'CREW ASSESSMENT 09-B',text:'Civilization ended quietly; the animal in us remained awake.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'crew_09c',channel:'CREW ASSESSMENT 09-C',text:'There are corridors in the mind that no navigation chart survives.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'memory_02a',channel:'MEMORY CORE 02-A',text:'The dead did not leave us. They became the grammar of every order.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'memory_02b',channel:'MEMORY CORE 02-B',text:'Time aboard the ship did not pass; it accumulated.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'memory_02c',channel:'MEMORY CORE 02-C',text:'Home was a word we preserved after its last location burned.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'transmission_01a',channel:'FINAL TRANSMISSION 01-A',text:'A person can endure almost any darkness once he decides it was chosen.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'transmission_01b',channel:'FINAL TRANSMISSION 01-B',text:'Guilt survived the species more faithfully than its monuments.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'},
+  {id:'transmission_01c',channel:'FINAL TRANSMISSION 01-C',text:'The final confession was addressed to nobody and transmitted anyway.',note:'ARK ARCHIVE · AUTHOR UNKNOWN · RECORD INCOMPLETE'}
 ];
 const ENGINE_ASSETS={
   backgrounds:{deep:'assets/visuals/background-dead-universe-v1.png',pulsar:'assets/visuals/background-dead-universe-v1.png',rift:'assets/visuals/background-alien-veil-v1.png',supernova:'assets/visuals/background-alien-veil-v1.png'},
@@ -92,7 +101,7 @@ const OLD_SAVE_KEY='orbit04-save-v1';
 const DEFAULT_SETTINGS={playerHp:'BOTH',enemyHp:'ELITES',xpReadout:'BOTH',damageNumbers:'CRITS',telegraphs:'ON',hints:'ON',mouse:'HOLD',targetPriority:'NEAREST',autoPause:'ON',shake:'ON',flash:'ON',motion:'FULL',uiScale:'XL',particles:'HIGH',graphics:'HIGH',effectClarity:'HIGH',glow:'ON',background:'FULL',contrast:'HIGH',audio:'ON',audioMix:'CINEMA',sfxVolume:'100%',musicVolume:'70%'};
 const DEFAULT_STATS={totalDamage:0,damageTaken:0,bosses:0,highestLevel:1,bestChain:0,bestGrazeChain:0,totalGrazes:0,signalRushes:0,clears:0,hardlineClears:0,blackoutClears:0,playTime:0,caches:0,conversions:0,flawlessBosses:0,secretEvents:0,nemeses:0,doctrinesChosen:0,operationsClaimed:0,ascensions:0,endlessTime:0,overcharges:0,fieldSignals:0,archiveFragments:0,hazardsTriggered:0,distanceTraveled:0,directivesCompleted:0};
 const DEFAULT_SAVE={credits:0,bestScore:0,bestTime:0,bestAscension:0,totalKills:0,runs:0,unlocked:['striker'],selected:'striker',difficulty:'STANDARD',contract:'NONE',sector:'AURORA',achievements:[],claimedOperations:[],research:{},shipMastery:{},sectorClears:{},discoveredWeapons:['pulse'],discoveredEnemies:['scout'],discoveredEvolutions:[],discoveredSynergies:[],discoveredArtifacts:[],discoveredArchives:[],stats:{...DEFAULT_STATS},settings:{...DEFAULT_SETTINGS}};
-function deepProfile(raw={}){return {...DEFAULT_SAVE,...raw,unlocked:Array.isArray(raw.unlocked)?raw.unlocked:['striker'],achievements:Array.isArray(raw.achievements)?raw.achievements:[],claimedOperations:Array.isArray(raw.claimedOperations)?raw.claimedOperations:[],research:{...(raw.research||{})},shipMastery:{...(raw.shipMastery||{})},sectorClears:{...(raw.sectorClears||{})},discoveredWeapons:Array.isArray(raw.discoveredWeapons)?raw.discoveredWeapons:['pulse'],discoveredEnemies:Array.isArray(raw.discoveredEnemies)?raw.discoveredEnemies:['scout'],discoveredEvolutions:Array.isArray(raw.discoveredEvolutions)?raw.discoveredEvolutions:[],discoveredSynergies:Array.isArray(raw.discoveredSynergies)?raw.discoveredSynergies:[],discoveredArtifacts:Array.isArray(raw.discoveredArtifacts)?raw.discoveredArtifacts:[],discoveredArchives:Array.isArray(raw.discoveredArchives)?raw.discoveredArchives:[],stats:{...DEFAULT_STATS,...(raw.stats||{})},settings:{...DEFAULT_SETTINGS,...(raw.settings||{})}}}
+function deepProfile(raw={}){return {...DEFAULT_SAVE,...raw,unlocked:Array.isArray(raw.unlocked)?raw.unlocked:['striker'],achievements:Array.isArray(raw.achievements)?raw.achievements:[],claimedOperations:Array.isArray(raw.claimedOperations)?raw.claimedOperations:[],research:{...(raw.research||{})},shipMastery:{...(raw.shipMastery||{})},sectorClears:{...(raw.sectorClears||{})},discoveredWeapons:Array.isArray(raw.discoveredWeapons)?raw.discoveredWeapons:['pulse'],discoveredEnemies:Array.isArray(raw.discoveredEnemies)?raw.discoveredEnemies:['scout'],discoveredEvolutions:Array.isArray(raw.discoveredEvolutions)?raw.discoveredEvolutions:[],discoveredSynergies:Array.isArray(raw.discoveredSynergies)?raw.discoveredSynergies:[],discoveredArtifacts:Array.isArray(raw.discoveredArtifacts)?raw.discoveredArtifacts:[],discoveredArchives:Array.isArray(raw.discoveredArchives)?normalizeArchiveIds(raw.discoveredArchives):[],stats:{...DEFAULT_STATS,...(raw.stats||{})},settings:{...DEFAULT_SETTINGS,...(raw.settings||{})}}}
 function decodeProfile(serialized){const raw=JSON.parse(serialized);if(!raw||typeof raw!=='object'||Array.isArray(raw))throw new Error('Invalid save profile');return deepProfile(raw)}
 let saveRecoverySource='',saveWriteWarning=false;
 function loadSave(){

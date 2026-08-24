@@ -29,6 +29,8 @@ const code=fs.readFileSync(path.join(root,'game.js'),'utf8');
 vm.runInContext(code,ctx,{filename:'game.js'});
 vm.runInContext(`
   if(document.body.dataset.orbitBoot!=='ok') throw new Error('boot flag missing');
+  const migratedArchiveProfile=deepProfile({discoveredArchives:['bernhard_01','solaris_02']});if(!migratedArchiveProfile.discoveredArchives.includes('bridge_04a')||!migratedArchiveProfile.discoveredArchives.includes('signal_12b')) throw new Error('legacy archive IDs were not migrated');
+  if(ARCHIVE_FRAGMENTS.some(entry=>/(bernhard|hamsun|solaris|haller|faulkner|dostoevsky)/i.test(entry.id+' '+entry.channel+' '+entry.note))) throw new Error('current archive records retain literary attribution');
   let rendererConfig=null;
   Phaser.Device={Features:{webGL:true}}; Phaser.WEBGL=2; Phaser.CANVAS=1;
   Phaser.Game=class{constructor(config){rendererConfig=config}};
