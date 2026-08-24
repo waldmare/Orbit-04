@@ -41,6 +41,7 @@ vm.runInContext(`
   save.settings.targetPriority='LOW HULL'; if(nearest(state.p,targetSet)!==weakTarget) throw new Error('low-hull targeting priority failed');
   save.settings.targetPriority='ELITES FIRST'; if(nearest(state.p,targetSet)!==eliteTarget) throw new Error('elite targeting priority failed');
   save.settings.targetPriority='NEAREST'; nearTarget.dead=weakTarget.dead=eliteTarget.dead=true;
+  save.settings.autoPause='OFF';handleWindowBlur();if(state.paused) throw new Error('focus-loss pause ignored the disabled setting');save.settings.autoPause='ON';handleWindowBlur();if(!state.paused) throw new Error('focus-loss pause failed');pause(false);
   if(selectEnemyType(30,.50)!=='scout'||selectEnemyType(30,.10)!=='tank'||selectEnemyType(70,.70)!=='tank') throw new Error('early heavy-ship encounter mix is incorrect');
   keys.d=true; const dashStart=state.p.x; state.enemyBullets.push({x:state.p.x+82,y:state.p.y,r:3,life:2,damage:1,grazed:false,vx:0,vy:0});
   if(!tryPhaseDash()||state.p.x<=dashStart||state.p.dashCooldown<=0||state.enemyBullets[0].life>0) throw new Error('PHASE DASH failed');
@@ -52,6 +53,7 @@ vm.runInContext(`
   generateWorldCell(-8,8); if(!state.worldNodes.some(node=>node.id==='-8:8:archive')) throw new Error('procedural archive signal generation failed');
   const cellsBefore=state.generatedCells.size; state.worldX+=WORLD_CELL_SIZE*3; updateWorldGeneration(); if(state.generatedCells.size<=cellsBefore) throw new Error('procedural world did not expand beyond the starting view');
   state.worldX=worldBefore; updateWorldGeneration(); updateNavigationHud(); if(document.getElementById('navigationSignal').classList.contains('hidden')) throw new Error('exploration navigation signal is hidden');
+  state.signalFilter='ARCHIVE';const archiveTarget=nearestWorldNode();if(!archiveTarget||archiveTarget.node.type!=='archive') throw new Error('archive scanner filter failed');state.signalFilter='ALL';if(!cycleSignalFilter()||state.signalFilter!=='SUPPORT') throw new Error('signal scanner cycling failed');const supportTarget=nearestWorldNode();if(supportTarget&&!['repair','flux','salvage'].includes(supportTarget.node.type)) throw new Error('support scanner filter failed');state.signalFilter='ALL';updateNavigationHud();
   const offscreenPriority=spawnEnemy('gunner',true,{x:-140,y:state.p.y}); offscreenPriority.nemesis=true; offscreenPriority.nemesisName='ECHO HUNTER'; updatePriorityHud();
   if(document.getElementById('prioritySignal').classList.contains('hidden')||!document.getElementById('prioritySignalText').textContent.includes('ECHO HUNTER')) throw new Error('off-screen priority compass failed');
   offscreenPriority.dead=true; updatePriorityHud(); if(!document.getElementById('prioritySignal').classList.contains('hidden')) throw new Error('priority compass did not clear');
@@ -80,7 +82,8 @@ vm.runInContext(`
   testAudioOutput(); if(save.settings.audio!=='ON'||sampleAttempts===0||fallbackStarts===0||!document.getElementById('audioStatusText').textContent.includes('OUTPUT CONFIRMED')) throw new Error('audio output recovery failed'); save.settings.audio='OFF';
   if(!applySettingsPreset('READABILITY')||save.settings.enemyHp!=='ALL'||save.settings.motion!=='REDUCED'||save.settings.uiScale!=='XXL'||save.settings.effectClarity!=='HIGH') throw new Error('readability profile was not applied');
   state.weaponDamage.pulse=120; state.damageDealt=120;
-  if(!renderRunIntel()||!document.getElementById('loadoutContent').innerHTML.includes('LAST SIGNAL')) throw new Error('run intel did not render the active build');
+  if(!recordUpgrade('CALIBRATION TEST','SYSTEM','LV 1 → LV 2')) throw new Error('install history rejected a valid upgrade');
+  if(!renderRunIntel()||!document.getElementById('loadoutContent').innerHTML.includes('LAST SIGNAL')||!document.getElementById('loadoutContent').innerHTML.includes('CALIBRATION TEST')||!document.getElementById('loadoutContent').innerHTML.includes('INSTALL LOG')) throw new Error('run intel did not render the active build and install history');
   state.choosing=true;state.choiceMode='level';renderOffers();
   if(!document.getElementById('buildCompass').innerHTML.includes('NEAREST BREAKPOINT')) throw new Error('build compass did not expose the nearest evolution');
   if(!document.getElementById('choices').children.some(card=>card.innerHTML.includes('IMPACT ·')&&card.innerHTML.includes('EVOLUTION ·'))) throw new Error('upgrade cards did not expose scoped impact and one build connection');

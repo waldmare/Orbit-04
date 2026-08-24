@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.84.0 — Navigation control and run safety
+
+- added an in-run signal scanner with All, Support, Archive, and Risk filters, cycled with `N`
+- added a timestamped six-entry install log to Run Intel for weapons, modules, doctrines, protocols, artifacts, repairs, and salvage conversions
+- added the current scanner filter and latest installation to the pause summary
+- made the existing focus-loss pause behavior configurable while keeping its safe default enabled
+- expanded automated coverage for filtered procedural navigation, installation history, and focus-loss behavior
+- preserved combat balance, procedural generation rates, rewards, and upgrade probabilities
+
 ## 0.83.0 — Tactical control and upgrade planning
 
 - added Nearest, Low Hull, and Elites First automatic targeting priorities without changing the default targeting behavior

@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.83.0-b8c2bc)
+![Version](https://img.shields.io/badge/version-0.84.0-b8c2bc)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-proprietary-f4ba68)
 
 ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.83.0`
+Current version: `0.84.0`
 
 ## Runtime overview
 
@@ -44,6 +44,9 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 - rerolls protected against returning an identical draw, with one upgrade card optionally pinned through the reroll
 - selectable automatic targeting priorities for nearest, damaged, or elite hostiles
 - a low-noise combat tracker for the build's nearest weapon evolution
+- an in-run signal scanner that filters procedural discoveries by support, archive, or risk category
+- a timestamped install log in Run Intel plus last-install and scanner summaries on pause
+- configurable focus-loss pausing to protect active runs during task switching
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
 - keyboard, mouse, and gamepad movement
 - licensed sample playback with automatic context recovery, verified-playback status, mute warnings, and an in-game output check
@@ -73,9 +76,9 @@ The renderer includes:
 
 ## Runtime screenshot
 
-![ORBIT//04 version 0.83.0 Last Ark runtime capture](docs/runtime-screenshot-v0.83.0.png)
+![ORBIT//04 version 0.84.0 Last Ark runtime capture](docs/runtime-screenshot-v0.84.0.png)
 
-This 1440 × 810 image was captured from the active 0.83.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
+This 1440 × 810 image was captured from the active 0.84.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
 
 ## Audio implementation
 
@@ -93,6 +96,7 @@ The settings screen provides:
 - optional attack telegraphs and pilot hints
 - `HOLD`, `FOLLOW`, and disabled mouse steering modes
 - nearest, low-hull, and elites-first automatic targeting priorities
+- optional automatic pause when the game window loses focus
 - screen shake and flash toggles
 - full and reduced motion modes
 - three interface scales
@@ -140,6 +144,7 @@ The install step runs `postinstall`, which copies the pinned Phaser runtime to `
 | Mouse position | Steer toward the cursor in `FOLLOW` mode |
 | Left stick or D-pad | Move with a gamepad |
 | `Shift` | Phase Dash |
+| `N` | Cycle the field scanner through all, support, archive, and risk signals |
 | `P` or `Esc` | Pause or resume |
 | `Tab` or `B` | Open or close Run Intel during a run |
 | `M` | Toggle audio |
@@ -168,7 +173,7 @@ Capture the documented gameplay scene from the local Electron/WebGL build:
 npm.cmd run screenshot
 ```
 
-The capture command writes `docs/runtime-screenshot-v0.83.0.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+The capture command writes `docs/runtime-screenshot-v0.84.0.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
 
 The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, renderer integration, runtime asset references, media file signatures, image dimensions, and the local Phaser bundle.
 
@@ -200,7 +205,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.83.0 adds player-controlled targeting priorities, a one-card reroll pin, and an unobtrusive evolution tracker to the existing progression and navigation systems. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.84.0 adds filtered signal navigation, focus-loss safety, and a concise installation history to the existing targeting and progression controls. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

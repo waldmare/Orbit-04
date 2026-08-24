@@ -23,7 +23,7 @@
     <div id="rushMeter" class="hidden"><div id="rushLabel"></div><div class="bar"><div id="rushFill"></div></div></div>
     <div id="evolutionTracker" class="hidden" aria-live="polite"><small>TRACKED EVOLUTION</small><b id="evolutionTrackerText"></b></div>
     <div id="abilityBar"><div id="dashWidget" class="ready"><b>SHIFT</b><span id="dashStatus">PHASE DASH · READY</span><i><em id="dashCharge"></em></i></div></div>
-    <div id="navigationSignal" class="hidden" data-disposition="boon"><span>WEAK SIGNAL IN THE ASH</span><b id="navigationSignalText"></b></div>
+    <div id="navigationSignal" class="hidden" data-disposition="boon"><span id="navigationSignalLabel">SCANNER ALL · N TO CYCLE</span><b id="navigationSignalText"></b></div>
     <div id="prioritySignal" class="hidden" data-tone="boss" aria-live="polite"><i id="prioritySignalArrow">▲</i><span><small>OFF-SCREEN PRIORITY</small><b id="prioritySignalText"></b></span></div>
     <div id="xpbar"><div id="xpfill"></div><div id="xptext"></div></div>
   </div>
@@ -67,7 +67,7 @@
         </div>
       </div>
 
-      <div class="footerHelp">WASD / ARROW KEYS / MOUSE — MOVE   ·   SHIFT — PHASE DASH   ·   M — AUDIO   ·   P / ESC — PAUSE</div>
+      <div class="footerHelp">WASD / ARROW KEYS / MOUSE — MOVE   ·   SHIFT — PHASE DASH   ·   N — SIGNAL SCAN   ·   M — AUDIO   ·   P / ESC — PAUSE</div>
     </div>
   </section>
 
@@ -181,6 +181,7 @@
         <div class="settingRow"><div><b>PILOT HINTS</b><div class="tiny">Short control and objective reminders when a run begins.</div></div><button id="hintsSetting"></button></div>
         <div class="settingRow"><div><b>MOUSE CONTROL</b><div class="tiny">HOLD: steer while holding LMB · FOLLOW: steer toward cursor.</div></div><button id="mouseSetting"></button></div>
         <div class="settingRow"><div><b>AUTO-TARGET PRIORITY</b><div class="tiny">NEAREST, LOW HULL, or ELITES FIRST. Applies to ORBIT//04 weapons only.</div></div><button id="targetPrioritySetting"></button></div>
+        <div class="settingRow"><div><b>PAUSE ON FOCUS LOSS</b><div class="tiny">Automatically pauses an active run when another window takes focus.</div></div><button id="autoPauseSetting"></button></div>
         <div class="settingRow"><div><b>SCREEN SHAKE</b><div class="tiny">Combat impact camera movement.</div></div><button id="shakeSetting"></button></div>
         <div class="settingRow"><div><b>FLASH EFFECTS</b><div class="tiny">Bright cache / evolution pulses.</div></div><button id="flashSetting"></button></div>
         <div class="settingRow"><div><b>MOTION</b><div class="tiny">REDUCED limits camera shake, panel movement and background drift.</div></div><button id="motionSetting"></button></div>
