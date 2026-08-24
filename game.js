@@ -1,7 +1,7 @@
 'use strict';
 
 // ORBIT//04 top-down runtime. All game data is stored locally.
-const GAME_VERSION='0.86.0';
+const GAME_VERSION='0.87.0';
 const RUN_TARGET=720;
 const MAX_ENEMIES=700,MAX_FRIENDLY_BULLETS=1300,MAX_ENEMY_BULLETS=900,MAX_PARTICLES=1400;
 const SUPPORT_URL='';
@@ -186,7 +186,8 @@ const SECTORS={
   NULL:{name:'SILENT KINGDOM',desc:'The center of the occupation. Dense alien cognition, stronger forms, no recoverable signal. +35% score.',unlock:()=>save.stats.hardlineClears>0,hp:1.20,damage:1.15,speed:1.05,spawn:1.12,elite:1.18,score:1.35,credits:1.20,xp:1.10,cacheLuck:.09,secret:1.65,shotRate:1.16,iff:1.55,star:'#888489'}
 };
 function sectorUnlocked(id){return !!SECTORS[id]?.unlock()}
-function nextSector(){const ids=Object.keys(SECTORS),i=Math.max(0,ids.indexOf(save.sector));for(let n=1;n<=ids.length;n++){const id=ids[(i+n)%ids.length];if(sectorUnlocked(id)){save.sector=id;persist();return}}}
+function cycleUnlockedOption(current,ids,direction=1,unlocked=()=>true){const i=Math.max(0,ids.indexOf(current)),step=direction<0?-1:1;for(let n=1;n<=ids.length;n++){const id=ids[(i+step*n+ids.length*2)%ids.length];if(unlocked(id))return id}return current}
+function nextSector(direction=1){save.sector=cycleUnlockedOption(save.sector,Object.keys(SECTORS),direction,sectorUnlocked);persist()}
 
 const CONTRACTS={
   NONE:{name:'NONE',desc:'No contract modifiers.',hp:1,damage:1,speed:1,spawn:1,score:1,credits:1,heal:1},
@@ -365,7 +366,8 @@ function masteryColor(level){return level>=5?'#ffffff':level>=4?'#bd9cff':level>
 function researchLevels(){return Object.values(save.research).reduce((a,b)=>a+(b||0),0)}
 function researchCost(id){const r=RESEARCH[id],l=save.research[id]||0;return Math.floor(r.base*Math.pow(1.48,l))}
 function difficultyUnlocked(id){return id!=='BLACKOUT'||save.stats.hardlineClears>0||save.achievements.includes('hardline_clear')}
-function nextDifficulty(){const ids=Object.keys(DIFFICULTIES);let i=ids.indexOf(save.difficulty);for(let n=1;n<=ids.length;n++){const id=ids[(i+n)%ids.length];if(difficultyUnlocked(id)){save.difficulty=id;persist();return}}}
+function nextDifficulty(direction=1){save.difficulty=cycleUnlockedOption(save.difficulty,Object.keys(DIFFICULTIES),direction,difficultyUnlocked);persist()}
+function nextContract(direction=1){save.contract=cycleUnlockedOption(save.contract,Object.keys(CONTRACTS),direction);persist()}
 function discoverWeapon(id){if(!save.discoveredWeapons.includes(id)){save.discoveredWeapons.push(id);persist(false)}}
 function discoverEnemy(id){if(!save.discoveredEnemies.includes(id)){save.discoveredEnemies.push(id);persist(false)}}
 function unlockAchievement(id){
@@ -422,8 +424,9 @@ function renderFrameBrief(id){
 function renderMenu(){
   $('saveLine').textContent=`${save.credits} CR · BEST ${Math.floor(save.bestScore)}`;
   $('researchLevelText').textContent=researchLevels();$('achievementCountText').textContent=`${save.achievements.length}/${Object.keys(ACHIEVEMENTS).length}`;$('lifetimeKillsText').textContent=save.totalKills;$('operationCountText').textContent=`${save.claimedOperations.length}/${Object.keys(OPERATIONS).length}${readyOperations().length?` · ${readyOperations().length} READY`:''}`;
-  const d=DIFFICULTIES[save.difficulty]||DIFFICULTIES.STANDARD;$('difficultyBtn').textContent=d.name;$('difficultyDesc').textContent=d.desc;const contract=CONTRACTS[save.contract]||CONTRACTS.NONE;$('contractBtn').textContent=contract.name;$('contractDesc').textContent=contract.desc;const sector=SECTORS[save.sector]||SECTORS.AURORA;$('sectorBtn').textContent=sector.name;$('sectorDesc').textContent=sector.desc;
+  const d=DIFFICULTIES[save.difficulty]||DIFFICULTIES.STANDARD;$('difficultyBtn').textContent=d.name;$('difficultyBtn').setAttribute('aria-label',`Current difficulty: ${d.name}. Select next difficulty.`);$('difficultyDesc').textContent=d.desc;const contract=CONTRACTS[save.contract]||CONTRACTS.NONE;$('contractBtn').textContent=contract.name;$('contractBtn').setAttribute('aria-label',`Current contract: ${contract.name}. Select next contract.`);$('contractDesc').textContent=contract.desc;const sector=SECTORS[save.sector]||SECTORS.AURORA;$('sectorBtn').textContent=sector.name;$('sectorBtn').setAttribute('aria-label',`Current sector: ${sector.name}. Select next sector.`);$('sectorDesc').textContent=sector.desc;
   const selectedId=save.unlocked.includes(save.selected)&&SHIPS[save.selected]?save.selected:'striker';if(save.selected!==selectedId)save.selected=selectedId;renderFrameBrief(selectedId);
+  const selectedShip=SHIPS[selectedId];$('launchSummary').innerHTML=`<span>DEPLOYMENT READY</span><b>${selectedShip.name}</b><i>${sector.name} · ${d.name} · ${contract.name}</i>`;$('startBtn').textContent=`DEPLOY ${selectedShip.name}`;
   const grid=$('shipGrid');grid.innerHTML='';
   for(const [id,s] of Object.entries(SHIPS)){
     const unlocked=save.unlocked.includes(id),selected=save.selected===id;const b=document.createElement('button');b.className=`shipCard${selected?' selected':''}`;
@@ -469,14 +472,16 @@ const PRESET_BUTTONS={READABILITY:'readabilityPresetBtn',CINEMATIC:'cinematicPre
 function applyDisplaySettings(){wrap.dataset.uiScale=save.settings.uiScale||'XL';wrap.dataset.contrast=save.settings.contrast||'HIGH';wrap.dataset.motion=save.settings.motion||'FULL';wrap.dataset.effectClarity=save.settings.effectClarity||'HIGH';AUDIO.setMix()}
 function matchingSettingsPreset(){return Object.entries(SETTING_PRESETS).find(([_id,preset])=>Object.entries(preset.values).every(([key,value])=>save.settings[key]===value))?.[0]||''}
 function renderAudioStatus(){const audio=AUDIO.status();$('audioStatusText').textContent=!audio.enabled?'MUTED IN GAME — set AUDIO to ON or press PLAY TEST.':audio.muted?'OUTPUT MUTED BY RENDERER — press PLAY TEST.':audio.confirmed?`OUTPUT CONFIRMED — samples ${audio.sampleContext} · fallback ${audio.fallback}.`:audio.error?`OUTPUT ERROR — ${audio.error}`:audio.locked?'WAITING FOR INPUT — click PLAY TEST to unlock audio.':`OUTPUT ARMED — press PLAY TEST to confirm playback.`}
-function renderSettings(){applyDisplaySettings();for(const [k,id] of Object.entries(SETTING_BUTTONS))$(id).textContent=save.settings[k];const active=matchingSettingsPreset();$('settingsPresetStatus').textContent=active?`${SETTING_PRESETS[active].label} ACTIVE`:'CUSTOM';for(const [id,buttonId] of Object.entries(PRESET_BUTTONS))$(buttonId).classList.toggle('selected',id===active);renderAudioStatus()}
+function renderSettings(){applyDisplaySettings();for(const [k,id] of Object.entries(SETTING_BUTTONS))$(id).textContent=save.settings[k];const active=matchingSettingsPreset();$('settingsPresetStatus').textContent=active?`${SETTING_PRESETS[active].label} ACTIVE`:'CUSTOM';for(const [id,buttonId] of Object.entries(PRESET_BUTTONS))$(buttonId).classList.toggle('selected',id===active);const renderer=(canvas.dataset.renderer||'initializing').toUpperCase(),pipeline=(canvas.dataset.renderPipeline||'adaptive').replaceAll('-',' ').toUpperCase();$('rendererStatusText').textContent=`${renderer} · ${pipeline}`;renderAudioStatus()}
 function cycleSetting(key){const a=SETTING_CYCLES[key],i=Math.max(0,a.indexOf(save.settings[key]));save.settings[key]=a[(i+1)%a.length];persist(false);renderSettings();AUDIO.sfx('ui')}
 function applySettingsPreset(id){const preset=SETTING_PRESETS[id];if(!preset)return false;Object.assign(save.settings,preset.values);persist(false);renderSettings();AUDIO.sfx('ui');toast(`${preset.label} PROFILE`,'Settings applied. Individual controls remain editable.');return true}
 function testAudioOutput(){if(save.settings.audio!=='ON')save.settings.audio='ON';persist(false);AUDIO.ensure();AUDIO.sfx('start');renderSettings();setTimeout(renderAudioStatus,180);toast('AUDIO OUTPUT CHECK','Startup cue sent. Verify the AUDIO row if it remains silent.')}
 function openOverlay(id){if(state?.mode==='run'&&!state.paused&&!state.choosing)pause(true);show(id);AUDIO.sfx('ui')}
 function closeOverlay(id){hide(id);AUDIO.sfx('ui')}
 
-$('difficultyBtn').onclick=()=>{AUDIO.sfx('ui');nextDifficulty()};$('contractBtn').onclick=()=>{AUDIO.sfx('ui');const ids=Object.keys(CONTRACTS),i=Math.max(0,ids.indexOf(save.contract));save.contract=ids[(i+1)%ids.length];persist()};$('sectorBtn').onclick=()=>{AUDIO.sfx('ui');nextSector()};
+$('difficultyPrev').onclick=()=>{AUDIO.sfx('ui');nextDifficulty(-1)};$('difficultyBtn').onclick=$('difficultyNext').onclick=()=>{AUDIO.sfx('ui');nextDifficulty(1)};
+$('sectorPrev').onclick=()=>{AUDIO.sfx('ui');nextSector(-1)};$('sectorBtn').onclick=$('sectorNext').onclick=()=>{AUDIO.sfx('ui');nextSector(1)};
+$('contractPrev').onclick=()=>{AUDIO.sfx('ui');nextContract(-1)};$('contractBtn').onclick=$('contractNext').onclick=()=>{AUDIO.sfx('ui');nextContract(1)};
 $('researchBtn').onclick=()=>{renderResearch();openOverlay('researchScreen')};$('operationsBtn').onclick=()=>{renderOperations();openOverlay('operationsScreen')};$('achievementsBtn').onclick=()=>{renderAchievements();openOverlay('achievementsScreen')};$('codexBtn').onclick=()=>{renderCodex();openOverlay('codexScreen')};
 $('settingsBtn').onclick=()=>{renderSettings();openOverlay('settingsScreen')};$('pauseSettingsBtn').onclick=()=>{renderSettings();show('settingsScreen')};$('settingsBackBtn').onclick=()=>closeOverlay('settingsScreen');
 for(const [k,id] of Object.entries(SETTING_BUTTONS))$(id).onclick=()=>cycleSetting(k);
@@ -976,12 +981,12 @@ function bootRenderer(){
     create(){
       phaserScene=this;spaceBg=this.add.image(RENDER_W/2,RENDER_H/2,'space-deep').setDepth(-3).setDisplaySize(RENDER_W*1.11,RENDER_H*1.11).setAlpha(.54);spaceBgNext=this.add.image(RENDER_W/2,RENDER_H/2,'space-pulsar').setDepth(-2.9).setDisplaySize(RENDER_W*1.12,RENDER_H*1.12).setAlpha(0);celestialG=this.add.graphics().setDepth(-2.5).setBlendMode(Phaser.BlendModes.ADD);backgroundDirector={current:'deep',target:'deep',mix:1,px:0,py:0,zoom:1.105};
       bgG=this.add.graphics().setDepth(0).setScale(RENDER_SCALE);nebulaG=this.add.graphics().setDepth(1).setScale(RENDER_SCALE).setBlendMode(Phaser.BlendModes.ADD);const dot=this.make.graphics({x:0,y:0,add:false});dot.fillStyle(0x9beaff,1).fillCircle(4,4,3);dot.generateTexture('ambient-dot',8,8);dot.destroy();ambientEmitter=this.add.particles(0,0,'ambient-dot',{x:{min:0,max:RENDER_W},y:{min:0,max:RENDER_H},speedX:{min:-4,max:4},speedY:{min:3,max:11},lifespan:{min:5000,max:9000},frequency:120,quantity:1,scale:{start:.18,end:0},alpha:{start:.20,end:0},blendMode:Phaser.BlendModes.ADD}).setDepth(1.5);
-      glowG=this.add.graphics().setDepth(2).setScale(RENDER_SCALE).setBlendMode(Phaser.BlendModes.ADD);worldG=this.add.graphics().setDepth(3).setScale(RENDER_SCALE);overlayG=this.add.graphics().setDepth(4).setScale(RENDER_SCALE);if(globalThis.OrbitVisualEngine){visualEngine=new globalThis.OrbitVisualEngine(this,{width:W,height:H,scale:RENDER_SCALE});canvas.dataset.visualEngine='sprite-pool-v3'}
-      AUDIO.attach(this);const loadedAudio=Object.keys(ENGINE_ASSETS.audio).filter(key=>this.cache.audio.exists(`audio-${key}`)).length;engineReady=true;document.body.dataset.orbitBoot='ok';canvas.dataset.engine='phaser-3.90-sprite-pools';canvas.dataset.audioEngine='licensed-sample-assets-v2';canvas.dataset.renderer=this.game.renderer.type===Phaser.WEBGL?'webgl':'canvas';console.info(`[ORBIT] ${canvas.dataset.engine} / ${canvas.dataset.renderer} / visuals=${canvas.dataset.visualEngine||'vector-fallback'} / audio=${canvas.dataset.audioEngine} (${loadedAudio}/${Object.keys(ENGINE_ASSETS.audio).length} files)`)
+      glowG=this.add.graphics().setDepth(2).setScale(RENDER_SCALE).setBlendMode(Phaser.BlendModes.ADD);worldG=this.add.graphics().setDepth(3).setScale(RENDER_SCALE);overlayG=this.add.graphics().setDepth(4).setScale(RENDER_SCALE);if(globalThis.OrbitVisualEngine){visualEngine=new globalThis.OrbitVisualEngine(this,{width:W,height:H,scale:RENDER_SCALE});canvas.dataset.visualEngine='sprite-pool-v4'}
+      AUDIO.attach(this);const loadedAudio=Object.keys(ENGINE_ASSETS.audio).filter(key=>this.cache.audio.exists(`audio-${key}`)).length;engineReady=true;document.body.dataset.orbitBoot='ok';canvas.dataset.engine='phaser-3.90-sprite-pools';canvas.dataset.audioEngine='licensed-sample-assets-v2';canvas.dataset.renderer=this.game.renderer.type===Phaser.WEBGL?'webgl':'canvas';canvas.dataset.renderPipeline=this.game.renderer.type===Phaser.WEBGL?'cinematic-webgl-v1':'clarity-canvas-v1';renderSettings();console.info(`[ORBIT] ${canvas.dataset.engine} / ${canvas.dataset.renderer} / pipeline=${canvas.dataset.renderPipeline} / visuals=${canvas.dataset.visualEngine||'vector-fallback'} / audio=${canvas.dataset.audioEngine} (${loadedAudio}/${Object.keys(ENGINE_ASSETS.audio).length} files)`)
     },
     update:engineTick
   };
-  const config=type=>({type,canvas,width:RENDER_W,height:RENDER_H,backgroundColor:'#02050a',transparent:false,audio:{disableWebAudio:false},render:{antialias:true,pixelArt:false,roundPixels:false,powerPreference:'high-performance'},scale:{mode:Phaser.Scale.NONE},scene});
+  const config=type=>({type,canvas,width:RENDER_W,height:RENDER_H,backgroundColor:'#02050a',transparent:false,audio:{disableWebAudio:false},fps:{target:120,min:30,smoothStep:true,deltaHistory:20},render:{antialias:true,antialiasGL:true,desynchronized:true,pixelArt:false,roundPixels:false,powerPreference:'high-performance'},scale:{mode:Phaser.Scale.NONE},scene});
   try{new Phaser.Game(config(Phaser.WEBGL))}catch(error){console.warn('WebGL unavailable; falling back to Canvas.',error);canvas.dataset.renderer='canvas-fallback';new Phaser.Game(config(Phaser.CANVAS))}
 }
 

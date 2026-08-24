@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.87.0 — Studio Interface and Cinematic Pipeline
+
+- replaced ambiguous click-to-cycle deployment values with explicit previous, current, and next controls for difficulty, sector, and contract
+- added a concise deployment summary and a frame-specific launch action so the final selection is visible before a run begins
+- established one studio-style component language across launch, level-up, settings, pause, research, operations, achievements, Codex, and results screens
+- increased interface depth, focus visibility, typography hierarchy, selection feedback, and minimum control sizes without adding menu density
+- reorganized settings into a wider two-column control surface with a live renderer and pipeline status indicator
+- enabled WebGL antialiasing options, a smoother high-refresh timing profile, and a quality-aware cinematic presentation path with Canvas fallback
+- added restrained object-level life-core bloom plus quality-aware vignette and color grading instead of expensive full-scene bloom
+- preserved combat balance, progression values, encounter composition, reward rates, and save compatibility
+
 ## 0.86.0 — Focused Launch Hangar
 
 - replaced the dense full-detail frame grid with one large selected-frame presentation and a compact visual frame bay

@@ -68,10 +68,22 @@
           <div id="shipGrid" class="shipGrid"></div>
         </div>
         <div class="sideMenu">
-          <h2>RUN CONFIG</h2>
-          <div class="runOption difficultyOption"><div><span>DIFFICULTY</span><button id="difficultyBtn"></button></div><p id="difficultyDesc"></p></div>
-          <div class="runOption sectorOption"><div><span>SECTOR</span><button id="sectorBtn"></button></div><p id="sectorDesc"></p></div>
-          <div class="runOption contractOption"><div><span>CONTRACT</span><button id="contractBtn"></button></div><p id="contractDesc"></p></div>
+          <div class="sectionHeading"><div><span>DEPLOYMENT</span><h2>RUN CONFIG</h2></div><i>03 PARAMETERS</i></div>
+          <div class="runOption difficultyOption">
+            <div class="runOptionHeader"><span>DIFFICULTY</span><i>THREAT PROFILE</i></div>
+            <div class="optionStepper"><button id="difficultyPrev" class="stepArrow" aria-label="Previous difficulty">‹</button><button id="difficultyBtn" class="stepValue"></button><button id="difficultyNext" class="stepArrow" aria-label="Next difficulty">›</button></div>
+            <p id="difficultyDesc"></p>
+          </div>
+          <div class="runOption sectorOption">
+            <div class="runOptionHeader"><span>SECTOR</span><i>FLIGHT VECTOR</i></div>
+            <div class="optionStepper"><button id="sectorPrev" class="stepArrow" aria-label="Previous sector">‹</button><button id="sectorBtn" class="stepValue"></button><button id="sectorNext" class="stepArrow" aria-label="Next sector">›</button></div>
+            <p id="sectorDesc"></p>
+          </div>
+          <div class="runOption contractOption">
+            <div class="runOptionHeader"><span>CONTRACT</span><i>RISK MODIFIER</i></div>
+            <div class="optionStepper"><button id="contractPrev" class="stepArrow" aria-label="Previous contract">‹</button><button id="contractBtn" class="stepValue"></button><button id="contractNext" class="stepArrow" aria-label="Next contract">›</button></div>
+            <p id="contractDesc"></p>
+          </div>
           <div class="profileSummary">
             <div><span>RESEARCH</span><b id="researchLevelText">0</b></div>
             <div><span>OPERATIONS</span><b id="operationCountText">0/0</b></div>
@@ -79,6 +91,7 @@
             <div><span>LIFETIME KILLS</span><b id="lifetimeKillsText">0</b></div>
           </div>
           <div class="menuStack">
+            <div id="launchSummary" class="launchSummary" aria-live="polite"></div>
             <button id="startBtn" class="primary">START RUN</button>
             <button id="researchBtn">RESEARCH</button>
             <button id="operationsBtn">OPERATIONS</button>
@@ -190,7 +203,7 @@
 
   <section id="settingsScreen" class="overlay">
     <div class="panel settingsPanel">
-      <h1>SETTINGS</h1><h2>DISPLAY / AUDIO / DATA</h2>
+      <div class="headerSplit settingsHeader"><div><h1>SETTINGS</h1><h2>DISPLAY / AUDIO / DATA</h2></div><div id="rendererStatusText" class="renderStatus">RENDERER INITIALIZING</div></div>
       <div class="settingsPresets">
         <div><b>CURATED PROFILES</b><div id="settingsPresetStatus" class="tiny">CUSTOM</div></div>
         <div class="presetButtons"><button id="readabilityPresetBtn">READABILITY</button><button id="cinematicPresetBtn">CINEMATIC</button><button id="performancePresetBtn">PERFORMANCE</button><button id="defaultsPresetBtn">DEFAULTS</button></div>

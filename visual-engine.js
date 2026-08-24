@@ -49,7 +49,23 @@
       this.mines=this.pool(()=>this.createMarker('orbit-mine'));
       this.menuHalo=scene.add.image(0,0,'orbit-ring').setDisplaySize(112,112).setAlpha(.18).setBlendMode(Phaser.BlendModes.ADD);
       this.playerLayer.addAt(this.menuHalo,0);
-      try{scene.cameras.main.postFX?.addVignette?.(.5,.5,.92,.34)}catch(_error){}
+      this.renderProfile='';this.cameraFx={vignette:null,colorMatrix:null};this.coreBloom=null;this.setupPremiumPipeline();
+    }
+
+    setupPremiumPipeline(){
+      const webgl=this.scene.game?.renderer?.type===Phaser.WEBGL;if(!webgl)return;
+      try{this.cameraFx.vignette=this.scene.cameras.main.postFX?.addVignette?.(.5,.5,.92,.30)||null}catch(_error){}
+      try{this.cameraFx.colorMatrix=this.scene.cameras.main.postFX?.addColorMatrix?.()||null}catch(_error){}
+      try{this.coreBloom=this.player.lifeCore.preFX?.addBloom?.(0xd3b173,0,0,1,.78,3)||null}catch(_error){}
+    }
+
+    updatePremiumPipeline(settings={}){
+      const quality=settings.graphics||'HIGH',glow=settings.glow!=='OFF',contrast=settings.contrast||'HIGH',profile=`${quality}:${glow}:${contrast}`;
+      if(profile===this.renderProfile)return;this.renderProfile=profile;
+      const cinematic=quality==='ULTRA'||quality==='HIGH',low=quality==='LOW';
+      if(this.coreBloom)this.coreBloom.active=cinematic&&glow;
+      if(this.cameraFx.vignette){this.cameraFx.vignette.active=!low;this.cameraFx.vignette.radius=quality==='ULTRA'?.94:.92;this.cameraFx.vignette.strength=quality==='ULTRA'?.27:.23}
+      const color=this.cameraFx.colorMatrix;if(color){color.active=!low;try{color.reset?.();if(!low){color.saturate?.(quality==='ULTRA'?-.08:-.13);color.contrast?.(contrast==='HIGH'?.055:.025)}}catch(_error){color.active=false}}
     }
 
     makeTextures(){
@@ -150,6 +166,7 @@
     sync(gameState,settings={}){
       const now=performance.now()/1000,delta=clamp(now-this.lastSync,1/240,.05);this.lastSync=now;this.delta=delta;this.time=gameState?.time??now;this.motionScale=settings.motion==='REDUCED'?.28:1;
       const quality=settings.graphics||'HIGH',glowOn=settings.glow!=='OFF',particlesOn=settings.particles!=='OFF',clarity=settings.effectClarity||'HIGH';
+      this.updatePremiumPipeline(settings);
       this.fx.clear();this.dangerFx.clear();this.siteFx.clear();this.menuHalo.setVisible(!gameState||gameState.mode!=='run');
       if(!gameState||gameState.mode!=='run'){
         const x=this.width*.5+Math.sin(this.time*.35)*18,y=this.height*.56+Math.sin(this.time*.55)*6,size=quality==='LOW'?88:102;
