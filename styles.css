@@ -34,7 +34,7 @@ h1,h2,p{margin-top:0}h1{font:600 28px/1 var(--sans);letter-spacing:.14em;margin-
 
 /* Readability presets. LARGE is intentionally larger than the original build. */
 #wrap{--ui-scale:1}#wrap[data-ui-scale="XL"]{--ui-scale:1.12}#wrap[data-ui-scale="XXL"]{--ui-scale:1.25}
-#wrap[data-contrast="HIGH"]{--muted:#bbc0bd;--line:#555d59;--lineHi:#858e89}#wrap[data-contrast="HIGH"] canvas{filter:contrast(1.12) saturate(.60)}
+#wrap[data-contrast="HIGH"]{--muted:#c5cbc7;--line:#606a65;--lineHi:#96a19b}#wrap[data-contrast="HIGH"] canvas{filter:contrast(1.17) saturate(.92) brightness(1.045)}
 button{font-size:calc(13px * var(--ui-scale))}.tiny{font-size:calc(12px * var(--ui-scale))}.tag{font-size:calc(12px * var(--ui-scale))}h1{font-size:calc(30px * var(--ui-scale))}h2{font-size:calc(12px * var(--ui-scale))}.brand h1{font-size:calc(38px * var(--ui-scale))}.shipName{font-size:calc(14px * var(--ui-scale))}.stat,.shipLock,.footerHelp,.metaLine{font-size:calc(11px * var(--ui-scale))}#hud{font-size:calc(12px * var(--ui-scale))}#hudSub{font-size:calc(11px * var(--ui-scale));top:52px}#xptext,#bossBar{font-size:calc(11px * var(--ui-scale))}#centerMessage{font-size:calc(19px * var(--ui-scale))}.toast{font-size:calc(11px * var(--ui-scale));max-width:380px}.choice .kind{font-size:calc(10px * var(--ui-scale))}.choice .name{font-size:calc(14px * var(--ui-scale))}.choice .lvl,.choice .evo{font-size:calc(11px * var(--ui-scale))}.choice .desc{font-size:calc(12px * var(--ui-scale))}.settingRow b{font-size:calc(12px * var(--ui-scale))}.researchCard .name,.achievement .name,.codexCard b,.operationCard .name{font-size:calc(12px * var(--ui-scale))}.researchCard .lvl,.researchCard .cost,.achievement .reward,.codexCard span,.metric span,.unlockItem{font-size:calc(11px * var(--ui-scale))}.metric b{font-size:calc(17px * var(--ui-scale))}
 .pauseSnapshot span,.intelMetric span,.intelItem small,.intelBadge,.intelHelp{font-size:calc(9px * var(--ui-scale))}.pauseSnapshot b,.intelItem b{font-size:calc(12px * var(--ui-scale))}.intelMetric b{font-size:calc(16px * var(--ui-scale))}.intelSection h3,.intelItem p{font-size:calc(11px * var(--ui-scale))}.intelEmpty{font-size:calc(10px * var(--ui-scale))}
 @media(max-width:1050px){.shipGrid{grid-template-columns:repeat(2,1fr)}.metricGrid{grid-template-columns:repeat(4,1fr)}.intelMetrics{grid-template-columns:repeat(3,1fr)}}
@@ -89,7 +89,7 @@ button:hover:not(:disabled){border-color:#aeb9b3;background:linear-gradient(180d
 .audioCheckRow{border-color:rgba(155,167,160,.30);background:rgba(21,26,23,.65)}.audioCheckRow button{border-color:rgba(168,180,173,.55);color:#e0e4e1}
 .pauseSnapshot>div,.intelMetric,.intelSection{border-color:rgba(125,136,130,.34);background:rgba(10,13,12,.62)}
 .archivePanel blockquote:before{content:"//";left:-34px;top:-12px;font:600 28px var(--mono);letter-spacing:-.16em;color:rgba(234,215,167,.18)}
-#wrap canvas{filter:saturate(.56) contrast(1.04)}
+#wrap canvas{filter:saturate(.78) contrast(1.08) brightness(1.025)}
 
 /* 0.81 — fast upgrade comprehension and restrained installation feedback. */
 .buildCompass{display:flex;align-items:stretch;justify-content:space-between;gap:8px;margin:-3px 0 12px;padding:8px;border:1px solid rgba(145,156,150,.25);border-radius:6px;background:rgba(5,8,7,.52)}

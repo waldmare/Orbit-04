@@ -7,7 +7,8 @@
 - corrected player banking so it changes the apparent hull profile without rotating the vessel away from its travel direction
 - changed hostile and allied facing to follow measured travel instead of continuously pointing at an attack target
 - increased the combat-scale silhouettes and retuned engine trails for clearer motion reads without changing collision sizes or balance
-- stabilized the player hull in its forward orientation and replaced full movement-axis rotation with restrained strafe lean
+- replaced the overly rigid fixed player heading with damped limited-angle steering, visible banking, inertia, acceleration response, and independently loaded engine plumes
+- strengthened combat color separation for the ark, hostile bodies, projectiles, and all eight pickup classes while preserving the ashen environment grade
 - replaced generic square pickups with eight semantic glyphs covering experience, caches, support signals, archives, relics, and hazards
 - expanded the real Electron smoke test with render-buffer and directional-heading assertions
 
