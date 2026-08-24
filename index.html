@@ -21,6 +21,7 @@
     <div id="hudSub"></div>
     <div id="bossBar" class="hidden"><div id="bossLabel"></div><div class="bar"><div id="bossFill"></div></div></div>
     <div id="rushMeter" class="hidden"><div id="rushLabel"></div><div class="bar"><div id="rushFill"></div></div></div>
+    <div id="evolutionTracker" class="hidden" aria-live="polite"><small>TRACKED EVOLUTION</small><b id="evolutionTrackerText"></b></div>
     <div id="abilityBar"><div id="dashWidget" class="ready"><b>SHIFT</b><span id="dashStatus">PHASE DASH · READY</span><i><em id="dashCharge"></em></i></div></div>
     <div id="navigationSignal" class="hidden" data-disposition="boon"><span>WEAK SIGNAL IN THE ASH</span><b id="navigationSignalText"></b></div>
     <div id="prioritySignal" class="hidden" data-tone="boss" aria-live="polite"><i id="prioritySignalArrow">▲</i><span><small>OFF-SCREEN PRIORITY</small><b id="prioritySignalText"></b></span></div>
@@ -75,6 +76,7 @@
       <div class="headerSplit"><div><h1>LEVEL UP</h1><h2>INSTALL ONE MODULE</h2></div><div id="levelMeta" class="tag"></div></div>
       <div id="buildCompass" class="buildCompass" aria-live="polite"></div>
       <div id="choices" class="choiceGrid"></div>
+      <div id="offerPins" class="offerPins" aria-label="Upgrade pin controls"></div>
       <div class="levelFooter">
         <div id="rerollInfo" class="tiny"></div>
         <div class="menuRow"><button id="skipBtn">SKIP + SALVAGE</button><button id="rerollBtn">REROLL</button></div>
@@ -178,6 +180,7 @@
         <div class="settingRow"><div><b>ATTACK TELEGRAPHS</b><div class="tiny">Aim lines and charge rings before dangerous attacks.</div></div><button id="telegraphSetting"></button></div>
         <div class="settingRow"><div><b>PILOT HINTS</b><div class="tiny">Short control and objective reminders when a run begins.</div></div><button id="hintsSetting"></button></div>
         <div class="settingRow"><div><b>MOUSE CONTROL</b><div class="tiny">HOLD: steer while holding LMB · FOLLOW: steer toward cursor.</div></div><button id="mouseSetting"></button></div>
+        <div class="settingRow"><div><b>AUTO-TARGET PRIORITY</b><div class="tiny">NEAREST, LOW HULL, or ELITES FIRST. Applies to ORBIT//04 weapons only.</div></div><button id="targetPrioritySetting"></button></div>
         <div class="settingRow"><div><b>SCREEN SHAKE</b><div class="tiny">Combat impact camera movement.</div></div><button id="shakeSetting"></button></div>
         <div class="settingRow"><div><b>FLASH EFFECTS</b><div class="tiny">Bright cache / evolution pulses.</div></div><button id="flashSetting"></button></div>
         <div class="settingRow"><div><b>MOTION</b><div class="tiny">REDUCED limits camera shake, panel movement and background drift.</div></div><button id="motionSetting"></button></div>

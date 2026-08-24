@@ -150,7 +150,7 @@ async function runAutomatedCapture(win) {
     return;
   }
   const preset = STEAM_CAPTURE_PRESETS[1];
-  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.82.0.png');
+  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.83.0.png');
   await captureScene(win, preset, output, { width: 1440, height: 810 });
 }
 

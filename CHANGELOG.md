@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.83.0 — Tactical control and upgrade planning
+
+- added Nearest, Low Hull, and Elites First automatic targeting priorities without changing the default targeting behavior
+- added one-card pinning so a preferred level-up choice can survive a reroll while the other cards refresh
+- added a compact in-combat tracker for the nearest weapon evolution once the build approaches its requirements
+- exposed the selected targeting priority in Run Intel and included the new option in curated settings profiles
+- expanded automated coverage for target selection, pinned rerolls, evolution guidance, and the new interface controls
+- preserved enemy statistics, weapon output, upgrade weights, spawn timing, and run economy
+
 ## 0.82.0 — Progression cadence and navigation QoL
 
 - versioned the verified runtime screenshot so repository front pages cannot retain the previous build through image caching

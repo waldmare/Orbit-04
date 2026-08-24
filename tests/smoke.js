@@ -11,7 +11,7 @@ for(const asset of requiredAssets){const full=path.join(root,asset);if(!fs.exist
 if(!html.includes('visual-engine.js'))throw new Error('sprite renderer script missing from index.html');
 const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);
 class ClassList{constructor(){this.s=new Set()}add(...x){x.forEach(v=>this.s.add(v))}remove(...x){x.forEach(v=>this.s.delete(v))}toggle(x,v){if(v===undefined){this.s.has(x)?this.s.delete(x):this.s.add(x)}else v?this.s.add(x):this.s.delete(x)}contains(x){return this.s.has(x)}}
-class El{constructor(id=''){this.id=id;this.classList=new ClassList();this.style={};this.dataset={};this.children=[];this.textContent='';this._html='';this.disabled=false;this.onclick=null}set innerHTML(v){this._html=v}get innerHTML(){return this._html}appendChild(x){this.children.push(x);return x}remove(){this.removed=true}addEventListener(){}setPointerCapture(){}querySelector(sel){if(sel==='button'){if(!this._btn)this._btn=new El();return this._btn}return null}get offsetWidth(){return 960}}
+class El{constructor(id=''){this.id=id;this.classList=new ClassList();this.style={};this.dataset={};this.attributes={};this.children=[];this.textContent='';this._html='';this.disabled=false;this.onclick=null}set innerHTML(v){this._html=v;if(v==='')this.children=[]}get innerHTML(){return this._html}appendChild(x){this.children.push(x);return x}setAttribute(k,v){this.attributes[k]=String(v)}remove(){this.removed=true}addEventListener(){}setPointerCapture(){}querySelector(sel){if(sel==='button'){if(!this._btn)this._btn=new El();return this._btn}return null}get offsetWidth(){return 960}}
 const els=Object.fromEntries(ids.map(id=>[id,new El(id)]));
 
 class G{clear(){return this}fillStyle(){return this}fillPoints(){return this}lineStyle(){return this}strokePoints(){return this}beginPath(){return this}moveTo(){return this}lineTo(){return this}strokePath(){return this}fillCircle(){return this}strokeCircle(){return this}strokeEllipse(){return this}fillRect(){return this}setPosition(){return this}setBlendMode(){return this}setScale(){return this}setDepth(){return this}setVisible(){return this}}
@@ -36,6 +36,11 @@ vm.runInContext(`
   if(rendererConfig?.type!==Phaser.WEBGL) throw new Error('renderer type must be explicit when using a custom canvas');
   save.settings.audio='OFF'; startRun();
   state.p.iFrames=9999;
+  const nearTarget=spawnEnemy('scout',false,{x:state.p.x+40,y:state.p.y}),weakTarget=spawnEnemy('scout',false,{x:state.p.x+170,y:state.p.y}),eliteTarget=spawnEnemy('tank',true,{x:state.p.x+250,y:state.p.y}),targetSet=enemy=>enemy===nearTarget||enemy===weakTarget||enemy===eliteTarget;weakTarget.hp=weakTarget.maxHp*.05;
+  save.settings.targetPriority='NEAREST'; if(nearest(state.p,targetSet)!==nearTarget) throw new Error('nearest targeting priority failed');
+  save.settings.targetPriority='LOW HULL'; if(nearest(state.p,targetSet)!==weakTarget) throw new Error('low-hull targeting priority failed');
+  save.settings.targetPriority='ELITES FIRST'; if(nearest(state.p,targetSet)!==eliteTarget) throw new Error('elite targeting priority failed');
+  save.settings.targetPriority='NEAREST'; nearTarget.dead=weakTarget.dead=eliteTarget.dead=true;
   if(selectEnemyType(30,.50)!=='scout'||selectEnemyType(30,.10)!=='tank'||selectEnemyType(70,.70)!=='tank') throw new Error('early heavy-ship encounter mix is incorrect');
   keys.d=true; const dashStart=state.p.x; state.enemyBullets.push({x:state.p.x+82,y:state.p.y,r:3,life:2,damage:1,grazed:false,vx:0,vy:0});
   if(!tryPhaseDash()||state.p.x<=dashStart||state.p.dashCooldown<=0||state.enemyBullets[0].life>0) throw new Error('PHASE DASH failed');
@@ -64,6 +69,9 @@ vm.runInContext(`
   if(document.getElementById('wrap').dataset.uiScale!=='XXL'||document.getElementById('wrap').dataset.contrast!=='HIGH') throw new Error('display settings were not applied');
   state.xp=state.xpNeed*.8; updateHudVisuals();
   if(!document.getElementById('xpbar').classList.contains('imminent')||!document.getElementById('xptext').textContent.includes('XP TO NEXT SYSTEM')) throw new Error('level anticipation feedback failed');
+  const pulseLevel=state.weapons.pulse.level,overclockLevel=state.passives.overclock||0;state.weapons.pulse.level=4;state.passives.overclock=2;state.rush=0;updateEvolutionTracker();
+  if(document.getElementById('evolutionTracker').classList.contains('hidden')||!document.getElementById('evolutionTrackerText').textContent.includes('4/6')||!document.getElementById('evolutionTrackerText').textContent.includes('2/4')) throw new Error('evolution tracker failed');
+  state.weapons.pulse.level=pulseLevel;state.passives.overclock=overclockLevel;
   state.xp=0;
   if(!document.getElementById('audioStatusText').textContent.includes('MUTED IN GAME')) throw new Error('audio status did not report disabled output');
   let fallbackStarts=0,sampleAttempts=0; window.AudioContext=class{constructor(){this.state='running';this.sampleRate=8000;this.currentTime=0;this.destination={}}createGain(){return{gain:{value:0,setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){}}}createOscillator(){return{frequency:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){},start(){fallbackStarts++},stop(){}}}createBuffer(){return{getChannelData:()=>new Float32Array(800)}}createBufferSource(){return{connect(){},start(){},stop(){}}}resume(){return Promise.resolve()}};
@@ -73,11 +81,14 @@ vm.runInContext(`
   if(!applySettingsPreset('READABILITY')||save.settings.enemyHp!=='ALL'||save.settings.motion!=='REDUCED'||save.settings.uiScale!=='XXL'||save.settings.effectClarity!=='HIGH') throw new Error('readability profile was not applied');
   state.weaponDamage.pulse=120; state.damageDealt=120;
   if(!renderRunIntel()||!document.getElementById('loadoutContent').innerHTML.includes('LAST SIGNAL')) throw new Error('run intel did not render the active build');
-  renderOffers();
+  state.choosing=true;state.choiceMode='level';renderOffers();
   if(!document.getElementById('buildCompass').innerHTML.includes('NEAREST BREAKPOINT')) throw new Error('build compass did not expose the nearest evolution');
   if(!document.getElementById('choices').children.some(card=>card.innerHTML.includes('IMPACT ·')&&card.innerHTML.includes('EVOLUTION ·'))) throw new Error('upgrade cards did not expose scoped impact and one build connection');
-  const previousDraw=state.currentOffers.map(offer=>offer.key),originalRandom=Math.random;Math.random=()=>0;renderOffers(previousDraw);Math.random=originalRandom;
-  if(state.currentOffers.map(offer=>offer.key).sort().join('|')===previousDraw.sort().join('|')) throw new Error('reroll protection returned an identical draw');
+  const pinnedOffer=state.currentOffers[0];if(!togglePinnedOffer(pinnedOffer.key)||state.pinnedOfferKey!==pinnedOffer.key) throw new Error('upgrade pin control failed');
+  const previousDraw=state.currentOffers.map(offer=>offer.key),previousUnpinned=previousDraw.filter(key=>key!==pinnedOffer.key).sort().join('|'),originalRandom=Math.random;Math.random=()=>0;renderOffers(previousDraw,pinnedOffer);Math.random=originalRandom;
+  if(!state.currentOffers.some(offer=>offer.key===pinnedOffer.key)||!document.getElementById('offerPins').children.some(button=>button.className.includes('selected'))) throw new Error('pinned offer did not survive reroll');
+  if(state.currentOffers.filter(offer=>offer.key!==pinnedOffer.key).map(offer=>offer.key).sort().join('|')===previousUnpinned) throw new Error('reroll protection returned identical unpinned cards');
+  state.choosing=false;state.choiceMode='';state.pinnedOfferKey='';
   pause(true);
   if(!state.paused||!document.getElementById('pauseScreen').classList.contains('show')) throw new Error('pause screen did not open');
   if(!document.getElementById('pauseSnapshot').innerHTML.includes('CURRENT PRIORITY')) throw new Error('pause snapshot did not render');
