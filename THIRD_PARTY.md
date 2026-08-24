@@ -12,9 +12,21 @@ The active gameplay sound effects use selected files from **Sci-Fi Sounds 1.0**,
 
 Source: https://kenney.nl/assets/sci-fi-sounds
 
-## Mixkit music
+## Pixabay music — active soundtrack
 
-The adaptive soundtrack uses these tracks under the Mixkit Free License:
+The adaptive dark-ambient soundtrack uses these files under the Pixabay Content License:
+
+- **Dystopian Ambient** — leberch — exploration / last-human state — https://pixabay.com/music/ambient-dystopian-ambient-520165/
+- **Dystopian Thriller** — leberch — high-threat combat state — https://pixabay.com/music/ambient-dystopian-thriller-520374/
+- **Blood Red Sky — Dark Ambient Crime Thriller and Horror Music** — ShadowsAndEchoes — boss / Conqueror state — https://pixabay.com/music/horror-scene-blood-red-sky-dark-ambient-crime-thriller-and-horror-music-152335/
+
+License summary: https://pixabay.com/service/license-summary/
+
+The license permits free use, adaptation, and commercial use subject to its prohibited-use and standalone-distribution restrictions. The downloaded tracks ship only as integrated game soundtrack assets.
+
+## Mixkit music — inactive legacy files
+
+Older builds used these tracks under the Mixkit Free License. The files may remain in source history but are not referenced by version 0.80.0:
 
 - **Spirit in the Woods** — Alejandro Magaña (A. M.)
 - **Sci-Fi Score** — Arulo

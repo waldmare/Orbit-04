@@ -2,10 +2,10 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 const root=path.join(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const requiredAssets=[
-  'assets/visuals/deep-space-arena-v1.png','assets/visuals/space-pulsar-v1.png','assets/visuals/space-rift-v1.png','assets/visuals/space-supernova-v1.png',
-  'assets/visuals/player-interceptor-v3.png','assets/visuals/enemy-scout-v3.png','assets/visuals/enemy-charger-v3.png','assets/visuals/enemy-tank-v3.png','assets/visuals/enemy-gunner-v3.png','assets/visuals/enemy-splitter-v3.png','assets/visuals/enemy-sniper-v3.png','assets/visuals/boss-carrier-v3.png',
+  'assets/visuals/background-dead-universe-v1.png','assets/visuals/background-alien-veil-v1.png',
+  'assets/visuals/player-last-ark-v1.png','assets/visuals/enemy-void-larva-v1.png','assets/visuals/enemy-ossuary-v1.png','assets/visuals/enemy-witness-v1.png','assets/visuals/boss-conquest-leviathan-v1.png',
   'assets/audio/premium/kenney-sci-fi-sounds/impactMetal_000.ogg','assets/audio/premium/kenney-sci-fi-sounds/thrusterFire_004.ogg','assets/audio/premium/kenney-sci-fi-sounds/laserSmall_000.ogg','assets/audio/premium/kenney-sci-fi-sounds/laserLarge_004.ogg','assets/audio/premium/kenney-sci-fi-sounds/explosionCrunch_004.ogg','assets/audio/premium/kenney-sci-fi-sounds/lowFrequency_explosion_001.ogg',
-  'assets/audio/premium/music-exploration-spirit.mp3','assets/audio/premium/music-combat-score.mp3','assets/audio/premium/music-boss-xanthos.mp3'
+  'assets/audio/premium/music-last-human-dystopian-ambient.mp3','assets/audio/premium/music-hostile-choir-dystopian-thriller.mp3','assets/audio/premium/music-leviathan-blood-red-sky.mp3'
 ];
 for(const asset of requiredAssets){const full=path.join(root,asset);if(!fs.existsSync(full)||fs.statSync(full).size<44)throw new Error(`missing engine asset: ${asset}`)}
 if(!html.includes('visual-engine.js'))throw new Error('sprite renderer script missing from index.html');
@@ -66,7 +66,10 @@ vm.runInContext(`
   testAudioOutput(); if(save.settings.audio!=='ON'||sampleAttempts===0||fallbackStarts===0||!document.getElementById('audioStatusText').textContent.includes('OUTPUT CONFIRMED')) throw new Error('audio output recovery failed'); save.settings.audio='OFF';
   if(!applySettingsPreset('READABILITY')||save.settings.enemyHp!=='ALL'||save.settings.motion!=='REDUCED'||save.settings.uiScale!=='XXL'||save.settings.effectClarity!=='HIGH') throw new Error('readability profile was not applied');
   state.weaponDamage.pulse=120; state.damageDealt=120;
-  if(!renderRunIntel()||!document.getElementById('loadoutContent').innerHTML.includes('PULSE CANNON')) throw new Error('run intel did not render the active build');
+  if(!renderRunIntel()||!document.getElementById('loadoutContent').innerHTML.includes('LAST SIGNAL')) throw new Error('run intel did not render the active build');
+  renderOffers();
+  if(!document.getElementById('buildCompass').innerHTML.includes('NEAREST BREAKPOINT')) throw new Error('build compass did not expose the nearest evolution');
+  if(!document.getElementById('choices').children.some(card=>card.innerHTML.includes('IMPACT ·')&&card.innerHTML.includes('EVOLUTION ·'))) throw new Error('upgrade cards did not expose scoped impact and one build connection');
   pause(true);
   if(!state.paused||!document.getElementById('pauseScreen').classList.contains('show')) throw new Error('pause screen did not open');
   if(!document.getElementById('pauseSnapshot').innerHTML.includes('CURRENT PRIORITY')) throw new Error('pause snapshot did not render');

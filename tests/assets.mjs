@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import pngjs from 'pngjs';
+
+const { PNG } = pngjs;
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sourceFiles = [
@@ -65,6 +68,22 @@ for (const relative of referencedAssets) {
   assert.ok(absolute.startsWith(path.join(root, 'assets') + path.sep), `${relative}: path escapes assets directory`);
   const info = await stat(absolute);
   assert.ok(info.isFile() && info.size > 0, `${relative}: referenced asset is missing or empty`);
+}
+
+const transparentEntityAssets = [
+  'assets/visuals/player-last-ark-v1.png',
+  'assets/visuals/enemy-void-larva-v1.png',
+  'assets/visuals/enemy-ossuary-v1.png',
+  'assets/visuals/enemy-witness-v1.png',
+  'assets/visuals/boss-conquest-leviathan-v1.png'
+];
+for (const relative of transparentEntityAssets) {
+  const png = PNG.sync.read(await readFile(path.join(root, relative)));
+  const cornerAlpha = [[0,0],[png.width-1,0],[0,png.height-1],[png.width-1,png.height-1]].map(([x,y]) => png.data[(y*png.width+x)*4+3]);
+  assert.ok(cornerAlpha.every(alpha => alpha === 0), `${relative}: sprite corners must be transparent`);
+  let transparent = 0, visible = 0;
+  for (let i = 3; i < png.data.length; i += 4) png.data[i] === 0 ? transparent++ : visible++;
+  assert.ok(transparent > png.width*png.height*.15 && visible > png.width*png.height*.04, `${relative}: sprite alpha coverage is implausible`);
 }
 
 const mediaFiles = (await walk(path.join(root, 'assets')))

@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.81.0 — Last Ark interaction and feedback polish
+
+- replaced the legacy player interceptor with a dedicated, transparent last-human ark sprite using battered graphite metal, bone-white repair panels, and a warm life-support core
+- preserved the ark's source aspect ratio and added a restrained breathing core, asymmetric engines, improved dash silhouettes, hit response, and installation pulse
+- removed spacecraft-style engine plumes from alien creatures and added per-species organic breathing, undulation, hover, spawn unfolding, and boss-scale body motion
+- added a compact Build Compass showing the nearest evolution breakpoint and current system/link count
+- redesigned level-up cards around immediate effect, affected scope, and one closest evolution or synergy path
+- added explicit synergy recipes for projected upgrade-path feedback while keeping full build detail in Run Intel
+- replaced routine alien destruction samples with lower-pitched organic material sounds, added layered boss-body collapse, softened repetitive voices, and slowed adaptive dark-ambient crossfades
+- added a separate installation sound and reserved large reward feedback for breakpoints, evolutions, links, artifacts, and bosses
+- preserved combat balance, upgrade probabilities, weapon output, enemy statistics, and run economy
+
+## 0.80.0 — Ashen Requiem art-direction rework
+
+- reframed ORBIT//04 as the final human-crewed ark in an alien-conquered universe
+- replaced the active enemy spacecraft and boss art with transparent organic alien creatures
+- replaced the colorful space plates with two ashen, low-saturation environment backgrounds and restrained celestial animation
+- renamed all ship configurations, weapons, evolutions, passive modules, sectors, world signals, enemy classes, and bosses around the last-human premise
+- replaced the active soundtrack with three licensed dark-ambient tracks and preserved adaptive exploration, combat, and boss crossfades
+- expanded the persistent literary field notes from 9 to 18 across Bernhard, Hamsun, Haller/Hesse, Faulkner, Lem, and Dostoevsky influences
+- labels every field note as original writing and explicitly states that it is not a quotation
+- reserved red for danger cues while moving navigation, progression, and interface effects into a graphite, ash, bone, and tarnished-silver palette
+- preserved enemy health, movement, damage, spawn composition, weapon output, progression, and reward balance
+
 ## 0.70.0 — Readability, reward feedback, and mix hierarchy
 
 - replaced the short Archive Fragment popup with a full Archive Reader that pauses combat and remains open until the player dismisses it

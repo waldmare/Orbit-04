@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.70.0-62e6ff)
+![Version](https://img.shields.io/badge/version-0.81.0-b8c2bc)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
-ORBIT//04 is a single-player, top-down space survival game. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a third boss encounter.
+ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.70.0`
+Current version: `0.81.0`
 
 ## Runtime overview
 
@@ -25,17 +25,18 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 
 ## Implemented game systems
 
-- 10 selectable frames with individual base statistics, starting weapons, and traits
-- 11 automatic weapon systems with upgrades and evolutions
+- 10 configurations of the single ORBIT//04 ark, each with individual statistics, a starting weapon, and a trait
+- 11 automatic weapon systems rethemed around grief, survival instinct, memory, and absence
+- concise level-up cards that expose immediate impact and one nearest evolution or synergy without presenting the full build graph at once
 - 3 difficulty levels, 4 sectors, and 4 optional run contracts
 - boss encounters at approximately 3:30, 7:30, and 12:00
 - optional Ascension mode after completing the base run
 - persistent credits, research upgrades, frame mastery, operations, achievements, and Codex data
 - projectile grazing, kill chains, Signal Rush, Overdrive, caches, anomalies, and hostile conversion
 - continuous directional travel with camera-safe world scrolling and active-encounter preservation
-- deterministic space generation beyond the starting view, including asteroid fields, wreckage, ion formations, and void sites
+- deterministic conquered-universe generation beyond the starting view, including ash fields, wreckage, alien formations, and void sites
 - six exploration signals: repair, combat amplification, salvage, archive fragments, risk/reward relics, and hostile jammers
-- 9 persistent literary archive fragments with original, clearly attributed thematic echoes of Bernhard, Hamsun, and Lem's *Solaris*
+- 18 persistent field notes with original, clearly labeled thematic echoes after Bernhard, Hamsun, Harry Haller in Hesse's *Steppenwolf*, Faulkner, Lem's *Solaris*, and Dostoevsky; none are presented as verbatim quotations
 - a persistent, pausing Archive Reader with manual dismissal and deferred data rewards
 - tiered reward ribbons for chains, Signal Rush, Overdrive, captured signals, and boss defeats
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
@@ -51,27 +52,29 @@ The Phaser scene loads the active backgrounds, ship sprites, and audio files fro
 
 The renderer includes:
 
-- distinct sprites for the player, six standard enemy classes, and the boss
+- a technological player vessel contrasted with four transparent organic creature plates covering six enemy behaviors and the Conqueror boss
+- a dedicated last-human ark sprite with a visible life-support core, asymmetric repair detail, responsive engines, preserved aspect ratio, and configuration-neutral hull materials
 - aspect-ratio-preserving sprite scaling
 - matte-free ship textures selected for the active camera scale
 - frame-rate-independent position and rotation smoothing for player, hostile, and allied ships
+- organic breathing, undulation, and asymmetric locomotion for alien bodies instead of spacecraft engine plumes
 - thrust-responsive engine plumes, turning bank, dash afterimages, spawn easing, hit recoil, and multi-stage destruction effects
 - animated pickups, exploration signals, orbiting systems, projectile streaks, and depth landmarks
 - damped impact shake and background parallax instead of per-frame random jitter
 - artifact-free vector glow, shields, elite markers, and telegraphs drawn in a dedicated additive pass
 - configurable particles, background detail, contrast, and graphics quality
-- four runtime background states: deep space, pulsar, gravitational rift, and supernova
+- two generated ashen environment plates, reused across four runtime states with restrained eclipse, rift, and dying-supernova animation
 - a vector rendering fallback when the retained sprite engine is unavailable
 
 ## Runtime screenshot
 
-![ORBIT//04 automated runtime capture](docs/runtime-screenshot.png)
+![ORBIT//04 version 0.81.0 Last Ark runtime capture](docs/runtime-screenshot.png)
 
-This 1440 × 810 image is an automated capture from the active Electron/WebGL runtime. The capture uses the real HUD, Phaser renderer, background system, ship textures, enemy classes, and gameplay state. Enemy placement and run time are fixed only to make the result reproducible; it is not concept art or a UI mockup.
+This 1440 × 810 image was captured from the active 0.81.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay.
 
 ## Audio implementation
 
-Gameplay sound effects use selected files from Kenney's Sci-Fi Sounds package. Music uses three Mixkit tracks assigned to exploration, combat, and boss states. The runtime crossfades between those states, limits repetitive combat voices, gives major rewards priority, and briefly ducks music around important cues. Music and sound-effect volume remain independently adjustable.
+Gameplay sound effects use selected files from Kenney's Sci-Fi Sounds package. Music uses three licensed dark-ambient tracks assigned to exploration, combat, and boss states. The runtime crossfades between those states, limits repetitive combat voices, gives major rewards priority, and briefly ducks music around important cues. Music and sound-effect volume remain independently adjustable.
 
 License and source information is listed in [THIRD_PARTY.md](THIRD_PARTY.md).
 
@@ -191,7 +194,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.67.0 is a Windows release-preparation build with procedural exploration, continuous combat-field travel, verified audio playback diagnostics, corrected early encounter composition, and in-run build telemetry. The repository can generate and validate the offline desktop package and real 1920 × 1080 gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.81.0 is an art-direction and interaction-polish build with a dedicated last-human ark, organic enemy motion, quieter hierarchical sound design, readable build-path guidance, dark-ambient adaptive music, continuous exploration, and verified audio diagnostics. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <meta name="description" content="ORBIT//04 is a top-down space survival game built with Phaser 3 and Electron." />
+  <meta name="description" content="ORBIT//04 is a top-down survival game about the last human vessel crossing an alien-conquered universe." />
   <meta name="theme-color" content="#05070a" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' data: blob:" />
   <title>ORBIT//04</title>
@@ -22,7 +22,7 @@
     <div id="bossBar" class="hidden"><div id="bossLabel"></div><div class="bar"><div id="bossFill"></div></div></div>
     <div id="rushMeter" class="hidden"><div id="rushLabel"></div><div class="bar"><div id="rushFill"></div></div></div>
     <div id="abilityBar"><div id="dashWidget" class="ready"><b>SHIFT</b><span id="dashStatus">PHASE DASH · READY</span><i><em id="dashCharge"></em></i></div></div>
-    <div id="navigationSignal" class="hidden" data-disposition="boon"><span>EXPLORATION SIGNAL</span><b id="navigationSignalText"></b></div>
+    <div id="navigationSignal" class="hidden" data-disposition="boon"><span>WEAK SIGNAL IN THE ASH</span><b id="navigationSignalText"></b></div>
     <div id="xpbar"><div id="xpfill"></div><div id="xptext"></div></div>
   </div>
   <div id="centerMessage"></div>
@@ -32,7 +32,7 @@
   <section id="titleScreen" class="overlay show">
     <div class="panel titlePanel">
       <div class="brand">
-        <div><h1>ORBIT//04</h1><div class="muted">TACTICAL SPACE SURVIVAL</div></div>
+        <div><h1>ORBIT//04</h1><div class="muted">THE LAST HUMAN VESSEL</div></div>
         <div class="tag">BUILD <span id="versionText"></span><br><span id="saveLine"></span></div>
       </div>
 
@@ -72,6 +72,7 @@
   <section id="levelScreen" class="overlay">
     <div class="panel levelPanel">
       <div class="headerSplit"><div><h1>LEVEL UP</h1><h2>INSTALL ONE MODULE</h2></div><div id="levelMeta" class="tag"></div></div>
+      <div id="buildCompass" class="buildCompass" aria-live="polite"></div>
       <div id="choices" class="choiceGrid"></div>
       <div class="levelFooter">
         <div id="rerollInfo" class="tiny"></div>
@@ -83,19 +84,19 @@
   <section id="archiveScreen" class="overlay archiveOverlay" role="dialog" aria-modal="true" aria-labelledby="archiveChannel">
     <div class="panel archivePanel">
       <div class="archiveHeader">
-        <div><span id="archiveStatus" class="archiveStatus">NEW ARCHIVE</span><h1 id="archiveChannel">ARCHIVE FRAGMENT</h1></div>
+        <div><span id="archiveStatus" class="archiveStatus">RECOVERED VOICE</span><h1 id="archiveChannel">LAST WORD</h1></div>
         <div id="archiveProgress" class="tag"></div>
       </div>
       <blockquote id="archiveQuote"></blockquote>
       <div id="archiveNote" class="archiveNote"></div>
       <div id="archiveReward" class="archiveReward"></div>
-      <div class="archiveFooter"><span>Saved permanently in CODEX / DISCOVERY</span><button id="archiveContinueBtn" class="primary">CONTINUE <b>ENTER</b></button></div>
+      <div class="archiveFooter"><span>Preserved in the ark memory / authorial echo, not a quotation</span><button id="archiveContinueBtn" class="primary">CONTINUE <b>ENTER</b></button></div>
     </div>
   </section>
 
   <section id="doctrineScreen" class="overlay">
     <div class="panel levelPanel">
-      <div class="headerSplit"><div><h1>DOCTRINE LINK</h1><h2>CHOOSE A RUN-DEFINING SYSTEM LAW</h2></div><div id="doctrineMeta" class="tag"></div></div>
+      <div class="headerSplit"><div><h1>SURVIVAL INSTINCT</h1><h2>CHOOSE WHAT THE LAST CREW IS WILLING TO BECOME</h2></div><div id="doctrineMeta" class="tag"></div></div>
       <div id="doctrineChoices" class="choiceGrid"></div>
       <div class="tiny" style="margin-top:10px">Two doctrines per run. Choices are permanent until the transmission ends.</div>
     </div>
@@ -103,8 +104,8 @@
 
   <section id="ascendScreen" class="overlay">
     <div class="panel smallPanel centered">
-      <h1>ORBIT STABLE</h1><h2>THE NULL CARRIER IS DOWN</h2>
-      <p class="muted">Bank the clear, or enter Ascension. Endless pressure scales every cycle; score and salvage multipliers rise with it.</p>
+      <h1>THE CONQUEROR IS DEAD</h1><h2>THE UNIVERSE REMAINS OCCUPIED</h2>
+      <p class="muted">Preserve the surviving crew, or continue into Ascension. Each cycle brings denser organisms, higher score and more salvage.</p>
       <div id="ascendStats" class="tag" style="text-align:center;margin:12px 0"></div>
       <div class="menuRow centered"><button id="bankRunBtn" class="primary">BANK RUN</button><button id="ascendRunBtn">ASCEND</button></div>
     </div>
@@ -112,7 +113,7 @@
 
   <section id="pauseScreen" class="overlay">
     <div class="panel smallPanel centered">
-      <h1>PAUSED</h1><p class="muted">Transmission suspended.</p>
+      <h1>PAUSED</h1><p class="muted">The dark waits. The crew does not sleep.</p>
       <div id="pauseSnapshot" class="pauseSnapshot"></div>
       <div class="menuRow centered"><button id="resumeBtn" class="primary">RESUME</button><button id="pauseLoadoutBtn">RUN INTEL</button><button id="pauseBankBtn" class="hidden">BANK ASCENSION</button><button id="restartRunBtn">RESTART RUN</button><button id="pauseSettingsBtn">SETTINGS</button><button id="menuBtn">ABORT RUN</button></div>
     </div>
@@ -184,7 +185,7 @@
         <div class="settingRow"><div><b>GRAPHICS PRESET</b><div class="tiny">Geometry detail and space-fog density.</div></div><button id="graphicsSetting"></button></div>
         <div class="settingRow"><div><b>EFFECT CLARITY</b><div class="tiny">HIGH separates hostile fire, player fire and ambient effects.</div></div><button id="effectClaritySetting"></button></div>
         <div class="settingRow"><div><b>GLOW FX</b><div class="tiny">Additive weapon, ship and hostile lighting.</div></div><button id="glowSetting"></button></div>
-        <div class="settingRow"><div><b>SPACE BACKGROUND</b><div class="tiny">FULL, SIMPLE or OFF for maximum clarity.</div></div><button id="backgroundSetting"></button></div>
+        <div class="settingRow"><div><b>DEAD UNIVERSE</b><div class="tiny">FULL enables the animated ash fields; SIMPLE and OFF prioritize clarity.</div></div><button id="backgroundSetting"></button></div>
         <div class="settingRow"><div><b>CONTRAST</b><div class="tiny">HIGH improves HUD and object separation.</div></div><button id="contrastSetting"></button></div>
         <div class="settingRow"><div><b>AUDIO</b><div class="tiny">Sample-based music and sound effects.</div></div><button id="audioSetting"></button></div>
         <div class="settingRow"><div><b>DYNAMIC RANGE</b><div class="tiny">CINEMA is widest · NIGHT keeps impacts controlled and dialogue-like cues clear.</div></div><button id="audioMixSetting"></button></div>

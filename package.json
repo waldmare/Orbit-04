@@ -1,8 +1,8 @@
 {
   "name": "orbit-04",
   "productName": "ORBIT 04",
-  "version": "0.70.0",
-  "description": "Top-down space survival game built with JavaScript, Phaser 3, and Electron.",
+  "version": "0.81.0",
+  "description": "Top-down survival game about the last human vessel in an alien-conquered universe.",
   "main": "desktop/main.cjs",
   "private": true,
   "license": "SEE LICENSE IN LICENSE.md",
