@@ -48,6 +48,18 @@ It should not come primarily from excessive enemy HP.
 
 Exploration effects are temporary or event-scoped. Baseline frame statistics, weapon values, enemy growth, boss timing, and progression remain unchanged.
 
+## 0.85 field directives
+
+Each run receives exactly one secondary objective. Directives rotate by completed run count, remain optional, and never block boss progression.
+
+| Directive | Requirement | Reward |
+|---|---:|---|
+| Recovery Order | Secure 3 field signals | +1 reroll and 10 base credits |
+| Transit Order | Travel 6.0 km | +1 skip and 10 base credits |
+| Attrition Order | Destroy 150 hostiles | One standard Data Cache |
+
+Only one directive can pay out per run. Rewards reuse existing resources and cache behavior; no additional currency, inventory, or permanent combat multiplier is introduced.
+
 ## 0.30 changes
 
 ### Hostiles

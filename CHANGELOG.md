@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.85.0 — Field Directives
+
+- added one deterministic secondary directive per run instead of a stack of simultaneous checklist objectives
+- added three directive routes: secure three field signals, travel 6.0 km, or destroy 150 hostile organisms
+- rewards use existing systems only: a reroll and salvage, a skip and salvage, or a standard Data Cache
+- added a compact directive tracker plus progress in Pause, Run Intel, run results, lifetime statistics, and automated tests
+- added the Field Officer achievement for completing five directives
+- preserved enemy pressure, procedural signal frequency, weapon balance, XP pacing, and the primary boss timeline
+
 ## 0.84.0 — Navigation control and run safety
 
 - added an in-run signal scanner with All, Support, Archive, and Risk filters, cycled with `N`

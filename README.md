@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.84.0-b8c2bc)
+![Version](https://img.shields.io/badge/version-0.85.0-b8c2bc)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-proprietary-f4ba68)
 
 ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.84.0`
+Current version: `0.85.0`
 
 ## Runtime overview
 
@@ -47,6 +47,7 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 - an in-run signal scanner that filters procedural discoveries by support, archive, or risk category
 - a timestamped install log in Run Intel plus last-install and scanner summaries on pause
 - configurable focus-loss pausing to protect active runs during task switching
+- one concise Field Directive per run, rotating between exploration, travel, and attrition objectives with existing-system rewards
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
 - keyboard, mouse, and gamepad movement
 - licensed sample playback with automatic context recovery, verified-playback status, mute warnings, and an in-game output check
@@ -76,9 +77,9 @@ The renderer includes:
 
 ## Runtime screenshot
 
-![ORBIT//04 version 0.84.0 Last Ark runtime capture](docs/runtime-screenshot-v0.84.0.png)
+![ORBIT//04 version 0.85.0 Last Ark runtime capture](docs/runtime-screenshot-v0.85.0.png)
 
-This 1440 × 810 image was captured from the active 0.84.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
+This 1440 × 810 image was captured from the active 0.85.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
 
 ## Audio implementation
 
@@ -173,7 +174,7 @@ Capture the documented gameplay scene from the local Electron/WebGL build:
 npm.cmd run screenshot
 ```
 
-The capture command writes `docs/runtime-screenshot-v0.84.0.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+The capture command writes `docs/runtime-screenshot-v0.85.0.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
 
 The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, renderer integration, runtime asset references, media file signatures, image dimensions, and the local Phaser bundle.
 
@@ -205,7 +206,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.84.0 adds filtered signal navigation, focus-loss safety, and a concise installation history to the existing targeting and progression controls. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.85.0 adds a focused Field Directive layer that gives each run one secondary route through existing exploration and combat systems without introducing another currency or menu. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

@@ -34,8 +34,9 @@ vm.runInContext(`
   Phaser.Game=class{constructor(config){rendererConfig=config}};
   bootRenderer();
   if(rendererConfig?.type!==Phaser.WEBGL) throw new Error('renderer type must be explicit when using a custom canvas');
-  save.settings.audio='OFF'; startRun();
+  save.settings.audio='OFF';if(selectFieldDirective()!=='recovery') throw new Error('first directive rotation is incorrect');save.runs=1;if(selectFieldDirective()!=='transit') throw new Error('second directive rotation is incorrect');save.runs=2;if(selectFieldDirective()!=='attrition') throw new Error('third directive rotation is incorrect');save.runs=0;startRun();
   state.p.iFrames=9999;
+  updateDirectiveHud();if(state.directiveId!=='recovery'||document.getElementById('directiveTracker').classList.contains('hidden')||!document.getElementById('directiveTrackerText').textContent.includes('RECOVERY ORDER')) throw new Error('field directive did not initialize');
   const nearTarget=spawnEnemy('scout',false,{x:state.p.x+40,y:state.p.y}),weakTarget=spawnEnemy('scout',false,{x:state.p.x+170,y:state.p.y}),eliteTarget=spawnEnemy('tank',true,{x:state.p.x+250,y:state.p.y}),targetSet=enemy=>enemy===nearTarget||enemy===weakTarget||enemy===eliteTarget;weakTarget.hp=weakTarget.maxHp*.05;
   save.settings.targetPriority='NEAREST'; if(nearest(state.p,targetSet)!==nearTarget) throw new Error('nearest targeting priority failed');
   save.settings.targetPriority='LOW HULL'; if(nearest(state.p,targetSet)!==weakTarget) throw new Error('low-hull targeting priority failed');
@@ -64,6 +65,7 @@ vm.runInContext(`
   if(state.archiveFragments!==1||save.stats.archiveFragments!==archiveStatsBefore+1||save.discoveredArchives.length!==archivesBefore+1||!state.paused||!state.archiveOpen) throw new Error('archive fragment recovery failed');
   if(!document.getElementById('archiveScreen').classList.contains('show')||!document.getElementById('archiveQuote').textContent||state.xp!==archiveXpBefore) throw new Error('persistent archive reader failed');
   closeArchiveFragment(); if(state.paused||state.archiveOpen||document.getElementById('archiveScreen').classList.contains('show')||state.xp!==archiveXpBefore+3) throw new Error('archive reader did not resume the run and bank data');
+  const directivesBefore=save.stats.directivesCompleted,rerollsBeforeDirective=state.rerolls;if(!checkFieldDirective()||!state.directiveComplete||save.stats.directivesCompleted!==directivesBefore+1||state.rerolls!==rerollsBeforeDirective+1) throw new Error('field directive completion failed');updateDirectiveHud();if(!document.getElementById('directiveTracker').classList.contains('hidden')||!document.getElementById('rewardRibbonTitle').textContent.includes('FIELD DIRECTIVE')) throw new Error('field directive completion feedback failed');
   const recoveredArchive=ARCHIVE_FRAGMENTS.find(entry=>entry.id===save.discoveredArchives.at(-1)); codexTab='discoveries'; renderCodex(); if(!recoveredArchive||!document.getElementById('codexContent').children.some(card=>card.innerHTML.includes(recoveredArchive.channel)&&card.innerHTML.includes('thematic echo'))) throw new Error('archive fragment Codex entry failed');
   if(Object.keys(ENGINE_ASSETS.backgrounds).length!==4) throw new Error('dynamic background plates missing');
   state.time=106; if(desiredBackground()!=='pulsar') throw new Error('background director did not advance'); state.time=0;
