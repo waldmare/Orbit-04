@@ -19,20 +19,20 @@ document.body.innerHTML=`
 
     <section id="menu3d" class="overlay3d"><div class="panel3d">
       <div class="brand3d"><h1>ORBIT<span>//04</span></h1><div class="version3d">REENTRY BUILD ${VERSION}<br>THIRD-PERSON ENGINE</div></div>
-      <div class="menuGrid3d"><div class="heroBlock3d"><p class="lead3d">Przebijaj się przez setki jednostek w pełnym 3D. Statek atakuje automatycznie — Ty odpowiadasz za ruch, pozycję, dash i budowę przeciążonego arsenału.</p><div class="controls3d"><b>WASD</b> RUCH · <b>MYSZ</b> KAMERA · <b>SHIFT</b> DASH · <b>ESC</b> PAUZA</div></div>
-      <div class="menuActions3d"><button id="start3d" class="button3d primary"><b>URUCHOM RUN</b><span>8 minut eskalacji · bossowie · nieskończone synergie</span></button><button id="settingsBtn3d" class="button3d"><b>USTAWIENIA</b><span>Grafika, muzyka i efekty</span></button><div class="telemetry"><div class="eyebrow">PROFIL PILOTA</div><div id="profileText3d" class="bigStat">0 SALVAGE</div><div id="recordText3d" class="subStat">BEST 0 · RUNS 0</div></div></div></div>
+      <div class="menuGrid3d"><div class="heroBlock3d"><p class="lead3d">Break through hundreds of hostile units in full 3D. The frame fires automatically; you control movement, positioning, dash timing, and the construction of an overloaded arsenal.</p><div class="controls3d"><b>WASD</b> MOVE · <b>MOUSE</b> CAMERA · <b>SHIFT</b> DASH · <b>ESC</b> PAUSE</div></div>
+      <div class="menuActions3d"><button id="start3d" class="button3d primary"><b>START RUN</b><span>8 minutes of escalation · bosses · open-ended synergies</span></button><button id="settingsBtn3d" class="button3d"><b>SETTINGS</b><span>Graphics, music, and effects</span></button><div class="telemetry"><div class="eyebrow">PILOT PROFILE</div><div id="profileText3d" class="bigStat">0 SALVAGE</div><div id="recordText3d" class="subStat">BEST 0 · RUNS 0</div></div></div></div>
       <div id="metaGrid3d" class="metaGrid3d"></div>
     </div></section>
 
     <section id="upgrade3d" class="overlay3d hidden"><div class="panel3d"><div class="brand3d"><div><div class="eyebrow">LIVE SYSTEM INTEGRATION</div><h2 id="upgradeTitle3d">LEVEL 2</h2></div><div class="version3d">NO CARDS<br>CHOOSE ONE SYSTEM</div></div><div id="choices3d" class="choiceGrid3d"></div></div></section>
-    <section id="pause3d" class="overlay3d hidden"><div class="panel3d panelSmall3d"><div class="eyebrow">TRANSMISSION SUSPENDED</div><h2>PAUZA</h2><p class="lead3d">Run czeka. Kamera wróci po wznowieniu.</p><div class="row3d"><button id="resume3d" class="button3d primary">WZNÓW</button><button id="abort3d" class="button3d">ZAKOŃCZ RUN</button></div></div></section>
-    <section id="gameover3d" class="overlay3d hidden"><div class="panel3d panelSmall3d"><div class="eyebrow">RUN TELEMETRY</div><div id="grade3d" class="grade3d">B</div><h2 id="endTitle3d">FRAME LOST</h2><div id="metrics3d" class="metricGrid3d"></div><p id="reward3d" class="lead3d accent3d"></p><div class="row3d"><button id="retry3d" class="button3d primary">JESZCZE RAZ</button><button id="menuBtn3d" class="button3d">HANGAR</button></div></div></section>
-    <section id="settings3d" class="overlay3d hidden"><div class="panel3d panelSmall3d"><div class="eyebrow">DISPLAY / AUDIO</div><h2>USTAWIENIA</h2><div class="settings3d">
-      <div class="setting3d"><label for="quality3d">JAKOŚĆ GRAFIKI</label><select id="quality3d"><option>HIGH</option><option>ULTRA</option><option>LOW</option></select></div>
-      <div class="setting3d"><label for="music3d">MUZYKA</label><input id="music3d" type="range" min="0" max="100" step="5"></div>
-      <div class="setting3d"><label for="sfx3d">EFEKTY</label><input id="sfx3d" type="range" min="0" max="100" step="5"></div>
-      <div class="setting3d"><label for="shake3d">DRGANIA KAMERY</label><input id="shake3d" type="checkbox"></div>
-    </div><button id="settingsClose3d" class="button3d primary">ZAPISZ I WRÓĆ</button></div></section>
+    <section id="pause3d" class="overlay3d hidden"><div class="panel3d panelSmall3d"><div class="eyebrow">TRANSMISSION SUSPENDED</div><h2>PAUSED</h2><p class="lead3d">The run is suspended. Camera control resumes with the transmission.</p><div class="row3d"><button id="resume3d" class="button3d primary">RESUME</button><button id="abort3d" class="button3d">ABORT RUN</button></div></div></section>
+    <section id="gameover3d" class="overlay3d hidden"><div class="panel3d panelSmall3d"><div class="eyebrow">RUN TELEMETRY</div><div id="grade3d" class="grade3d">B</div><h2 id="endTitle3d">FRAME LOST</h2><div id="metrics3d" class="metricGrid3d"></div><p id="reward3d" class="lead3d accent3d"></p><div class="row3d"><button id="retry3d" class="button3d primary">RUN AGAIN</button><button id="menuBtn3d" class="button3d">HANGAR</button></div></div></section>
+    <section id="settings3d" class="overlay3d hidden"><div class="panel3d panelSmall3d"><div class="eyebrow">DISPLAY / AUDIO</div><h2>SETTINGS</h2><div class="settings3d">
+      <div class="setting3d"><label for="quality3d">GRAPHICS QUALITY</label><select id="quality3d"><option>HIGH</option><option>ULTRA</option><option>LOW</option></select></div>
+      <div class="setting3d"><label for="music3d">MUSIC</label><input id="music3d" type="range" min="0" max="100" step="5"></div>
+      <div class="setting3d"><label for="sfx3d">SOUND EFFECTS</label><input id="sfx3d" type="range" min="0" max="100" step="5"></div>
+      <div class="setting3d"><label for="shake3d">CAMERA SHAKE</label><input id="shake3d" type="checkbox"></div>
+    </div><button id="settingsClose3d" class="button3d primary">SAVE AND RETURN</button></div></section>
   </div>
 </main>`;
 
@@ -53,18 +53,18 @@ class SoundDirector{
 const SOUND=new SoundDirector();
 
 const UPGRADES=[
-  {id:'output',name:'AMPLIFIER CORE',desc:'+24% obrażeń wszystkich systemów.',max:8,apply:s=>s.damage*=1.24},
-  {id:'overclock',name:'ZERO-LATENCY BUS',desc:'+18% szybkostrzelności automatycznego uzbrojenia.',max:8,apply:s=>s.fireRate*=1.18},
-  {id:'multishot',name:'SPLIT ARRAY',desc:'+1 równoległy pocisk. Szersze pokrycie hordy.',max:5,apply:s=>s.multishot++},
-  {id:'velocity',name:'MASS DRIVER',desc:'+22% prędkości pocisków i +1 przebicie.',max:6,apply:s=>{s.projectileSpeed*=1.22;s.pierce++}},
-  {id:'hull',name:'REACTIVE HULL',desc:'+28 maksymalnej integralności i natychmiastowa naprawa.',max:6,apply:s=>{s.maxHull+=28;s.hull=Math.min(s.maxHull,s.hull+38)}},
-  {id:'thrusters',name:'VECTOR THRUST',desc:'+12% prędkości i krótszy cooldown dasha.',max:6,apply:s=>{s.speed*=1.12;s.dashMax=Math.max(1.5,s.dashMax*.90)}},
-  {id:'magnet',name:'GRAVITY NET',desc:'+30% zasięgu zbierania danych.',max:5,apply:s=>s.magnet*=1.30},
+  {id:'output',name:'AMPLIFIER CORE',desc:'+24% output from all weapon systems.',max:8,apply:s=>s.damage*=1.24},
+  {id:'overclock',name:'ZERO-LATENCY BUS',desc:'+18% automatic weapon fire rate.',max:8,apply:s=>s.fireRate*=1.18},
+  {id:'multishot',name:'SPLIT ARRAY',desc:'+1 parallel projectile. Increases horde coverage.',max:5,apply:s=>s.multishot++},
+  {id:'velocity',name:'MASS DRIVER',desc:'+22% projectile velocity and +1 penetration.',max:6,apply:s=>{s.projectileSpeed*=1.22;s.pierce++}},
+  {id:'hull',name:'REACTIVE HULL',desc:'+28 maximum integrity and an immediate repair.',max:6,apply:s=>{s.maxHull+=28;s.hull=Math.min(s.maxHull,s.hull+38)}},
+  {id:'thrusters',name:'VECTOR THRUST',desc:'+12% movement speed and a shorter dash cooldown.',max:6,apply:s=>{s.speed*=1.12;s.dashMax=Math.max(1.5,s.dashMax*.90)}},
+  {id:'magnet',name:'GRAVITY NET',desc:'+30% data collection radius.',max:5,apply:s=>s.magnet*=1.30},
   {id:'critical',name:'PREDICTIVE LOCK',desc:'+7% szansy na trafienie krytyczne.',max:6,apply:s=>s.crit+=.07},
   {id:'drone',name:'GUARDIAN WING',desc:'+1 autonomiczny dron orbitalny.',max:4,apply:s=>s.drones++},
-  {id:'nova',name:'NOVA REACTOR',desc:'Cykliczna fala uderzeniowa. Kolejne poziomy skracają ładowanie.',max:5,apply:s=>{s.novaLevel++;s.novaMax=Math.max(3.5,8-s.novaLevel*.8)}},
-  {id:'shield',name:'PHASE SHIELD',desc:'Regeneracja kadłuba po 5 sekundach bez trafienia.',max:4,apply:s=>s.regen+=2.2},
-  {id:'salvage',name:'HARVEST PROTOCOL',desc:'+30% salvage z elit i bossów.',max:4,apply:s=>s.salvageMul*=1.30}
+  {id:'nova',name:'NOVA REACTOR',desc:'Periodic shockwave. Each level reduces charge time.',max:5,apply:s=>{s.novaLevel++;s.novaMax=Math.max(3.5,8-s.novaLevel*.8)}},
+  {id:'shield',name:'PHASE SHIELD',desc:'Regenerates hull after 5 seconds without taking a hit.',max:4,apply:s=>s.regen+=2.2},
+  {id:'salvage',name:'HARVEST PROTOCOL',desc:'+30% salvage from elites and bosses.',max:4,apply:s=>s.salvageMul*=1.30}
 ];
 
 function canvasGlow(color='#8de9ff'){
@@ -121,7 +121,7 @@ class Orbit3D{
 
   applyQuality(){const q=profile.settings.quality,dpr=q==='ULTRA'?Math.min(devicePixelRatio,2):q==='LOW'?1:Math.min(devicePixelRatio,1.5);this.renderer.setPixelRatio(dpr);this.renderer.shadowMap.enabled=q!=='LOW';this.renderer.toneMappingExposure=q==='ULTRA'?1.18:1.08;this.resize()}
   resize(){const w=innerWidth,h=innerHeight;this.renderer.setSize(w,h,false);this.camera.aspect=w/h;this.camera.updateProjectionMatrix()}
-  renderProfile(){$('profileText3d').textContent=`${profile.salvage} SALVAGE`;$('recordText3d').textContent=`BEST ${Math.floor(profile.bestScore)} · RUNS ${profile.runs} · KILLS ${profile.totalKills}`;const names={hull:['HULL MEMORY','+8 startowego kadłuba'],output:['OUTPUT MEMORY','+4% obrażeń'],thrusters:['THRUSTER MEMORY','+3% prędkości']};$('metaGrid3d').innerHTML=Object.entries(names).map(([id,[name,desc]])=>{const l=profile.meta[id],cost=50+l*65;return`<div class="metaUpgrade3d"><b>${name} · M${l}</b><small>${desc} na poziom.</small><button class="button3d" data-meta="${id}" ${l>=5||profile.salvage<cost?'disabled':''}>${l>=5?'MAX':`ULEPSZ · ${cost}`}</button></div>`}).join('');document.querySelectorAll('[data-meta]').forEach(b=>b.onclick=()=>this.buyMeta(b.dataset.meta))}
+  renderProfile(){$('profileText3d').textContent=`${profile.salvage} SALVAGE`;$('recordText3d').textContent=`BEST ${Math.floor(profile.bestScore)} · RUNS ${profile.runs} · KILLS ${profile.totalKills}`;const names={hull:['HULL MEMORY','+8 starting hull'],output:['OUTPUT MEMORY','+4% damage'],thrusters:['THRUSTER MEMORY','+3% movement speed']};$('metaGrid3d').innerHTML=Object.entries(names).map(([id,[name,desc]])=>{const l=profile.meta[id],cost=50+l*65;return`<div class="metaUpgrade3d"><b>${name} · M${l}</b><small>${desc} per level.</small><button class="button3d" data-meta="${id}" ${l>=5||profile.salvage<cost?'disabled':''}>${l>=5?'MAX':`UPGRADE · ${cost}`}</button></div>`}).join('');document.querySelectorAll('[data-meta]').forEach(b=>b.onclick=()=>this.buyMeta(b.dataset.meta))}
   buyMeta(id){const l=profile.meta[id],cost=50+l*65;if(l>=5||profile.salvage<cost)return;profile.salvage-=cost;profile.meta[id]++;persist();SOUND.play('ui',.55);this.renderProfile()}
 
   startRun(){
@@ -181,7 +181,7 @@ class Orbit3D{
   diagnostics(){return{version:VERSION,engine:this.canvas.dataset.engine,mode:this.mode,time:this.run?.time||0,level:this.run?.level||0,enemies:this.enemies.length,bullets:this.bullets.length,orbs:this.orbs.length,kills:this.run?.kills||0,renderer:this.renderer.capabilities.isWebGL2?'webgl2':'webgl1'}}
 
   update(dt){if(this.mode!=='run'||this.paused||this.leveling||!this.run)return;const s=this.run;s.time+=dt;this.updatePlayer(dt);this.updateSpawns(dt);this.updateEnemies(dt);this.updateWeapons(dt);this.updateBullets(dt);this.updateOrbs(dt);this.updateEffects(dt);SOUND.update({boss:!!s.boss,threat:s.threat,combo:s.combo,overdrive:s.overdrive});this.updateHud();if(s.time>=480)this.finish(true)}
-  finish(victory,aborted=false){if(this.mode!=='run')return;const s=this.run;this.mode='ended';this.paused=true;SOUND.pause();document.exitPointerLock?.();const earned=Math.round((s.kills*.12+s.level*2+s.salvage)*(victory?1.35:1));profile.salvage+=earned;profile.bestScore=Math.max(profile.bestScore,Math.floor(s.score));profile.bestTime=Math.max(profile.bestTime,Math.floor(s.time));profile.runs++;profile.totalKills+=s.kills;persist();hide('hud3d');hide('pause3d');show('gameover3d');const grade=victory?'S':s.time>300?'A':s.time>180?'B':s.time>90?'C':'D';$('grade3d').textContent=grade;$('endTitle3d').textContent=aborted?'RUN ABORTED':victory?'SECTOR BROKEN':'FRAME LOST';$('metrics3d').innerHTML=[[fmt(s.time),'TIME'],[s.level,'LEVEL'],[s.kills,'KILLS'],[s.comboBest,'BEST CHAIN'],[Math.floor(s.score),'SCORE'],[Object.keys(s.levels).length,'SYSTEMS'],[s.threat,'THREAT'],[s.salvage,'FIELD SALVAGE']].map(([v,k])=>`<div class="metric3d"><b>${v}</b><span>${k}</span></div>`).join('');$('reward3d').textContent=`+${earned} SALVAGE · stałe ulepszenia czekają w hangarze`;this.renderProfile()}
+  finish(victory,aborted=false){if(this.mode!=='run')return;const s=this.run;this.mode='ended';this.paused=true;SOUND.pause();document.exitPointerLock?.();const earned=Math.round((s.kills*.12+s.level*2+s.salvage)*(victory?1.35:1));profile.salvage+=earned;profile.bestScore=Math.max(profile.bestScore,Math.floor(s.score));profile.bestTime=Math.max(profile.bestTime,Math.floor(s.time));profile.runs++;profile.totalKills+=s.kills;persist();hide('hud3d');hide('pause3d');show('gameover3d');const grade=victory?'S':s.time>300?'A':s.time>180?'B':s.time>90?'C':'D';$('grade3d').textContent=grade;$('endTitle3d').textContent=aborted?'RUN ABORTED':victory?'SECTOR BROKEN':'FRAME LOST';$('metrics3d').innerHTML=[[fmt(s.time),'TIME'],[s.level,'LEVEL'],[s.kills,'KILLS'],[s.comboBest,'BEST CHAIN'],[Math.floor(s.score),'SCORE'],[Object.keys(s.levels).length,'SYSTEMS'],[s.threat,'THREAT'],[s.salvage,'FIELD SALVAGE']].map(([v,k])=>`<div class="metric3d"><b>${v}</b><span>${k}</span></div>`).join('');$('reward3d').textContent=`+${earned} SALVAGE · permanent upgrades are waiting in the hangar`;this.renderProfile()}
 
   animate(){requestAnimationFrame(()=>this.animate());this.timer.update();const dt=Math.min(.033,this.timer.getDelta());if(this.mode==='menu'){this.ship.rotation.y+=dt*.16;this.ship.position.y=.2+Math.sin(performance.now()*.0012)*.18;this.camera.position.lerp(new THREE.Vector3(0,5.5,13),1-Math.exp(-dt*2));this.camera.lookAt(0,.3,0)}else{this.update(dt);this.updateCamera(dt)}this.updateEnvironment(dt);this.renderer.render(this.scene,this.camera)}
 }

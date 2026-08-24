@@ -42,6 +42,7 @@ vm.runInContext(`
   state.p.iFrames=9999;
   updateDirectiveHud();if(state.directiveId!=='recovery'||document.getElementById('directiveTracker').classList.contains('hidden')||!document.getElementById('directiveTrackerText').textContent.includes('RECOVERY ORDER')) throw new Error('field directive did not initialize');
   const nearTarget=spawnEnemy('scout',false,{x:state.p.x+40,y:state.p.y}),weakTarget=spawnEnemy('scout',false,{x:state.p.x+170,y:state.p.y}),eliteTarget=spawnEnemy('tank',true,{x:state.p.x+250,y:state.p.y}),targetSet=enemy=>enemy===nearTarget||enemy===weakTarget||enemy===eliteTarget;weakTarget.hp=weakTarget.maxHp*.05;
+  const weaponFxBefore=state.weaponFx.length;fireProjectile(state.p.x,state.p.y,nearTarget,420,10,{weaponId:'rail',color:'#d8c68b'});if(state.weaponFx.length!==weaponFxBefore+1||state.p.weaponKick<=0||state.p.weaponAngle!==0) throw new Error('weapon firing presentation event failed');
   save.settings.targetPriority='NEAREST'; if(nearest(state.p,targetSet)!==nearTarget) throw new Error('nearest targeting priority failed');
   save.settings.targetPriority='LOW HULL'; if(nearest(state.p,targetSet)!==weakTarget) throw new Error('low-hull targeting priority failed');
   save.settings.targetPriority='ELITES FIRST'; if(nearest(state.p,targetSet)!==eliteTarget) throw new Error('elite targeting priority failed');

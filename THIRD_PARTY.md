@@ -1,8 +1,14 @@
 # Third-party software
 
+## Three.js
+
+ORBIT//04 uses Three.js r185 as its active top-down combat presentation engine.
+
+Three.js is distributed under the MIT License. The pinned offline modules retain their upstream SPDX license headers in `vendor/three.module.min.js` and `vendor/three.core.min.js`.
+
 ## Phaser
 
-ORBIT//04 uses Phaser 3.90.0 as its active top-down rendering framework.
+ORBIT//04 uses Phaser 3.90.0 as its simulation-facing scene, audio and animated-environment host, and rendering compatibility fallback.
 
 Phaser is distributed under the MIT License. The runtime is installed from the `phaser` npm package and copied into `vendor/phaser.min.js` during local installation and packaging so the game can run offline.
 

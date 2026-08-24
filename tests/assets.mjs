@@ -12,6 +12,7 @@ const sourceFiles = [
   'styles.css',
   'game.js',
   'visual-engine.js',
+  'three-visual-engine.mjs',
   'desktop/main.cjs'
 ];
 const mediaExtensions = new Set(['.png', '.wav', '.ogg', '.mp3']);
@@ -75,7 +76,9 @@ const transparentEntityAssets = [
   'assets/visuals/enemy-void-larva-v1.png',
   'assets/visuals/enemy-ossuary-v1.png',
   'assets/visuals/enemy-witness-v1.png',
-  'assets/visuals/boss-conquest-leviathan-v1.png'
+  'assets/visuals/boss-conquest-leviathan-v1.png',
+  'assets/visuals/weapon-muzzle-premium-v1.png',
+  'assets/visuals/weapon-projectile-premium-v1.png'
 ];
 for (const relative of transparentEntityAssets) {
   const png = PNG.sync.read(await readFile(path.join(root, relative)));
@@ -105,5 +108,9 @@ for (const absolute of mediaFiles) {
 
 const phaser = await stat(path.join(root, 'vendor', 'phaser.min.js'));
 assert.ok(phaser.isFile() && phaser.size > 1_000_000, 'offline Phaser runtime is missing or truncated');
+for (const file of ['three.module.min.js', 'three.core.min.js']) {
+  const three = await stat(path.join(root, 'vendor', file));
+  assert.ok(three.isFile() && three.size > 300_000, `offline Three.js module is missing or truncated: ${file}`);
+}
 
 console.log(`ORBIT asset audit: PASS (${referencedAssets.size} runtime references, ${mediaFiles.length} media files, ${(totalBytes / 1024 / 1024).toFixed(1)} MiB)`);

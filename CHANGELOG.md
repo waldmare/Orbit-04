@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.88.0 — Three.js Combat Presentation
+
+- moved the active player, enemy, projectile, pickup, signal, health-bar, and combat-effect presentation to a pooled Three.js r185 WebGL layer
+- retained the top-down camera, established simulation, audio, save data, animated environment, and Phaser compatibility fallback
+- added transparent high-resolution muzzle-flash and projectile plates with per-weapon proportions, additive materials, hostile firing flashes, and directional recoil
+- added ACES filmic tone mapping, sRGB texture handling, orthographic projection, reduced-motion handling, quality-aware exposure, and deterministic camera response
+- removed the remaining Polish player-facing strings from the supported runtime and translated the inactive third-person prototype for repository consistency
+- expanded renderer, asset-alpha, English-copy, offline-bundle, and runtime-capture regression coverage
+- preserved weapon statistics, enemy pressure, progression probabilities, rewards, input behavior, and save compatibility
+
 ## 0.87.0 — Studio Interface and Cinematic Pipeline
 
 - replaced ambiguous click-to-cycle deployment values with explicit previous, current, and next controls for difficulty, sector, and contract

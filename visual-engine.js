@@ -273,6 +273,7 @@
       if(settings.telegraphs==='OFF')return;
       for(const e of s.enemies||[]){if(e.dead)continue;const ranged=e.type==='gunner'||e.type==='sniper'||e.boss;if(ranged&&e.shootT>0&&e.shootT<.42){const alpha=clamp((.42-e.shootT)/.42),color=e.boss?0xff3657:e.type==='sniper'?0xffc35c:0xff6e85;this.dangerFx.lineStyle(high?4:3,0x020307,.62*alpha).beginPath().moveTo(e.x,e.y).lineTo(p.x,p.y).strokePath();this.dangerFx.lineStyle(high?1.5:1.1,color,.82*alpha).beginPath().moveTo(e.x,e.y).lineTo(p.x,p.y).strokePath();this.dangerFx.lineStyle(1.2,color,.48*alpha).strokeCircle(p.x,p.y,15+alpha*8)}if(e.type==='charger'&&e.burst<=0&&e.chargeT>0&&e.chargeT<.58){const alpha=clamp((.58-e.chargeT)/.58);this.dangerFx.lineStyle(4,0x020307,.62*alpha).strokeCircle(e.x,e.y,e.r+10+alpha*10);this.dangerFx.lineStyle(1.6,0xffbd61,.90*alpha).strokeCircle(e.x,e.y,e.r+10+alpha*10)}}
     }
+    destroy(){this.root?.destroy?.(true);this.siteFx?.destroy?.();this.fx?.destroy?.();this.dangerFx?.destroy?.()}
   }
 
   globalThis.OrbitVisualEngine=OrbitVisualEngine;

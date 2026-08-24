@@ -1,27 +1,29 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.87.0-b39a63)
-![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
+![Version](https://img.shields.io/badge/version-0.88.0-b39a63)
+![Three.js](https://img.shields.io/badge/Three.js-r185-b39a63)
+![Phaser](https://img.shields.io/badge/Phaser-3.90%20host-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-proprietary-f4ba68)
 
 ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.87.0`
+Current version: `0.88.0`
 
 ## Runtime overview
 
 | Component | Implementation |
 |---|---|
-| Rendering | Phaser 3.90, WebGL with Canvas fallback |
+| Combat presentation | Three.js r185, WebGL, orthographic top-down camera, ACES tone mapping |
+| Simulation and fallback host | Phaser 3.90 with Canvas fallback |
 | Internal resolution | 1440 × 810 |
 | Desktop host | Electron 43 |
 | Game logic | JavaScript running locally in the renderer process |
 | Save data | Browser `localStorage` with automatic backup, manual export, and import |
 | Automated checks | Node.js tests and Windows packaging on GitHub Actions |
 
-The supported runtime is the top-down Phaser implementation loaded by `index.html`. The repository also contains an inactive third-person prototype; it is not imported by the current game.
+The supported runtime is the top-down game loaded by `index.html`. Three.js is the active combat presentation layer. Phaser continues to host the simulation-facing scene, local audio, animated environment, and compatibility fallback while the migration proceeds without discarding gameplay content or save compatibility. The repository also contains an inactive third-person prototype; it is not imported by the current game.
 
 ## Implemented game systems
 
@@ -58,7 +60,7 @@ Detailed balance targets are documented in [BALANCE.md](BALANCE.md). Historical 
 
 ## Rendering implementation
 
-The Phaser scene loads the active backgrounds, ship sprites, and audio files from local paths. `visual-engine.js` manages retained object pools for ships, projectiles, pickups, particles, orbiting weapons, and damage text. Energy beams, arcs, rifts, telegraphs, and additive lighting use separate graphics layers.
+`three-visual-engine.mjs` is the active combat presentation engine. It renders the player, alien organisms, friendly and hostile projectiles, weapon flashes, beams, particles, signals, pickups, dash echoes, and world-space health bars through pooled Three.js sprites and meshes. An orthographic camera preserves the established top-down controls while ACES tone mapping, linear filtering, additive materials, animated recoil, and per-weapon proportions replace the previous Phaser combat layer. Phaser still loads local audio, runs the animated environment scene, and provides an automatic compatibility fallback.
 
 The renderer includes:
 
@@ -68,25 +70,25 @@ The renderer includes:
 - matte-free ship textures selected for the active camera scale
 - frame-rate-independent position and rotation smoothing for player, hostile, and allied ships
 - organic breathing, undulation, and asymmetric locomotion for alien bodies instead of spacecraft engine plumes
-- thrust-responsive engine plumes, turning bank, dash afterimages, spawn easing, hit recoil, and multi-stage destruction effects
+- directional weapon recoil, generated transparent muzzle plates, per-weapon projectile silhouettes, hostile firing flashes, beam lines, turning response, and dash afterimages
 - animated pickups, exploration signals, orbiting systems, projectile streaks, and depth landmarks
 - damped impact shake and background parallax instead of per-frame random jitter
 - artifact-free vector glow, shields, elite markers, and telegraphs drawn in a dedicated additive pass
 - configurable particles, background detail, contrast, and graphics quality
 - two generated ashen environment plates, reused across four runtime states with restrained eclipse, rift, and dying-supernova animation
-- a vector rendering fallback when the retained sprite engine is unavailable
-- a quality-aware WebGL presentation profile with antialiasing, high-refresh frame pacing, restrained color grading, vignette, and object-level life-core bloom
-- an automatic clarity-first Canvas fallback when WebGL effects are unavailable
+- the retained Phaser renderer as a compatibility fallback when the Three.js presentation layer is unavailable
+- a quality-aware Three.js WebGL presentation profile with antialiasing, high-refresh frame pacing, ACES filmic tone mapping, restrained color grading, and additive emissive effects
+- an automatic clarity-first Canvas fallback through the Phaser host when WebGL is unavailable
 
 ## Runtime screenshot
 
-![ORBIT//04 version 0.87.0 studio launch hangar](docs/launch-hangar-v0.87.0.png)
+![ORBIT//04 version 0.88.0 studio launch hangar](docs/launch-hangar-v0.88.0.png)
 
 The launch hangar capture shows the selected runtime frame silhouette, compact frame bay, comparable ratings, and mission configuration at the same 1440 × 810 presentation used by the desktop build.
 
-![ORBIT//04 version 0.87.0 Last Ark runtime capture](docs/runtime-screenshot-v0.87.0.png)
+![ORBIT//04 version 0.88.0 Last Ark runtime capture](docs/runtime-screenshot-v0.88.0.png)
 
-This 1440 × 810 image was captured from the active 0.87.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
+This 1440 × 810 image was captured from the active 0.88.0 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
 
 ## Audio implementation
 
@@ -141,7 +143,7 @@ npm install
 npm start
 ```
 
-The install step runs `postinstall`, which copies the pinned Phaser runtime to `vendor/phaser.min.js`. Opening `index.html` directly from the filesystem is not the supported launch path.
+The install step runs `postinstall`, which copies the pinned Phaser compatibility runtime to `vendor/phaser.min.js`. The pinned Three.js r185 modules are stored locally in `vendor/`, so the presentation layer also runs offline. Opening `index.html` directly from the filesystem is not the supported launch path.
 
 ## Controls
 
@@ -181,7 +183,7 @@ Capture the documented gameplay scene from the local Electron/WebGL build:
 npm.cmd run screenshot
 ```
 
-The capture command writes `docs/runtime-screenshot-v0.87.0.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+The capture command writes `docs/runtime-screenshot-v0.88.0.png` only after the Three.js presentation engine, gameplay state, HUD, and enemy scene pass runtime readiness checks.
 
 Capture the launch hangar and verify that it has no horizontal overflow:
 
@@ -189,7 +191,7 @@ Capture the launch hangar and verify that it has no horizontal overflow:
 npm.cmd run screenshot:menu
 ```
 
-The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, renderer integration, runtime asset references, media file signatures, image dimensions, and the local Phaser bundle.
+The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, Three.js presentation integration, English runtime copy, weapon-effect assets, media file signatures, image dimensions, and both local rendering bundles.
 
 ## Package the desktop application
 
@@ -203,8 +205,10 @@ Electron Forge writes the validated Windows application to `out/ORBIT-04-win32-x
 
 ```text
 index.html                 Application shell and interface
-game.js                    Game state, content, input, audio, and Phaser setup
-visual-engine.js           Retained sprite pools and rendering layers
+game.js                    Game state, content, input, audio, and renderer bootstrap
+three-visual-engine.mjs    Active Three.js combat presentation engine
+three-engine-loader.js     Deferred Three.js module loader
+visual-engine.js           Phaser compatibility renderer
 styles.css                 Interface and display settings
 desktop/main.cjs           Electron main process
 assets/                    Runtime images and audio
@@ -219,7 +223,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.87.0 adds explicit deployment controls, a unified studio interface system, and a quality-aware cinematic WebGL presentation path while retaining the clarity-first Canvas fallback. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.88.0 moves the active top-down combat presentation to Three.js r185, adds dedicated weapon-fire animation and transparent projectile assets, and removes the remaining Polish runtime copy. Phaser remains the simulation, audio, environment, and compatibility host during the staged migration. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

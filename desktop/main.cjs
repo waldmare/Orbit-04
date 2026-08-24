@@ -117,6 +117,16 @@ async function configureCaptureScene(win, preset) {
       enemies:state.enemies.length,
       hostileProjectiles:state.enemyBullets.length,
       friendlyProjectiles:state.bullets.length,
+      presentation:{
+        engine:document.getElementById('game')?.dataset.engine,
+        opacity:getComputedStyle(document.getElementById('gameThree')).opacity,
+        zIndex:getComputedStyle(document.getElementById('gameThree')).zIndex,
+        width:document.getElementById('gameThree').width,
+        height:document.getElementById('gameThree').height,
+        objects:visualEngine?.world?.children?.length||0,
+        playerVisible:visualEngine?.player?.visible===true,
+        playerPosition:visualEngine?.player?.position?.toArray?.()||[]
+      },
       visibleScreens:screens.filter(id => $(id).classList.contains('show')),
       hudHidden:hud.classList.contains('hidden')
     };
@@ -166,7 +176,7 @@ async function captureMenu(win) {
   const image = await win.capturePage(undefined, { stayHidden: true });
   const size = image.getSize();
   if (image.isEmpty() || size.width !== 1440 || size.height !== 810) throw new Error(`launch hangar capture invalid: ${JSON.stringify(size)}`);
-  const output = path.join(__dirname, '..', 'docs', 'launch-hangar-v0.87.0.png');
+  const output = path.join(__dirname, '..', 'docs', 'launch-hangar-v0.88.0.png');
   await mkdir(path.dirname(output), { recursive: true });
   await writeFile(output, image.toPNG());
   console.log(`[menu-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
@@ -182,7 +192,7 @@ async function runAutomatedCapture(win) {
     return;
   }
   const preset = STEAM_CAPTURE_PRESETS[1];
-  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.87.0.png');
+  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.88.0.png');
   await captureScene(win, preset, output, { width: 1440, height: 810 });
 }
 

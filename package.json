@@ -1,7 +1,7 @@
 {
   "name": "orbit-04",
   "productName": "ORBIT 04",
-  "version": "0.87.0",
+  "version": "0.88.0",
   "description": "Top-down survival game about the last human vessel in an alien-conquered universe.",
   "main": "desktop/main.cjs",
   "private": true,
@@ -31,7 +31,7 @@
     "make": "npm run vendor && electron-forge make",
     "release:check": "npm test && npm run package && node tools/verify-release.mjs",
     "test:assets": "node tests/assets.mjs",
-    "test": "node --check desktop/main.cjs && node --check visual-engine.js && node --check tools/check-build-environment.mjs && node --check tools/generate-audio-reforged.mjs && node --check tools/generate-app-icon.mjs && node --check tools/verify-release.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs && npm run test:assets"
+    "test": "node --check desktop/main.cjs && node --check visual-engine.js && node --check three-engine-loader.js && node --check three-visual-engine.mjs && node --check game-3d.mjs && node --check tools/check-build-environment.mjs && node --check tools/generate-audio-reforged.mjs && node --check tools/generate-app-icon.mjs && node --check tools/verify-release.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs && npm run test:assets"
   },
   "dependencies": {
     "phaser": "3.90.0"
