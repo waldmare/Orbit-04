@@ -68,7 +68,10 @@ The renderer includes:
 - a dedicated last-human ark sprite with a visible life-support core, asymmetric repair detail, responsive engines, preserved aspect ratio, and configuration-neutral hull materials
 - aspect-ratio-preserving sprite scaling
 - matte-free ship textures selected for the active camera scale
+- display-size- and DPI-aware WebGL buffers that preserve native sharpness when the desktop window is enlarged or moved between monitors
+- mipmapped texture sampling with hardware-aware anisotropy for stable detail during rotation
 - frame-rate-independent position and rotation smoothing for player, hostile, and allied ships
+- movement-derived hostile and allied headings, with shortest-path turns and silhouette compression used for banking instead of corrupting the facing angle
 - organic breathing, undulation, and asymmetric locomotion for alien bodies instead of spacecraft engine plumes
 - directional weapon recoil, generated transparent muzzle plates, per-weapon projectile silhouettes, hostile firing flashes, beam lines, turning response, and dash afterimages
 - animated pickups, exploration signals, orbiting systems, projectile streaks, and depth landmarks
@@ -88,7 +91,7 @@ The launch hangar capture shows the selected runtime frame silhouette, compact f
 
 ![ORBIT//04 version 0.88.1 Last Ark runtime capture](docs/runtime-screenshot-v0.88.1.png)
 
-This 1440 × 810 image was captured from the active 0.88.1 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
+This 1440 × 810 image was captured from the active 0.88.1 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The presentation buffer now follows the actual desktop display size and system DPI rather than stretching a fixed 1440 × 810 frame. The versioned filename prevents repository front-page image caches from presenting an older build.
 
 ## Audio implementation
 

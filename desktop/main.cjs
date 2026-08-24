@@ -123,6 +123,11 @@ async function configureCaptureScene(win, preset) {
         zIndex:getComputedStyle(document.getElementById('gameThree')).zIndex,
         width:document.getElementById('gameThree').width,
         height:document.getElementById('gameThree').height,
+        clientWidth:document.getElementById('gameThree').clientWidth,
+        clientHeight:document.getElementById('gameThree').clientHeight,
+        renderWidth:Number(document.getElementById('gameThree').dataset.renderWidth||0),
+        renderHeight:Number(document.getElementById('gameThree').dataset.renderHeight||0),
+        pixelRatio:Number(document.getElementById('gameThree').dataset.pixelRatio||0),
         objects:visualEngine?.world?.children?.length||0,
         playerVisible:visualEngine?.player?.visible===true,
         playerPosition:visualEngine?.player?.position?.toArray?.()||[]
@@ -137,6 +142,9 @@ async function captureScene(win, preset, destination, expectedSize) {
   const setup = await configureCaptureScene(win, preset);
   if (setup.mode !== 'run' || setup.enemies < 6 || setup.visibleScreens.length || setup.hudHidden) {
     throw new Error(`capture scene not ready: ${JSON.stringify(setup)}`);
+  }
+  if (setup.presentation.renderWidth < expectedSize.width || setup.presentation.renderHeight < expectedSize.height) {
+    throw new Error(`presentation buffer is below capture resolution: ${JSON.stringify(setup.presentation)}`);
   }
   await delay(700);
   // Keeping the hidden window paintable avoids a stale pre-game compositor frame on Windows.
@@ -248,13 +256,13 @@ function createWindow() {
           damageEnemy(enemy,10,false,'smoke',false);
           enemy.hp=enemy.maxHp=1e6;
           draw();
-          return {dashed,floaters:state.floaters.length,dashCooldown:state.p.dashCooldown,playerStart:{x:state.p.x,y:state.p.y},playerVisualStart:{x:visualEngine?.player?.position?.x||0,y:visualEngine?.player?.position?.y||0},enemyStart:{x:enemy.x,y:enemy.y}};
+          const layer=document.getElementById('gameThree');return {dashed,floaters:state.floaters.length,dashCooldown:state.p.dashCooldown,playerStart:{x:state.p.x,y:state.p.y},playerVisualStart:{x:visualEngine?.player?.position?.x||0,y:visualEngine?.player?.position?.y||0},enemyStart:{x:enemy.x,y:enemy.y},presentation:{clientWidth:layer?.clientWidth||0,clientHeight:layer?.clientHeight||0,renderWidth:Number(layer?.dataset.renderWidth||0),renderHeight:Number(layer?.dataset.renderHeight||0)}};
         })()`);
         await delay(900);
-        const gameplay = await win.webContents.executeJavaScript(`(() => {keys.d=false;const enemy=state.enemies.find(item=>item.smokeProbe),active=state.enemies.filter(item=>!item.dead),enemyIndex=active.indexOf(enemy),enemyVisual=visualEngine?.pools?.enemies?.[enemyIndex]?.position;return {mode:state.mode,time:state.time,enemies:state.enemies.length,dashCooldown:state.p.dashCooldown,floaterPool:visualEngine?.pools?.floaters?.length||0,player:{x:state.p.x,y:state.p.y},playerVisual:{x:visualEngine?.player?.position?.x||0,y:visualEngine?.player?.position?.y||0},enemy:{x:enemy?.x||0,y:enemy?.y||0},enemyVisual:{x:enemyVisual?.x||0,y:enemyVisual?.y||0}}})()`);
+        const gameplay = await win.webContents.executeJavaScript(`(() => {keys.d=false;const enemy=state.enemies.find(item=>item.smokeProbe),active=state.enemies.filter(item=>!item.dead),enemyIndex=active.indexOf(enemy),enemySprite=visualEngine?.pools?.enemies?.[enemyIndex],enemyVisual=enemySprite?.position;return {mode:state.mode,time:state.time,enemies:state.enemies.length,dashCooldown:state.p.dashCooldown,floaterPool:visualEngine?.pools?.floaters?.length||0,player:{x:state.p.x,y:state.p.y},playerVisual:{x:visualEngine?.player?.position?.x||0,y:visualEngine?.player?.position?.y||0},playerHeading:visualEngine?.playerMotion?.angle??99,enemy:{x:enemy?.x||0,y:enemy?.y||0},enemyVisual:{x:enemyVisual?.x||0,y:enemyVisual?.y||0},enemyHeading:enemySprite?.userData?.motion?.angle??99}})()`);
         console.log(`[gameplay-smoke] ${JSON.stringify({ ...setup, ...gameplay })}`);
-        const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-        if (!setup.dashed || setup.floaters < 1 || gameplay.mode !== 'run' || gameplay.time <= 0 || gameplay.enemies < 1 || gameplay.floaterPool < 1 || distance(gameplay.player,setup.playerStart)<40 || distance(gameplay.playerVisual,setup.playerVisualStart)<30 || distance(gameplay.enemy,setup.enemyStart)<5 || distance(gameplay.enemyVisual,setup.enemyStart)<3 || distance(gameplay.enemyVisual,gameplay.enemy)>30) process.exitCode = 1;
+        const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),angleDistance=(a,b)=>Math.abs(Math.atan2(Math.sin(a-b),Math.cos(a-b)));
+        if (!setup.dashed || setup.floaters < 1 || gameplay.mode !== 'run' || gameplay.time <= 0 || gameplay.enemies < 1 || gameplay.floaterPool < 1 || setup.presentation.renderWidth<setup.presentation.clientWidth || setup.presentation.renderHeight<setup.presentation.clientHeight || distance(gameplay.player,setup.playerStart)<40 || distance(gameplay.playerVisual,setup.playerVisualStart)<30 || distance(gameplay.enemy,setup.enemyStart)<5 || distance(gameplay.enemyVisual,setup.enemyStart)<3 || distance(gameplay.enemyVisual,gameplay.enemy)>30 || angleDistance(gameplay.playerHeading,0)>.30 || angleDistance(Math.abs(gameplay.enemyHeading),Math.PI)>.55) process.exitCode = 1;
         return app.exit(process.exitCode || 0);
       }
       if (captureMode && rendererState.boot === 'ok') {

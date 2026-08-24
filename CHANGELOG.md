@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — Display Clarity and Motion Correction
+
+- replaced the fixed 1440 × 810 Three.js buffer with display-size- and DPI-aware rendering, capped per graphics-quality profile
+- enabled hardware-aware anisotropic sampling while retaining stable mipmaps for rotating high-resolution ship textures
+- corrected player banking so it changes the apparent hull profile without rotating the vessel away from its travel direction
+- changed hostile and allied facing to follow measured travel instead of continuously pointing at an attack target
+- increased the combat-scale silhouettes and retuned engine trails for clearer motion reads without changing collision sizes or balance
+- expanded the real Electron smoke test with render-buffer and directional-heading assertions
+
 ## 0.88.1 — Three.js Motion Parity
 
 - restored frame-rate-independent interpolation for the player, hostile organisms, and allied vessels

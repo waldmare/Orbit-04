@@ -32,13 +32,13 @@ function engineTexture(){
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=texture.magFilter=THREE.LinearFilter;return texture;
 }
 
-function configureTexture(texture){texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;texture.anisotropy=8;return texture}
+function configureTexture(texture,maxAnisotropy=8){texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;texture.generateMipmaps=true;texture.anisotropy=Math.max(1,Math.min(16,maxAnisotropy));return texture}
 
 export class OrbitThreeVisualEngine{
   constructor(canvas,{width=960,height=540,scale=1.5}={}){
     this.canvas=canvas;this.width=width;this.height=height;this.scale=scale;this.time=0;this.motionScale=1;
     this.renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,premultipliedAlpha:true,powerPreference:'high-performance'});
-    this.renderer.setPixelRatio(1);this.renderer.setSize(width*scale,height*scale,false);this.renderer.setClearColor(0x000000,0);
+    this.renderer.setClearColor(0x000000,0);this.maxAnisotropy=this.renderer.capabilities.getMaxAnisotropy();this.lastQuality='HIGH';this.renderResolution={width:0,height:0,pixelRatio:0};
     this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.08;
     this.scene=new THREE.Scene();this.camera=new THREE.OrthographicCamera(0,width,0,height,.1,300);this.camera.position.set(0,0,100);this.camera.lookAt(0,0,0);
     this.loader=new THREE.TextureLoader();this.glowTexture=radialTexture();this.engineTexture=engineTexture();this.textures={
@@ -49,10 +49,12 @@ export class OrbitThreeVisualEngine{
     this.playerGlow=this.sprite(this.glowTexture,THREE.AdditiveBlending);this.playerTrail=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.playerEngineLeft=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.playerEngineRight=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.player=this.sprite(this.textures.player);this.world.add(this.playerTrail,this.playerEngineLeft,this.playerEngineRight,this.playerGlow,this.player);
     this.playerMotion={ready:false,x:width*.5,y:height*.5,angle:-Math.PI/2,bank:0,thrust:0,velocity:0};
     this.pools={enemies:[],enemyGlows:[],allies:[],allyTrails:[],bullets:[],hostileBullets:[],loot:[],particles:[],muzzles:[],rings:[],beams:[],bars:[],echoes:[],orbitals:[],mines:[],floaters:[],deathGlows:[],deathRings:[]};
-    this.lastFrame=performance.now();this.canvas.dataset.engine='three-r185-topdown';this.canvas.dataset.pipeline='aces-topdown-v1';
+    this.lastFrame=performance.now();this.canvas.dataset.engine='three-r185-topdown';this.canvas.dataset.pipeline='aces-topdown-v2-hidpi';
+    this.syncRendererResolution('HIGH',true);
+    this.resizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(()=>this.syncRendererResolution(this.lastQuality,true)):null;this.resizeObserver?.observe(this.canvas);
   }
 
-  load(path){return configureTexture(this.loader.load(path))}
+  load(path){return configureTexture(this.loader.load(path),this.maxAnisotropy)}
   sprite(texture,blending=THREE.NormalBlending){const material=new THREE.SpriteMaterial({map:texture,color:0xffffff,transparent:true,depthWrite:false,depthTest:false,side:THREE.DoubleSide,blending,toneMapped:false,alphaTest:.008});const sprite=new THREE.Sprite(material);sprite.visible=false;return sprite}
   textSprite(){
     const canvas=document.createElement('canvas');canvas.width=256;canvas.height=64;const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=texture.magFilter=THREE.LinearFilter;
@@ -62,6 +64,7 @@ export class OrbitThreeVisualEngine{
   mesh(material,geometry=new THREE.PlaneGeometry(1,1)){const mesh=new THREE.Mesh(geometry,material);mesh.visible=false;return mesh}
   use(pool,count,factory,update){while(pool.length<count){const item=factory();pool.push(item);this.world.add(item)}for(let i=0;i<pool.length;i++){const visible=i<count;pool[i].visible=visible;if(visible)update(pool[i],i)}}
   motionFor(object,entity,x,y,angle){let motion=object.userData.motion;if(!motion||motion.entity!==entity){motion={entity,x,y,angle,bank:0,spawn:0,velocity:0,lastX:x,lastY:y};object.userData.motion=motion}return motion}
+  movementHeading(motion,x,y,fallback){const lastX=motion.targetX??x,lastY=motion.targetY??y,dx=x-lastX,dy=y-lastY,distance=Math.hypot(dx,dy);motion.targetX=x;motion.targetY=y;if(distance>.025&&distance<120)motion.travelAngle=Math.atan2(dy,dx);return motion.travelAngle??fallback}
   smoothMotion(motion,x,y,angle,positionResponse,angleResponse){const beforeX=motion.x,beforeY=motion.y,beforeAngle=motion.angle;motion.x=smoothValue(motion.x,x,positionResponse,this.delta);motion.y=smoothValue(motion.y,y,positionResponse,this.delta);motion.angle=smoothAngle(motion.angle,angle,angleResponse,this.delta);motion.velocity=smoothValue(motion.velocity,Math.hypot(motion.x-beforeX,motion.y-beforeY)/Math.max(this.delta,.001),9,this.delta);const turn=Math.atan2(Math.sin(motion.angle-beforeAngle),Math.cos(motion.angle-beforeAngle))/Math.max(this.delta,.001);motion.bank=smoothValue(motion.bank,clamp(turn*.015,-.14,.14)*this.motionScale,8,this.delta);return motion}
   placeSprite(sprite,x,y,width,height,rotation=0,z=1,opacity=1,color='#ffffff'){
     sprite.position.set(x,y,z);sprite.scale.set(width,height,1);sprite.material.rotation=-rotation;sprite.material.opacity=opacity;sprite.material.color.set(color);
@@ -69,8 +72,15 @@ export class OrbitThreeVisualEngine{
   flatMaterial(color='#ffffff',blending=THREE.NormalBlending){return new THREE.MeshBasicMaterial({color,transparent:true,opacity:1,depthWrite:false,depthTest:false,side:THREE.DoubleSide,blending,toneMapped:false})}
   placeBeam(mesh,x1,y1,x2,y2,width,color,opacity,z=6){const dx=x2-x1,dy=y2-y1,length=Math.hypot(dx,dy);mesh.position.set((x1+x2)/2,(y1+y2)/2,z);mesh.rotation.z=Math.atan2(dy,dx);mesh.scale.set(length,width,1);mesh.material.color.set(color);mesh.material.opacity=opacity}
 
+  syncRendererResolution(quality='HIGH',force=false){
+    this.lastQuality=quality;const bounds=this.canvas.getBoundingClientRect(),width=Math.max(1,Math.round(bounds.width||this.width*this.scale)),height=Math.max(1,Math.round(bounds.height||this.height*this.scale)),deviceRatio=Math.max(1,globalThis.devicePixelRatio||1),qualityCap=quality==='LOW'?1:quality==='ULTRA'?2.5:2,maxDimension=quality==='LOW'?1920:quality==='ULTRA'?5120:3840,pixelRatio=Math.min(deviceRatio,qualityCap,maxDimension/Math.max(width,height)),previous=this.renderResolution;
+    if(!force&&previous.width===width&&previous.height===height&&Math.abs(previous.pixelRatio-pixelRatio)<.001)return;
+    this.renderer.setPixelRatio(pixelRatio);this.renderer.setSize(width,height,false);this.renderResolution={width,height,pixelRatio};this.canvas.dataset.renderWidth=String(Math.round(width*pixelRatio));this.canvas.dataset.renderHeight=String(Math.round(height*pixelRatio));this.canvas.dataset.pixelRatio=String(pixelRatio);
+  }
+
   sync(gameState,settings={}){
     const now=performance.now(),dt=clamp((now-this.lastFrame)/1000,1/240,.05);this.lastFrame=now;this.delta=dt;this.time=gameState?.time??now/1000;this.motionScale=settings.motion==='REDUCED'?.28:1;
+    this.syncRendererResolution(settings.graphics||'HIGH');
     if(!gameState||gameState.mode!=='run'){this.syncMenu(settings);this.renderer.render(this.scene,this.camera);return}
     const state=gameState,quality=settings.graphics||'HIGH',glow=settings.glow!=='OFF';
     const shake=(state.shake||0)*this.motionScale,moveLead=state.p.moving?2.4*this.motionScale:0;this.world.position.set(Math.sin(this.time*37)*shake*.09-(state.p._lastMoveX||0)*moveLead,Math.cos(this.time*29)*shake*.07-(state.p._lastMoveY||0)*moveLead,0);
@@ -90,22 +100,22 @@ export class OrbitThreeVisualEngine{
     const beforeX=m.x,beforeY=m.y,beforeAngle=m.angle;m.x=smoothValue(m.x,p.x,24,this.delta);m.y=smoothValue(m.y,p.y,24,this.delta);m.angle=smoothAngle(m.angle,targetAngle,p.moving?11:5.5,this.delta);const turn=Math.atan2(Math.sin(m.angle-beforeAngle),Math.cos(m.angle-beforeAngle))/Math.max(this.delta,.001);m.bank=smoothValue(m.bank,clamp(turn*.018,-.15,.15)*this.motionScale,9,this.delta);m.velocity=smoothValue(m.velocity,Math.hypot(m.x-beforeX,m.y-beforeY)/Math.max(this.delta,.001),8,this.delta);m.thrust=smoothValue(m.thrust,p.moving?1:.18,7,this.delta);
     const kick=clamp((p.weaponKick||0)/.12),dash=clamp((p.dashFx||0)/.32),pulse=.88+.12*Math.sin(this.time*(p.hp/p.maxHp<.3?8:2.1)),hover=Math.sin(this.time*2.1)*.42*this.motionScale;
     const x=m.x-Math.cos(p.weaponAngle??m.angle)*kick*4.5,y=m.y+hover-Math.sin(p.weaponAngle??m.angle)*kick*4.5,breath=1+Math.sin(this.time*1.55)*.006*this.motionScale;
-    this.player.visible=true;this.placeSprite(this.player,x,y,48*(1+kick*.025+dash*.05)/breath,72*(1-kick*.035+dash*.018)*breath,m.angle+Math.PI/2+m.bank,5,1,p.hitFlash>0?'#ffffff':'#d7ddd7');
+    const turnCompression=1-Math.min(.075,Math.abs(m.bank)*.48);this.player.visible=true;this.placeSprite(this.player,x,y,54*turnCompression*(1+kick*.025+dash*.05)/breath,81*(1-kick*.035+dash*.018)*breath,m.angle+Math.PI/2,5,1,p.hitFlash>0?'#ffffff':'#d7ddd7');
     this.playerGlow.visible=glow;this.placeSprite(this.playerGlow,x,y,88+kick*20+dash*28,88+kick*20+dash*28,0,3,(p.hp/p.maxHp<.3?.18:.10)*pulse+(dash*.08),p.hp/p.maxHp<.3?'#b04450':'#b9ad79');
-    const backX=-Math.cos(m.angle),backY=-Math.sin(m.angle),sideX=-Math.sin(m.angle),sideY=Math.cos(m.angle),trailLength=20+m.thrust*30+dash*48,trailX=x+backX*(22+trailLength*.48),trailY=y+backY*(22+trailLength*.48),enginePulse=.82+.12*Math.sin(this.time*25)+.06*Math.sin(this.time*41);
+    const backX=-Math.cos(m.angle),backY=-Math.sin(m.angle),sideX=-Math.sin(m.angle),sideY=Math.cos(m.angle),trailLength=22+m.thrust*32+dash*50,trailX=x+backX*(25+trailLength*.48),trailY=y+backY*(25+trailLength*.48),enginePulse=.82+.12*Math.sin(this.time*25)+.06*Math.sin(this.time*41);
     this.playerTrail.visible=glow;this.placeSprite(this.playerTrail,trailX,trailY,trailLength*1.16,14+m.thrust*5,m.angle,2,(.10+.13*m.thrust+.12*dash)*enginePulse,'#829d98');
     this.playerEngineLeft.visible=this.playerEngineRight.visible=true;for(const [engine,side] of [[this.playerEngineLeft,-1],[this.playerEngineRight,1]]){const offset=side*5.5,ex=trailX+sideX*offset,ey=trailY+sideY*offset;this.placeSprite(engine,ex,ey,trailLength,5.5+m.thrust*2.5,m.angle,3,(.32+.48*m.thrust+.18*dash)*(side<0?enginePulse:1.04-enginePulse*.12),side<0?'#c5d2ca':'#c2aa78')}
-    const echoes=p.dashFx>0?7:0;this.use(this.pools.echoes,echoes,()=>this.sprite(this.textures.player,THREE.AdditiveBlending),(sprite,i)=>{const t=(i+1)/(echoes+1),fade=1-t,eased=t*t*(3-2*t);this.placeSprite(sprite,p.x+(p.dashFromX-p.x)*eased,p.y+(p.dashFromY-p.y)*eased,48*(.9+fade*.08),72*(.9+fade*.08),m.angle+Math.PI/2,2,.22*fade*dash,'#c8bd91')});
+    const echoes=p.dashFx>0?7:0;this.use(this.pools.echoes,echoes,()=>this.sprite(this.textures.player,THREE.AdditiveBlending),(sprite,i)=>{const t=(i+1)/(echoes+1),fade=1-t,eased=t*t*(3-2*t);this.placeSprite(sprite,p.x+(p.dashFromX-p.x)*eased,p.y+(p.dashFromY-p.y)*eased,54*(.9+fade*.08),81*(.9+fade*.08),m.angle+Math.PI/2,2,.22*fade*dash,'#c8bd91')});
   }
 
   syncEnemies(state,settings,glow){
     const enemies=state.enemies.filter(enemy=>!enemy.dead);
-    this.use(this.pools.enemies,enemies.length,()=>this.sprite(this.textures['enemy-scout']),(sprite,i)=>{const enemy=enemies[i],boss=!!enemy.boss,size=enemy.r*(boss?3.8:enemy.elite?3.35:3.05),targetAngle=Math.atan2(state.p.y-enemy.y,state.p.x-enemy.x),m=this.motionFor(sprite,enemy,enemy.x,enemy.y,targetAngle);this.smoothMotion(m,enemy.x,enemy.y,targetAngle,boss?8:enemy.type==='charger'?19:14,boss?3.8:7.5);m.spawn=clamp(m.spawn+this.delta*(boss?.55:enemy.elite?.85:1.25));const phase=this.time*(boss?.62:enemy.type==='charger'?2.8:enemy.type==='tank'?.78:1.45)+i*.73,breath=Math.sin(phase),hover=Math.sin(phase*.71)*(boss?1.6:enemy.elite?.8:.42)*this.motionScale,charge=enemy.type==='charger'&&enemy.burst>0?.14:0,hitKick=clamp((enemy.hit||0)/.08)*4.2,entry=easeOutBack(m.spawn),texture=this.textures[`enemy-${boss?'boss':enemy.type}`]||this.textures['enemy-scout'];if(sprite.material.map!==texture){sprite.material.map=texture;sprite.material.needsUpdate=true}this.placeSprite(sprite,m.x-Math.cos(m.angle)*hitKick,m.y+hover-Math.sin(m.angle)*hitKick,size*.67*(1+breath*.035+charge)*entry,size*(1-breath*.025-charge*.08)*entry,m.angle+Math.PI/2+m.bank+Math.sin(phase*.67)*.018*this.motionScale,4,easeOutCubic(m.spawn),enemy.hit>0?'#ffffff':enemy.bounty?'#d9c27b':'#c5c0b9')});
+    this.use(this.pools.enemies,enemies.length,()=>this.sprite(this.textures['enemy-scout']),(sprite,i)=>{const enemy=enemies[i],boss=!!enemy.boss,size=enemy.r*(boss?4.25:enemy.elite?3.72:3.42),aimAngle=Math.atan2(state.p.y-enemy.y,state.p.x-enemy.x),m=this.motionFor(sprite,enemy,enemy.x,enemy.y,aimAngle),targetAngle=this.movementHeading(m,enemy.x,enemy.y,aimAngle);this.smoothMotion(m,enemy.x,enemy.y,targetAngle,boss?8:enemy.type==='charger'?19:14,boss?3.8:7.5);m.spawn=clamp(m.spawn+this.delta*(boss?.55:enemy.elite?.85:1.25));const phase=this.time*(boss?.62:enemy.type==='charger'?2.8:enemy.type==='tank'?.78:1.45)+i*.73,breath=Math.sin(phase),hover=Math.sin(phase*.71)*(boss?1.6:enemy.elite?.8:.42)*this.motionScale,charge=enemy.type==='charger'&&enemy.burst>0?.14:0,hitKick=clamp((enemy.hit||0)/.08)*4.2,entry=easeOutBack(m.spawn),texture=this.textures[`enemy-${boss?'boss':enemy.type}`]||this.textures['enemy-scout'],turnCompression=1-Math.min(.09,Math.abs(m.bank)*.55);if(sprite.material.map!==texture){sprite.material.map=texture;sprite.material.needsUpdate=true}this.placeSprite(sprite,m.x-Math.cos(m.angle)*hitKick,m.y+hover-Math.sin(m.angle)*hitKick,size*.67*turnCompression*(1+breath*.035+charge)*entry,size*(1-breath*.025-charge*.08)*entry,m.angle+Math.PI/2+Math.sin(phase*.67)*.012*this.motionScale,4,easeOutCubic(m.spawn),enemy.hit>0?'#ffffff':enemy.bounty?'#d9c27b':'#c5c0b9')});
     this.use(this.pools.enemyGlows,glow?enemies.length:0,()=>this.sprite(this.glowTexture,THREE.AdditiveBlending),(sprite,i)=>{const enemy=enemies[i],body=this.pools.enemies[i],priority=enemy.boss||enemy.elite||enemy.nemesis||enemy.bounty,size=enemy.r*(enemy.boss?5.4:priority?4.2:3.1),pulse=.88+.12*Math.sin(this.time*(enemy.boss?1.2:2.1)+i);this.placeSprite(sprite,body.position.x,body.position.y,size*pulse,size*pulse,0,2,priority?.10:.035,enemy.boss?'#a73749':enemy.bounty?'#c2a45e':'#7e666a')});
   }
 
   syncAllies(state){
-    const allies=state.allies||[];this.use(this.pools.allies,allies.length,()=>this.sprite(this.textures['enemy-scout']),(sprite,i)=>{const ally=allies[i],target=state.enemies.filter(enemy=>!enemy.dead).sort((a,b)=>(a.x-ally.x)**2+(a.y-ally.y)**2-((b.x-ally.x)**2+(b.y-ally.y)**2))[0],targetAngle=target?Math.atan2(target.y-ally.y,target.x-ally.x):-Math.PI/2,size=Math.max(28,(ally.r||9)*3.1),texture=this.textures[`enemy-${ally.type}`]||this.textures['enemy-scout'],m=this.motionFor(sprite,ally,ally.x,ally.y,targetAngle);this.smoothMotion(m,ally.x,ally.y,targetAngle,16,8);m.spawn=clamp(m.spawn+this.delta*2.4);if(sprite.material.map!==texture){sprite.material.map=texture;sprite.material.needsUpdate=true}const hover=Math.sin(this.time*2+i)*.6*this.motionScale,entry=easeOutBack(m.spawn);this.placeSprite(sprite,m.x,m.y+hover,size*.7*entry,size*entry,m.angle+Math.PI/2+m.bank,4,easeOutCubic(m.spawn),'#9dbdb0')});
+    const allies=state.allies||[];this.use(this.pools.allies,allies.length,()=>this.sprite(this.textures['enemy-scout']),(sprite,i)=>{const ally=allies[i],target=state.enemies.filter(enemy=>!enemy.dead).sort((a,b)=>(a.x-ally.x)**2+(a.y-ally.y)**2-((b.x-ally.x)**2+(b.y-ally.y)**2))[0],aimAngle=target?Math.atan2(target.y-ally.y,target.x-ally.x):-Math.PI/2,size=Math.max(31,(ally.r||9)*3.42),texture=this.textures[`enemy-${ally.type}`]||this.textures['enemy-scout'],m=this.motionFor(sprite,ally,ally.x,ally.y,aimAngle),targetAngle=this.movementHeading(m,ally.x,ally.y,aimAngle);this.smoothMotion(m,ally.x,ally.y,targetAngle,16,8);m.spawn=clamp(m.spawn+this.delta*2.4);if(sprite.material.map!==texture){sprite.material.map=texture;sprite.material.needsUpdate=true}const hover=Math.sin(this.time*2+i)*.6*this.motionScale,entry=easeOutBack(m.spawn),turnCompression=1-Math.min(.08,Math.abs(m.bank)*.5);this.placeSprite(sprite,m.x,m.y+hover,size*.7*turnCompression*entry,size*entry,m.angle+Math.PI/2,4,easeOutCubic(m.spawn),'#9dbdb0')});
     this.use(this.pools.allyTrails,allies.length,()=>this.sprite(this.engineTexture,THREE.AdditiveBlending),(trail,i)=>{const body=this.pools.allies[i],m=body.userData.motion,length=18+Math.min(18,m.velocity*.08),backX=-Math.cos(m.angle),backY=-Math.sin(m.angle);this.placeSprite(trail,body.position.x+backX*(15+length*.45),body.position.y+backY*(15+length*.45),length,5,m.angle,3,.30,'#88aa9e')});
   }
 
@@ -154,7 +164,7 @@ export class OrbitThreeVisualEngine{
     this.use(this.pools.bars,bars.length,()=>this.mesh(this.flatMaterial()),(mesh,i)=>{const bar=bars[i];mesh.position.set(bar.x,bar.y,10);mesh.scale.set(bar.width,bar.height,1);mesh.material.color.set(bar.color);mesh.material.opacity=bar.alpha});
   }
 
-  destroy(){this.renderer.dispose();for(const texture of Object.values(this.textures))texture.dispose();this.glowTexture.dispose()}
+  destroy(){this.resizeObserver?.disconnect();this.renderer.dispose();for(const texture of Object.values(this.textures))texture.dispose();this.glowTexture.dispose()}
 }
 
 export const rendererName=`Three.js r${THREE.REVISION} top-down`;
