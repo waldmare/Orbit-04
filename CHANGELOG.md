@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.82.0 — Progression cadence and navigation QoL
+
+- versioned the verified runtime screenshot so repository front pages cannot retain the previous build through image caching
+- added a compact off-screen priority compass for bosses, Echo Hunters, and timed signal targets
+- added a restrained imminent-level state that reports the exact XP remaining and gently increases pickup convergence near a level breakpoint
+- added a boss-clear Salvage Sweep that pulls earned XP across the arena without changing reward amounts
+- prevented rerolls from returning an identical three-card selection when alternatives are available
+- fixed large XP gains so every pending level is presented in sequence instead of waiting for another pickup
+- kept combat statistics, XP values, drop quantities, upgrade weights, and enemy pressure unchanged
+
 ## 0.81.0 — Last Ark interaction and feedback polish
 
 - replaced the legacy player interceptor with a dedicated, transparent last-human ark sprite using battered graphite metal, bone-white repair panels, and a warm life-support core

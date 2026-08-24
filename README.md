@@ -1,14 +1,14 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.81.0-b8c2bc)
+![Version](https://img.shields.io/badge/version-0.82.0-b8c2bc)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
 ![License](https://img.shields.io/badge/license-source--visible-f4ba68)
 
 ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.81.0`
+Current version: `0.82.0`
 
 ## Runtime overview
 
@@ -39,6 +39,9 @@ The supported runtime is the top-down Phaser implementation loaded by `index.htm
 - 18 persistent field notes with original, clearly labeled thematic echoes after Bernhard, Hamsun, Harry Haller in Hesse's *Steppenwolf*, Faulkner, Lem's *Solaris*, and Dostoevsky; none are presented as verbatim quotations
 - a persistent, pausing Archive Reader with manual dismissal and deferred data rewards
 - tiered reward ribbons for chains, Signal Rush, Overdrive, captured signals, and boss defeats
+- an off-screen priority compass for bosses, Echo Hunters, and timed signal targets
+- level-end pickup convergence, boss-clear salvage sweeps, and correctly queued multi-level rewards
+- rerolls protected against returning an identical three-card draw
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
 - keyboard, mouse, and gamepad movement
 - licensed sample playback with automatic context recovery, verified-playback status, mute warnings, and an in-game output check
@@ -68,9 +71,9 @@ The renderer includes:
 
 ## Runtime screenshot
 
-![ORBIT//04 version 0.81.0 Last Ark runtime capture](docs/runtime-screenshot.png)
+![ORBIT//04 version 0.82.0 Last Ark runtime capture](docs/runtime-screenshot-v0.82.0.png)
 
-This 1440 × 810 image was captured from the active 0.81.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay.
+This 1440 × 810 image was captured from the active 0.82.0 Electron/WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The versioned filename prevents repository front-page image caches from presenting an older build.
 
 ## Audio implementation
 
@@ -162,7 +165,7 @@ Capture the documented gameplay scene from the local Electron/WebGL build:
 npm.cmd run screenshot
 ```
 
-The capture command writes `docs/runtime-screenshot.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+The capture command writes `docs/runtime-screenshot-v0.82.0.png` only after the renderer, gameplay state, HUD, and enemy scene pass runtime readiness checks.
 
 The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, renderer integration, runtime asset references, media file signatures, image dimensions, and the local Phaser bundle.
 
@@ -194,7 +197,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.81.0 is an art-direction and interaction-polish build with a dedicated last-human ark, organic enemy motion, quieter hierarchical sound design, readable build-path guidance, dark-ambient adaptive music, continuous exploration, and verified audio diagnostics. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.82.0 adds low-noise progression anticipation, off-screen priority guidance, boss-clear salvage collection, protected rerolls, and reliable multi-level reward queuing to the Last Ark art and audio direction. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

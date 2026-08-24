@@ -47,6 +47,9 @@ vm.runInContext(`
   generateWorldCell(-8,8); if(!state.worldNodes.some(node=>node.id==='-8:8:archive')) throw new Error('procedural archive signal generation failed');
   const cellsBefore=state.generatedCells.size; state.worldX+=WORLD_CELL_SIZE*3; updateWorldGeneration(); if(state.generatedCells.size<=cellsBefore) throw new Error('procedural world did not expand beyond the starting view');
   state.worldX=worldBefore; updateWorldGeneration(); updateNavigationHud(); if(document.getElementById('navigationSignal').classList.contains('hidden')) throw new Error('exploration navigation signal is hidden');
+  const offscreenPriority=spawnEnemy('gunner',true,{x:-140,y:state.p.y}); offscreenPriority.nemesis=true; offscreenPriority.nemesisName='ECHO HUNTER'; updatePriorityHud();
+  if(document.getElementById('prioritySignal').classList.contains('hidden')||!document.getElementById('prioritySignalText').textContent.includes('ECHO HUNTER')) throw new Error('off-screen priority compass failed');
+  offscreenPriority.dead=true; updatePriorityHud(); if(!document.getElementById('prioritySignal').classList.contains('hidden')) throw new Error('priority compass did not clear');
   state.p.hp=state.p.maxHp*.5; const hpBefore=state.p.hp; if(!collectWorldNode({type:'repair',x:state.p.x,y:state.p.y,color:'#79f0ca',disposition:'boon',collected:false})||state.p.hp<=hpBefore) throw new Error('repair relay failed');
   state.fieldBoostUntil=0; const powerBefore=weaponPower('pulse',state.weapons.pulse); collectWorldNode({type:'flux',x:state.p.x,y:state.p.y,color:'#8de9ff',disposition:'boon',collected:false}); if(weaponPower('pulse',state.weapons.pulse)<=powerBefore) throw new Error('flux amplifier failed');
   collectWorldNode({type:'jammer',x:state.p.x,y:state.p.y,color:'#ff6177',disposition:'hazard',collected:false}); if(state.interferenceUntil<=state.time||state.hazardFinds!==1) throw new Error('world hazard failed');
@@ -59,6 +62,9 @@ vm.runInContext(`
   state.time=106; if(desiredBackground()!=='pulsar') throw new Error('background director did not advance'); state.time=0;
   save.settings.uiScale='XXL'; save.settings.contrast='HIGH'; renderSettings();
   if(document.getElementById('wrap').dataset.uiScale!=='XXL'||document.getElementById('wrap').dataset.contrast!=='HIGH') throw new Error('display settings were not applied');
+  state.xp=state.xpNeed*.8; updateHudVisuals();
+  if(!document.getElementById('xpbar').classList.contains('imminent')||!document.getElementById('xptext').textContent.includes('XP TO NEXT SYSTEM')) throw new Error('level anticipation feedback failed');
+  state.xp=0;
   if(!document.getElementById('audioStatusText').textContent.includes('MUTED IN GAME')) throw new Error('audio status did not report disabled output');
   let fallbackStarts=0,sampleAttempts=0; window.AudioContext=class{constructor(){this.state='running';this.sampleRate=8000;this.currentTime=0;this.destination={}}createGain(){return{gain:{value:0,setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){}}}createOscillator(){return{frequency:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){},start(){fallbackStarts++},stop(){}}}createBuffer(){return{getChannelData:()=>new Float32Array(800)}}createBufferSource(){return{connect(){},start(){},stop(){}}}resume(){return Promise.resolve()}};
   AUDIO.attach({sound:{locked:false,pauseOnBlur:true,context:{state:'running'},play(){sampleAttempts++;return false}},cache:{audio:{exists:()=>true}}});
@@ -70,6 +76,8 @@ vm.runInContext(`
   renderOffers();
   if(!document.getElementById('buildCompass').innerHTML.includes('NEAREST BREAKPOINT')) throw new Error('build compass did not expose the nearest evolution');
   if(!document.getElementById('choices').children.some(card=>card.innerHTML.includes('IMPACT ·')&&card.innerHTML.includes('EVOLUTION ·'))) throw new Error('upgrade cards did not expose scoped impact and one build connection');
+  const previousDraw=state.currentOffers.map(offer=>offer.key),originalRandom=Math.random;Math.random=()=>0;renderOffers(previousDraw);Math.random=originalRandom;
+  if(state.currentOffers.map(offer=>offer.key).sort().join('|')===previousDraw.sort().join('|')) throw new Error('reroll protection returned an identical draw');
   pause(true);
   if(!state.paused||!document.getElementById('pauseScreen').classList.contains('show')) throw new Error('pause screen did not open');
   if(!document.getElementById('pauseSnapshot').innerHTML.includes('CURRENT PRIORITY')) throw new Error('pause snapshot did not render');
@@ -86,6 +94,7 @@ vm.runInContext(`
   if(!document.getElementById('rewardRibbon').classList.contains('show')||!document.getElementById('rewardRibbonTitle').textContent.includes('SIGNAL RUSH')) throw new Error('reward milestone ribbon failed');
   if(!state.deathFx.length||state.deathFx[0].maxLife<=0) throw new Error('persistent destruction animation was not created');
   const destructionLife=state.deathFx[0].life; update(.05); if(state.deathFx[0].life>=destructionLife) throw new Error('destruction animation did not advance');
+  spawnBoss(1); const sweepBoss=state.enemies.find(enemy=>enemy.boss&&!enemy.dead); killEnemy(sweepBoss); if(state.salvageSweep<=0) throw new Error('boss salvage sweep did not activate'); state.hitStop=0;
   draw();
   if(document.getElementById('rushMeter').classList.contains('hidden')) throw new Error('SIGNAL RUSH HUD is hidden');
   state.p.x=100; state.p.y=100; mouse.active=true; mouse.inside=true; mouse.x=200; mouse.y=100;
@@ -100,6 +109,9 @@ vm.runInContext(`
   gainXp(100);
   if(!state.choosing) throw new Error('level-up screen did not open');
   selectOffer(state.currentOffers[0]);
+  if(!state.choosing) throw new Error('pending level reward was not queued');
+  let pendingPicks=0;while(state.choosing&&pendingPicks++<12)selectOffer(state.currentOffers[0]);
+  if(state.choosing||state.xp>=state.xpNeed||pendingPicks<2) throw new Error('multi-level reward queue did not drain');
   renderResearch(); renderAchievements(); renderCodex(); renderSettings();
   save.credits=321; persist(false);
   save.credits=654; persist(false);

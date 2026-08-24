@@ -60,6 +60,7 @@ async function configureCaptureScene(win, preset) {
     save.settings.motion='FULL';
     applyDisplaySettings();
     startRun();
+    toastStack.innerHTML='';
     state.time=preset.time;
     state.level=preset.level;
     state.threat=preset.threat;
@@ -149,7 +150,7 @@ async function runAutomatedCapture(win) {
     return;
   }
   const preset = STEAM_CAPTURE_PRESETS[1];
-  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot.png');
+  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.82.0.png');
   await captureScene(win, preset, output, { width: 1440, height: 810 });
 }
 
