@@ -134,6 +134,12 @@
   <section id="levelScreen" class="overlay">
     <div class="panel levelPanel">
       <div class="headerSplit"><div><h1>LEVEL UP</h1><h2>INSTALL ONE MODULE</h2></div><div id="levelMeta" class="tag"></div></div>
+      <div class="choiceGuide" aria-label="Upgrade choice guide">
+        <span class="guideAction"><b>1–3</b><em>CHOOSE ONE</em><small>Installs immediately</small></span>
+        <span data-tone="weapon"><svg class="uiIcon" aria-hidden="true"><use href="#icon-weapon"/></svg><em>WEAPON</em><small>Adds or improves auto-fire</small></span>
+        <span data-tone="module"><svg class="uiIcon" aria-hidden="true"><use href="#icon-trait"/></svg><em>MODULE</em><small>Improves your whole build</small></span>
+        <span data-tone="breakpoint"><svg class="uiIcon" aria-hidden="true"><use href="#icon-output"/></svg><em>GOLD</em><small>Major power breakpoint</small></span>
+      </div>
       <div id="buildCompass" class="buildCompass" aria-live="polite"></div>
       <div id="choices" class="choiceGrid"></div>
       <div id="offerPins" class="offerPins" aria-label="Upgrade pin controls"></div>

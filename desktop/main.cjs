@@ -106,7 +106,8 @@ async function configureCaptureScene(win, preset) {
     for(const enemy of shooters)enemyShoot(enemy);
     state.enemyBullets.forEach((bullet,index)=>{const travel=.14+(index%6)*.09;bullet.x+=bullet.vx*travel;bullet.y+=bullet.vy*travel});
     for(const target of state.enemies.slice(0,6))fireProjectile(state.p.x,state.p.y,target,360,1,{r:3,life:2,color:'#9ffaff',weaponId:'capture'});
-    state.bullets.forEach((bullet,index)=>{const travel=.12+(index%4)*.08;bullet.x+=bullet.vx*travel;bullet.y+=bullet.vy*travel});
+    state.bullets.forEach((bullet,index)=>{const travel=.12+(index%4)*.08;bullet.x+=bullet.vx*travel;bullet.y+=bullet.vy*travel;bullet.life-=travel});
+    const impactTarget=state.enemies[1];if(impactTarget){emitImpactFx(impactTarget.x,impactTarget.y,-260,80,'missile','#ffd27a',true,24);state.impactFx.at(-1).life=state.impactFx.at(-1).maxLife*.58}
     state.beams.push({x1:state.p.x,y1:state.p.y,x2:755,y2:165,life:.8,color:'#78caff'});
     particle(300,300,'#89eaff',20);
     particle(675,280,'#ad78ff',20);

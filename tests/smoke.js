@@ -42,7 +42,8 @@ vm.runInContext(`
   state.p.iFrames=9999;
   updateDirectiveHud();if(state.directiveId!=='recovery'||document.getElementById('directiveTracker').classList.contains('hidden')||!document.getElementById('directiveTrackerText').textContent.includes('RECOVERY ORDER')) throw new Error('field directive did not initialize');
   const nearTarget=spawnEnemy('scout',false,{x:state.p.x+40,y:state.p.y}),weakTarget=spawnEnemy('scout',false,{x:state.p.x+170,y:state.p.y}),eliteTarget=spawnEnemy('tank',true,{x:state.p.x+250,y:state.p.y}),targetSet=enemy=>enemy===nearTarget||enemy===weakTarget||enemy===eliteTarget;weakTarget.hp=weakTarget.maxHp*.05;
-  const weaponFxBefore=state.weaponFx.length;fireProjectile(state.p.x,state.p.y,nearTarget,420,10,{weaponId:'rail',color:'#d8c68b'});if(state.weaponFx.length!==weaponFxBefore+1||state.p.weaponKick<=0||state.p.weaponAngle!==0) throw new Error('weapon firing presentation event failed');
+  const weaponFxBefore=state.weaponFx.length;fireProjectile(state.p.x,state.p.y,nearTarget,420,10,{weaponId:'rail',color:'#d8c68b'});if(state.weaponFx.length!==weaponFxBefore+1||state.p.weaponKick<=0||state.p.weaponAngle!==0||state.bullets.at(-1).maxLife!==state.bullets.at(-1).life) throw new Error('weapon firing presentation event failed');
+  const impactFxBefore=state.impactFx.length;emitImpactFx(nearTarget.x,nearTarget.y,420,0,'rail','#d8c68b',true,18);if(state.impactFx.length!==impactFxBefore+1||!state.impactFx.at(-1).finalHit||state.impactFx.at(-1).maxLife<=0) throw new Error('directional final-impact event failed');
   save.settings.targetPriority='NEAREST'; if(nearest(state.p,targetSet)!==nearTarget) throw new Error('nearest targeting priority failed');
   save.settings.targetPriority='LOW HULL'; if(nearest(state.p,targetSet)!==weakTarget) throw new Error('low-hull targeting priority failed');
   save.settings.targetPriority='ELITES FIRST'; if(nearest(state.p,targetSet)!==eliteTarget) throw new Error('elite targeting priority failed');
@@ -94,6 +95,7 @@ vm.runInContext(`
   state.choosing=true;state.choiceMode='level';renderOffers();
   if(!document.getElementById('buildCompass').innerHTML.includes('NEAREST BREAKPOINT')) throw new Error('build compass did not expose the nearest evolution');
   const upgradeCards=document.getElementById('choices').children;if(upgradeCards.some(card=>card.innerHTML.includes('class="impact"')||((card.innerHTML.match(/class="desc">([^<]*)/)||[])[1]||'').length>72)) throw new Error('upgrade cards did not keep visible copy concise');
+  if(!upgradeCards.every(card=>card.dataset.tone&&card.innerHTML.includes('choiceGlyph')&&card.innerHTML.includes('choiceScope')&&card.innerHTML.includes('choiceAction'))) throw new Error('guided semantic upgrade cards are incomplete');
   if(!upgradeCards.every(card=>card.title.includes('IMPACT ·'))||state.currentOffers.some((offer,index)=>offerConnection(offer)&&!upgradeCards[index].title.includes(offerConnection(offer)))) throw new Error('upgrade cards did not preserve full scoped impact and build connection details');
   const pinnedOffer=state.currentOffers[0];if(!togglePinnedOffer(pinnedOffer.key)||state.pinnedOfferKey!==pinnedOffer.key) throw new Error('upgrade pin control failed');
   const previousDraw=state.currentOffers.map(offer=>offer.key),previousUnpinned=previousDraw.filter(key=>key!==pinnedOffer.key).sort().join('|'),originalRandom=Math.random;Math.random=()=>0;renderOffers(previousDraw,pinnedOffer);Math.random=originalRandom;
