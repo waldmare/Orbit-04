@@ -95,7 +95,7 @@ The renderer includes:
 
 ![ORBIT//04 version 0.88.1 studio launch hangar](docs/launch-hangar-v0.88.1.png)
 
-The launch hangar capture shows the selected runtime frame silhouette, compact frame bay, comparable ratings, and mission configuration at the same 1440 × 810 presentation used by the desktop build.
+The launch hangar capture shows the selected runtime frame, compact visual frame bay, three icon-led mission decisions, collapsed optional progression data, and the single primary deployment action at the same 1440 × 810 presentation used by the desktop build. Cyan, magenta, acid green, violet, and amber identify functions and risk while the underlying surfaces remain damaged and near-black.
 
 ![ORBIT//04 version 0.88.1 Last Ark runtime capture](docs/runtime-screenshot-v0.88.1.png)
 
@@ -121,6 +121,7 @@ The settings screen provides:
 - screen shake and flash toggles
 - full and reduced motion modes
 - three interface scales
+- labeled SVG icons for frame statistics, loadout roles, mission choices, progression, and navigation; icons are never used without text or accessible naming
 - particle, graphics, glow, background, and contrast controls
 - High, Balanced, and Cinematic effect-clarity modes with hostile projectile outlining and priority telegraphs
 - three dynamic-range profiles with independent music and sound-effect volume

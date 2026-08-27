@@ -388,13 +388,14 @@ function checkMetaAchievements(){
 
 // ---------- MENU / SETTINGS ----------
 const HANGAR_PALETTES={
-  striker:{main:'#d0d1c4',edge:'#788980',accent:'#a0aa78'},bastion:{main:'#cbc5ad',edge:'#7c755b',accent:'#b3995e'},
-  wraith:{main:'#c2b8b5',edge:'#785c5a',accent:'#995a53'},specter:{main:'#bbb8aa',edge:'#626955',accent:'#87936a'},
-  bulwark:{main:'#c5c8b7',edge:'#65735e',accent:'#809064'},oracle:{main:'#c5c1b5',edge:'#6c7a75',accent:'#829894'},
-  vector:{main:'#c7b9aa',edge:'#805b4d',accent:'#a66c50'},talon:{main:'#c7bea8',edge:'#79664c',accent:'#a88958'},
-  halo:{main:'#c0b7bc',edge:'#705e69',accent:'#8f7380'},event:{main:'#bcbeb4',edge:'#59665f',accent:'#768a78'}
+  striker:{main:'#d8ded8',edge:'#087f86',accent:'#32eee0'},bastion:{main:'#d6ccb4',edge:'#8f5d25',accent:'#ffae32'},
+  wraith:{main:'#d4c1c9',edge:'#852951',accent:'#ff357f'},specter:{main:'#cbd1b8',edge:'#5f7d29',accent:'#b9f447'},
+  bulwark:{main:'#d7c8b8',edge:'#9a492e',accent:'#ff7045'},oracle:{main:'#c8c2d3',edge:'#694d8d',accent:'#a873ff'},
+  vector:{main:'#d6bcc6',edge:'#9c234c',accent:'#ff236d'},talon:{main:'#d5c8ae',edge:'#8d6925',accent:'#ffc13d'},
+  halo:{main:'#cabfd3',edge:'#6d438c',accent:'#c167ff'},event:{main:'#c5d0cc',edge:'#13727b',accent:'#29e4f2'}
 };
 const hangarShipPalette=id=>HANGAR_PALETTES[id]||HANGAR_PALETTES.striker;
+const uiIconMarkup=name=>`<svg class="uiIcon" aria-hidden="true"><use href="#icon-${name}"/></svg>`;
 function renderShipCanvas(canvas,id,large=false,locked=false){
   if(!canvas||typeof canvas.getContext!=='function')return false;
   const ctx=canvas.getContext('2d');if(!ctx)return false;
@@ -418,8 +419,8 @@ function renderShipCanvas(canvas,id,large=false,locked=false){
 function renderFrameBrief(id){
   const s=SHIPS[id]||SHIPS.striker,w=WEAPON_META[s.weapon],mastery=masteryLevel(id),pal=hangarShipPalette(id);
   $('frameStage').style['--frame-accent']=pal.accent;$('frameStage').style['--frame-edge']=pal.edge;
-  $('frameName').textContent=s.name;$('frameRole').textContent=s.role;$('frameDescription').textContent=s.desc;$('frameMastery').textContent=`MASTERY M${mastery}`;$('frameMastery').style.color=masteryColor(mastery);
-  $('frameWeapon').textContent=w.name;$('frameWeaponDesc').textContent=w.desc;$('frameTrait').textContent=s.trait;$('frameTraitDesc').textContent=s.traitDesc;$('frameAvailability').textContent='READY FOR DEPLOYMENT';
+  $('frameName').textContent=s.name;$('frameRole').textContent=s.role;$('frameDescription').textContent=s.desc;$('frameDescription').title=s.desc;$('frameMastery').textContent=`MASTERY M${mastery}`;$('frameMastery').style.color=masteryColor(mastery);
+  $('frameWeapon').textContent=w.name;$('frameWeaponDesc').textContent=w.desc;$('frameWeaponCard').title=w.desc;$('frameTrait').textContent=s.trait;$('frameTraitDesc').textContent=s.traitDesc;$('frameTraitCard').title=s.traitDesc;$('frameAvailability').textContent='READY FOR DEPLOYMENT';
   $('frameHullValue').textContent=s.hp;$('frameSpeedValue').textContent=s.speed;$('frameOutputValue').textContent=`${Math.round(s.damage*100)}%`;
   $('frameHullBar').style.width=`${clamp(s.hp/130*100,8,100)}%`;$('frameSpeedBar').style.width=`${clamp(s.speed/300*100,8,100)}%`;$('frameOutputBar').style.width=`${clamp(s.damage/1.25*100,8,100)}%`;
   $('frameRosterCount').textContent=`${save.unlocked.length} / ${Object.keys(SHIPS).length} UNLOCKED`;renderShipCanvas($('framePreview'),id,true,false);
@@ -427,14 +428,14 @@ function renderFrameBrief(id){
 function renderMenu(){
   $('saveLine').textContent=`${save.credits} CR · BEST ${Math.floor(save.bestScore)}`;
   $('researchLevelText').textContent=researchLevels();$('achievementCountText').textContent=`${save.achievements.length}/${Object.keys(ACHIEVEMENTS).length}`;$('lifetimeKillsText').textContent=save.totalKills;$('operationCountText').textContent=`${save.claimedOperations.length}/${Object.keys(OPERATIONS).length}${readyOperations().length?` · ${readyOperations().length} READY`:''}`;
-  const d=DIFFICULTIES[save.difficulty]||DIFFICULTIES.STANDARD;$('difficultyBtn').textContent=d.name;$('difficultyBtn').setAttribute('aria-label',`Current difficulty: ${d.name}. Select next difficulty.`);$('difficultyDesc').textContent=d.desc;const contract=CONTRACTS[save.contract]||CONTRACTS.NONE;$('contractBtn').textContent=contract.name;$('contractBtn').setAttribute('aria-label',`Current contract: ${contract.name}. Select next contract.`);$('contractDesc').textContent=contract.desc;const sector=SECTORS[save.sector]||SECTORS.AURORA;$('sectorBtn').textContent=sector.name;$('sectorBtn').setAttribute('aria-label',`Current sector: ${sector.name}. Select next sector.`);$('sectorDesc').textContent=sector.desc;
+  const d=DIFFICULTIES[save.difficulty]||DIFFICULTIES.STANDARD;$('difficultyBtn').textContent=d.name;$('difficultyBtn').title=d.desc;$('difficultyBtn').setAttribute('aria-label',`Current difficulty: ${d.name}. ${d.desc}`);$('difficultyDesc').textContent=d.desc;const contract=CONTRACTS[save.contract]||CONTRACTS.NONE;$('contractBtn').textContent=contract.name;$('contractBtn').title=contract.desc;$('contractBtn').setAttribute('aria-label',`Current contract: ${contract.name}. ${contract.desc}`);$('contractDesc').textContent=contract.desc;const sector=SECTORS[save.sector]||SECTORS.AURORA;$('sectorBtn').textContent=sector.name;$('sectorBtn').title=sector.desc;$('sectorBtn').setAttribute('aria-label',`Current sector: ${sector.name}. ${sector.desc}`);$('sectorDesc').textContent=sector.desc;
   const selectedId=save.unlocked.includes(save.selected)&&SHIPS[save.selected]?save.selected:'striker';if(save.selected!==selectedId)save.selected=selectedId;renderFrameBrief(selectedId);
-  const selectedShip=SHIPS[selectedId];$('launchSummary').innerHTML=`<span>DEPLOYMENT READY</span><b>${selectedShip.name}</b><i>${sector.name} · ${d.name} · ${contract.name}</i>`;$('startBtn').textContent=`DEPLOY ${selectedShip.name}`;
+  const selectedShip=SHIPS[selectedId];$('launchSummary').innerHTML=`<span>${uiIconMarkup('launch')} READY</span><b>${selectedShip.name}</b><i>${uiIconMarkup('sector')} ${sector.name} <em>·</em> ${uiIconMarkup('threat')} ${d.name} <em>·</em> ${uiIconMarkup('contract')} ${contract.name}</i>`;$('startBtn').innerHTML=`${uiIconMarkup('launch')}<span>DEPLOY ${selectedShip.name}</span>`;
   const grid=$('shipGrid');grid.innerHTML='';
   for(const [id,s] of Object.entries(SHIPS)){
     const unlocked=save.unlocked.includes(id),selected=save.selected===id;const b=document.createElement('button');b.className=`shipCard${selected?' selected':''}`;
     const cost=id==='oracle'&&save.achievements.includes('iff_friend')?Math.floor(s.cost*.7):s.cost;
-    const mastery=masteryLevel(id);b.style['--ship-accent']=hangarShipPalette(id).accent;b.setAttribute('aria-label',`${s.name}, ${s.role}${unlocked?', unlocked':`, locked, ${cost} credits`}`);b.innerHTML=`<canvas class="shipThumb" width="150" height="68" aria-hidden="true"></canvas><span class="shipCardTop"><b class="shipName">${s.name}</b><i style="color:${masteryColor(mastery)}">M${mastery}</i></span><span class="shipCardRole">${s.role}</span><span class="shipCardStatus">${selected?'ACTIVE':unlocked?'AVAILABLE':`${cost} CR`}</span>`;
+    const mastery=masteryLevel(id);b.style['--ship-accent']=hangarShipPalette(id).accent;b.setAttribute('aria-label',`${s.name}, ${s.role}${unlocked?', unlocked':`, locked, ${cost} credits`}`);b.innerHTML=`<canvas class="shipThumb" width="150" height="68" aria-hidden="true"></canvas><span class="shipCardTop"><b class="shipName">${s.name}</b><i style="color:${masteryColor(mastery)}">M${mastery}</i></span><span class="shipCardRole">${uiIconMarkup('frame')}${s.role}</span><span class="shipCardStatus">${selected?'ACTIVE':unlocked?'AVAILABLE':`${cost} CR`}</span>`;
     b.onclick=()=>{AUDIO.sfx('ui');if(!unlocked){if(save.credits>=cost){save.credits-=cost;save.unlocked.push(id);save.selected=id;persist();checkMetaAchievements()}else toast('INSUFFICIENT CREDITS',`${cost-save.credits} CR required.`);return}save.selected=id;persist()};grid.appendChild(b);
     renderShipCanvas(b.querySelector('canvas'),id,false,!unlocked);
   }

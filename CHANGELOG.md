@@ -2,6 +2,11 @@
 
 ## Unreleased — Display Clarity and Motion Correction
 
+- rebuilt the launch hangar around three primary decisions, one deployment action, compact frame comparisons, and an optional collapsed progression summary
+- replaced text-heavy configuration cards with labeled semantic SVG icons, persistent accessible descriptions, and native hover tooltips
+- introduced a neon-noir interface palette using cyan, magenta, acid green, violet, and amber as functional signals over damaged near-black surfaces
+- extended the same color language to the combat HUD, XP and rush meters, reward feedback, and upgrade cards without brightening the ashen playfield
+- refreshed both verified Electron screenshots so repository presentation reflects the current runtime rather than concept artwork
 - added desktop audio autoplay handling plus explicit Phaser mixer unmute, unlock, and suspended-context recovery
 - added a movement-reactive low engine layer, alternate weapon samples, stronger default output, and a layered output check
 - separated the ashen environment grade from the combat grade so hostile silhouettes, friendly fire, pickups, and the ark retain clear color identities
