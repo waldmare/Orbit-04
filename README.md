@@ -54,7 +54,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - one concise Field Directive per run, rotating between exploration, travel, and attrition objectives with existing-system rewards
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
 - keyboard, mouse, and gamepad movement
-- licensed sample playback with automatic context recovery, verified-playback status, mute warnings, and an in-game output check
+- layered 48 kHz stereo sound playback with automatic context recovery, verified mixer status, mute warnings, and an in-game output check
 - local save export, import, and reset controls
 
 Detailed balance targets are documented in [BALANCE.md](BALANCE.md). Historical changes are recorded in [CHANGELOG.md](CHANGELOG.md).
@@ -105,7 +105,7 @@ This 1440 × 810 image was captured from the active 0.88.1 Electron/Three.js Web
 
 ## Audio implementation
 
-Gameplay sound effects use selected files from Kenney's Sci-Fi Sounds package. Music uses three licensed dark-ambient tracks assigned to exploration, combat, and boss states. The runtime crossfades between those states, adds a movement-reactive engine bed, varies repeated weapon samples, limits competing combat voices, gives major rewards priority, and briefly ducks music around important cues. The desktop host permits local autoplay, while the runtime explicitly unmutes and resumes both playback contexts after focus or device interruptions. The Settings output check plays a layered reference cue and reports the active music, engine, sample context, and mixer state. Music and sound-effect volume remain independently adjustable.
+Gameplay sound effects use the repository's layered 48 kHz stereo sound set rather than the previous short prototype samples. Every weapon family has a distinct transient, body and tail; flak, rift, heavy alien fire, system installation, artifacts, streaks, grazes and engine motion have dedicated cues. Important impacts add controlled sub and material layers, while hostile fire, kills, critical hits, mines, rifts and rewards are positioned across the stereo field from their world location. Phaser's real master output is routed through the selected dynamic-range compressor, so CINEMA, BALANCED and NIGHT now shape loaded samples and music instead of affecting only the emergency synthesizer. Music uses three licensed dark-ambient tracks assigned to exploration, combat and boss states, with adaptive crossfades and priority ducking. The Settings output check plays weapon and reward references and reports the active studio mixer.
 
 License and source information is listed in [THIRD_PARTY.md](THIRD_PARTY.md).
 

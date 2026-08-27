@@ -2,6 +2,9 @@
 
 ## Unreleased — Display Clarity and Motion Correction
 
+- replaced the active short prototype SFX mapping with a dedicated 48 kHz stereo combat set, including unique flak, rift, heavy-alien-fire, system-install, artifact, streak, graze, sub and engine cues
+- routed Phaser's loaded samples and adaptive music through the real dynamic-range compressor, added world-position stereo placement and distance control, and preserved the procedural path only as failure recovery
+- separated weapon, kill, reward and progression identities so routine events no longer reuse the same mobile-style UI samples
 - shortened level-up and doctrine cards to one mechanical effect plus one compact build link, while retaining full details in native tooltips and accessibility labels
 - lifted environmental midtones, star visibility, ash-field separation, and navigation guides while reducing the stacked dark filter and outer vignette
 - rebuilt the launch hangar around three primary decisions, one deployment action, compact frame comparisons, and an optional collapsed progression summary

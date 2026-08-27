@@ -4,7 +4,7 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const requiredAssets=[
   'assets/visuals/background-dead-universe-v1.png','assets/visuals/background-alien-veil-v1.png',
   'assets/visuals/player-last-ark-v1.png','assets/visuals/enemy-void-larva-v1.png','assets/visuals/enemy-ossuary-v1.png','assets/visuals/enemy-witness-v1.png','assets/visuals/boss-conquest-leviathan-v1.png',
-  'assets/audio/premium/kenney-sci-fi-sounds/impactMetal_000.ogg','assets/audio/premium/kenney-sci-fi-sounds/thrusterFire_004.ogg','assets/audio/premium/kenney-sci-fi-sounds/laserSmall_000.ogg','assets/audio/premium/kenney-sci-fi-sounds/laserLarge_004.ogg','assets/audio/premium/kenney-sci-fi-sounds/explosionCrunch_004.ogg','assets/audio/premium/kenney-sci-fi-sounds/lowFrequency_explosion_001.ogg',
+  'assets/audio/pulse.wav','assets/audio/pulse_alt.wav','assets/audio/rail.wav','assets/audio/flak.wav','assets/audio/rift.wav','assets/audio/enemy_heavy_shot.wav','assets/audio/system_install.wav','assets/audio/achievement.wav','assets/audio/artifact.wav','assets/audio/sub_bass.wav','assets/audio/engine_loop.wav',
   'assets/audio/premium/music-last-human-dystopian-ambient.mp3','assets/audio/premium/music-hostile-choir-dystopian-thriller.mp3','assets/audio/premium/music-leviathan-blood-red-sky.mp3'
 ];
 for(const asset of requiredAssets){const full=path.join(root,asset);if(!fs.existsSync(full)||fs.statSync(full).size<44)throw new Error(`missing engine asset: ${asset}`)}
@@ -94,7 +94,7 @@ vm.runInContext(`
   state.choosing=true;state.choiceMode='level';renderOffers();
   if(!document.getElementById('buildCompass').innerHTML.includes('NEAREST BREAKPOINT')) throw new Error('build compass did not expose the nearest evolution');
   const upgradeCards=document.getElementById('choices').children;if(upgradeCards.some(card=>card.innerHTML.includes('class="impact"')||((card.innerHTML.match(/class="desc">([^<]*)/)||[])[1]||'').length>72)) throw new Error('upgrade cards did not keep visible copy concise');
-  if(!upgradeCards.some(card=>card.title.includes('IMPACT ·')&&card.title.includes('EVOLUTION ·'))) throw new Error('upgrade cards did not preserve full scoped impact and build connection details');
+  if(!upgradeCards.every(card=>card.title.includes('IMPACT ·'))||state.currentOffers.some((offer,index)=>offerConnection(offer)&&!upgradeCards[index].title.includes(offerConnection(offer)))) throw new Error('upgrade cards did not preserve full scoped impact and build connection details');
   const pinnedOffer=state.currentOffers[0];if(!togglePinnedOffer(pinnedOffer.key)||state.pinnedOfferKey!==pinnedOffer.key) throw new Error('upgrade pin control failed');
   const previousDraw=state.currentOffers.map(offer=>offer.key),previousUnpinned=previousDraw.filter(key=>key!==pinnedOffer.key).sort().join('|'),originalRandom=Math.random;Math.random=()=>0;renderOffers(previousDraw,pinnedOffer);Math.random=originalRandom;
   if(!state.currentOffers.some(offer=>offer.key===pinnedOffer.key)||!document.getElementById('offerPins').children.some(button=>button.className.includes('selected'))) throw new Error('pinned offer did not survive reroll');
