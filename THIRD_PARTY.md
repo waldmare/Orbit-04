@@ -29,17 +29,21 @@ Older builds used selected files from **Sci-Fi Sounds 1.0**, created and distrib
 
 Source: https://kenney.nl/assets/sci-fi-sounds
 
-## Pixabay music — active soundtrack
+## OpenGameArt music — active soundtrack
 
-The adaptive dark-ambient soundtrack uses these files under the Pixabay Content License:
+The adaptive dark-space synthwave soundtrack uses these Creative Commons Zero 1.0 Universal (CC0-1.0) tracks:
 
-- **Dystopian Ambient** — leberch — exploration / last-human state — https://pixabay.com/music/ambient-dystopian-ambient-520165/
-- **Dystopian Thriller** — leberch — high-threat combat state — https://pixabay.com/music/ambient-dystopian-thriller-520374/
-- **Blood Red Sky — Dark Ambient Crime Thriller and Horror Music** — ShadowsAndEchoes — boss / Conqueror state — https://pixabay.com/music/horror-scene-blood-red-sky-dark-ambient-crime-thriller-and-horror-music-152335/
+- **Space City** — MintoDog — exploration layer — https://opengameart.org/content/space-city
+- **Synth Wave** — Pro Sensory — combat layer — https://opengameart.org/content/synth-wave
+- **Cybershaman** — Ruskerdax — boss layer — https://opengameart.org/content/cybershaman
+
+The CC0 dedication permits copying, modification, distribution and commercial use without attribution. These notices are retained for provenance and project auditability.
+
+## Pixabay music — inactive legacy files
+
+Earlier builds used three tracks under the Pixabay Content License: **Dystopian Ambient** and **Dystopian Thriller** by leberch, and **Blood Red Sky** by ShadowsAndEchoes. They are no longer referenced by the supported runtime but remain in source history.
 
 License summary: https://pixabay.com/service/license-summary/
-
-The license permits free use, adaptation, and commercial use subject to its prohibited-use and standalone-distribution restrictions. The downloaded tracks ship only as integrated game soundtrack assets.
 
 ## Mixkit music — inactive legacy files
 

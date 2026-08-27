@@ -15,8 +15,8 @@ const sourceFiles = [
   'three-visual-engine.mjs',
   'desktop/main.cjs'
 ];
-const mediaExtensions = new Set(['.png', '.wav', '.ogg', '.mp3']);
-const assetPattern = /assets\/[A-Za-z0-9_./-]+\.(?:png|wav|ogg|mp3)/g;
+const mediaExtensions = new Set(['.png', '.wav', '.flac', '.ogg', '.mp3']);
+const assetPattern = /assets\/[A-Za-z0-9_./-]+\.(?:png|wav|flac|ogg|mp3)/g;
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -55,6 +55,11 @@ function validateMp3(buffer, relative) {
   const hasId3 = buffer.subarray(0, 3).toString('ascii') === 'ID3';
   const hasFrameSync = buffer[0] === 0xff && (buffer[1] & 0xe0) === 0xe0;
   assert.ok(hasId3 || hasFrameSync, `${relative}: invalid MP3 signature`);
+}
+
+function validateFlac(buffer, relative) {
+  assert.ok(buffer.length >= 42, `${relative}: truncated FLAC file`);
+  assert.equal(buffer.subarray(0, 4).toString('ascii'), 'fLaC', `${relative}: invalid FLAC signature`);
 }
 
 const referencedAssets = new Set();
@@ -101,6 +106,7 @@ for (const absolute of mediaFiles) {
   switch (path.extname(absolute).toLowerCase()) {
     case '.png': validatePng(buffer, relative); break;
     case '.wav': validateWav(buffer, relative); break;
+    case '.flac': validateFlac(buffer, relative); break;
     case '.ogg': validateOgg(buffer, relative); break;
     case '.mp3': validateMp3(buffer, relative); break;
   }
