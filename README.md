@@ -78,6 +78,8 @@ The renderer includes:
 - glance-readable hostile roles: chargers, tanks, gunners, splitters, and snipers use consistent ashen-color accents, compact intent glyphs, and priority-scaled threat rings
 - class-tuned organic locomotion with lateral sway, speed stretch, weapon recoil, turning compression, and short motion wakes instead of static sprites translated across the arena
 - dark separation rings around hostile projectiles and thicker priority health bars for reliable reads against bright weapons and animated backgrounds
+- separate environment and combat color grades: the world remains desaturated and oppressive while combat silhouettes retain restrained corpse-green, rust, arterial-red, and cold-blue identities
+- enlarged dark backplates behind hostile organisms and friendly projectiles, preserving the crowded-survival readability of the combat field without changing collision geometry
 - organic breathing, undulation, and asymmetric locomotion for alien bodies instead of spacecraft engine plumes
 - directional weapon recoil, generated transparent muzzle plates, per-weapon projectile silhouettes, hostile firing flashes, beam lines, turning response, and dash afterimages
 - animated pickups, exploration signals, orbiting systems, projectile streaks, and depth landmarks
@@ -101,7 +103,7 @@ This 1440 × 810 image was captured from the active 0.88.1 Electron/Three.js Web
 
 ## Audio implementation
 
-Gameplay sound effects use selected files from Kenney's Sci-Fi Sounds package. Music uses three licensed dark-ambient tracks assigned to exploration, combat, and boss states. The runtime crossfades between those states, limits repetitive combat voices, gives major rewards priority, and briefly ducks music around important cues. Music and sound-effect volume remain independently adjustable.
+Gameplay sound effects use selected files from Kenney's Sci-Fi Sounds package. Music uses three licensed dark-ambient tracks assigned to exploration, combat, and boss states. The runtime crossfades between those states, adds a movement-reactive engine bed, varies repeated weapon samples, limits competing combat voices, gives major rewards priority, and briefly ducks music around important cues. The desktop host permits local autoplay, while the runtime explicitly unmutes and resumes both playback contexts after focus or device interruptions. The Settings output check plays a layered reference cue and reports the active music, engine, sample context, and mixer state. Music and sound-effect volume remain independently adjustable.
 
 License and source information is listed in [THIRD_PARTY.md](THIRD_PARTY.md).
 

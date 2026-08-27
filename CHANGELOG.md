@@ -2,6 +2,10 @@
 
 ## Unreleased — Display Clarity and Motion Correction
 
+- added desktop audio autoplay handling plus explicit Phaser mixer unmute, unlock, and suspended-context recovery
+- added a movement-reactive low engine layer, alternate weapon samples, stronger default output, and a layered output check
+- separated the ashen environment grade from the combat grade so hostile silhouettes, friendly fire, pickups, and the ark retain clear color identities
+- added dark silhouette backplates to hostile organisms and friendly projectiles for crowd readability without changing hitboxes or balance
 - replaced the fixed 1440 × 810 Three.js buffer with display-size- and DPI-aware rendering, capped per graphics-quality profile
 - enabled hardware-aware anisotropic sampling while retaining stable mipmaps for rotating high-resolution ship textures
 - corrected player banking so it changes the apparent hull profile without rotating the vessel away from its travel direction

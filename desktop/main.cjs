@@ -2,12 +2,17 @@ const { app, BrowserWindow, Menu, session, shell } = require('electron');
 const { appendFile, mkdir, writeFile } = require('node:fs/promises');
 const path = require('node:path');
 
+// ORBIT//04 is a local desktop game, so its licensed soundtrack may start as
+// soon as a run begins instead of inheriting browser autoplay restrictions.
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 const smokeMode = process.argv.includes('--orbit-smoke');
+const audioSmokeMode = process.argv.includes('--orbit-audio-smoke');
 const runtimeCaptureMode = process.argv.includes('--orbit-capture');
 const menuCaptureMode = process.argv.includes('--orbit-menu-capture');
 const steamCaptureMode = process.argv.includes('--orbit-steam-capture');
 const captureMode = runtimeCaptureMode || menuCaptureMode || steamCaptureMode;
-const automatedMode = smokeMode || captureMode;
+const automatedMode = smokeMode || audioSmokeMode || captureMode;
 const entryFile = path.join(__dirname, '..', 'index.html');
 const iconFile = path.join(__dirname, '..', 'assets', 'branding', 'orbit-app-icon.ico');
 const STEAM_CAPTURE_PRESETS = [
@@ -255,6 +260,14 @@ function createWindow() {
       const rendererState = await waitForRenderer(win);
       console.log(`[renderer-ready] ${JSON.stringify(rendererState)}`);
       if (automatedMode && rendererState.boot !== 'ok') return app.exit(1);
+      if (audioSmokeMode && rendererState.boot === 'ok') {
+        await win.webContents.executeJavaScript(`(() => {save.settings.audio='ON';save.settings.audioMix='BALANCED';save.settings.sfxVolume='100%';save.settings.musicVolume='100%';AUDIO.syncEnabled();startRun();AUDIO.testOutput();return true})()`);
+        await delay(1400);
+        const audio = await win.webContents.executeJavaScript(`AUDIO.status()`);
+        console.log(`[audio-smoke] ${JSON.stringify(audio)}`);
+        if (!audio.enabled || audio.locked || audio.muted || audio.managerVolume < .9 || audio.sampleContext !== 'running' || audio.musicPlaying < 1 || !audio.ambiencePlaying || !audio.confirmed || audio.attempts < 1) process.exitCode = 1;
+        return app.exit(process.exitCode || 0);
+      }
       if (smokeMode && rendererState.boot === 'ok') {
         const setup = await win.webContents.executeJavaScript(`(() => {
           save.settings.audio='OFF'; save.settings.damageNumbers='ALL'; save.settings.motion='FULL'; save.settings.effectClarity='HIGH'; startRun();

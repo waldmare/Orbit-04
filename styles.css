@@ -90,6 +90,8 @@ button:hover:not(:disabled){border-color:#aeb9b3;background:linear-gradient(180d
 .pauseSnapshot>div,.intelMetric,.intelSection{border-color:rgba(125,136,130,.34);background:rgba(10,13,12,.62)}
 .archivePanel blockquote:before{content:"//";left:-34px;top:-12px;font:600 28px var(--mono);letter-spacing:-.16em;color:rgba(234,215,167,.18)}
 #wrap canvas{filter:saturate(.78) contrast(1.08) brightness(1.025)}
+#game{filter:saturate(.48) contrast(1.10) brightness(.78)}#gameThree{filter:saturate(1.02) contrast(1.16) brightness(1.11)}
+#wrap[data-contrast="HIGH"] #game{filter:saturate(.52) contrast(1.17) brightness(.80)}#wrap[data-contrast="HIGH"] #gameThree{filter:saturate(1.10) contrast(1.21) brightness(1.14)}
 
 /* 0.81 — fast upgrade comprehension and restrained installation feedback. */
 .buildCompass{display:flex;align-items:stretch;justify-content:space-between;gap:8px;margin:-3px 0 12px;padding:8px;border:1px solid rgba(145,156,150,.25);border-radius:6px;background:rgba(5,8,7,.52)}
