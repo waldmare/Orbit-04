@@ -9,6 +9,10 @@
 - increased the combat-scale silhouettes and retuned engine trails for clearer motion reads without changing collision sizes or balance
 - replaced the overly rigid fixed player heading with damped limited-angle steering, visible banking, inertia, acceleration response, and independently loaded engine plumes
 - strengthened combat color separation for the ark, hostile bodies, projectiles, and all eight pickup classes while preserving the ashen environment grade
+- added restrained role colors, semantic intent glyphs, and priority-scaled threat rings for non-scout enemies
+- added dark separation rings to hostile projectiles and clearer health bars for bosses, elites, Echo Hunters, and bounty targets
+- added visible attitude thrusters and an animated life-support core to the player vessel
+- added class-specific hostile sway, velocity stretch, firing recoil, and short organic motion wakes without changing simulation speed or combat balance
 - replaced generic square pickups with eight semantic glyphs covering experience, caches, support signals, archives, relics, and hazards
 - expanded the real Electron smoke test with render-buffer and directional-heading assertions
 

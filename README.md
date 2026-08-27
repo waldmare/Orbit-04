@@ -73,7 +73,11 @@ The renderer includes:
 - frame-rate-independent position and rotation smoothing for player, hostile, and allied ships
 - movement-derived hostile and allied headings, with shortest-path turns and silhouette compression used for banking instead of corrupting the facing angle
 - a forward-biased player hull with damped limited-angle steering, lateral banking, movement inertia, acceleration stretch, and independently loaded engines instead of either rigid sliding or full-axis rotation
+- visible maneuvering thrusters and a load-responsive life-support core that keep the ark animated during strafing, acceleration, braking, and idle flight
 - semantic, color-coded pickup silhouettes for experience, caches, repair, combat flux, salvage, archives, relics, and jammers
+- glance-readable hostile roles: chargers, tanks, gunners, splitters, and snipers use consistent ashen-color accents, compact intent glyphs, and priority-scaled threat rings
+- class-tuned organic locomotion with lateral sway, speed stretch, weapon recoil, turning compression, and short motion wakes instead of static sprites translated across the arena
+- dark separation rings around hostile projectiles and thicker priority health bars for reliable reads against bright weapons and animated backgrounds
 - organic breathing, undulation, and asymmetric locomotion for alien bodies instead of spacecraft engine plumes
 - directional weapon recoil, generated transparent muzzle plates, per-weapon projectile silhouettes, hostile firing flashes, beam lines, turning response, and dash afterimages
 - animated pickups, exploration signals, orbiting systems, projectile streaks, and depth landmarks
