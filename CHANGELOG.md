@@ -2,6 +2,9 @@
 
 ## Unreleased — Display Clarity and Motion Correction
 
+- replaced the generated combat and reward cues with a curated commercial-safe CC0 library from Lentikula, ObsydianX, Spring Spring and NenadSimic
+- assigned distinct full-length weapon, hostile, phase, destruction, interface and reward recordings, then retuned voice levels and cooldowns for the mastered source material
+- added third-party provenance, source URLs, per-file processing notes and runtime checks for every active external sound
 - replaced the active short prototype SFX mapping with a dedicated 48 kHz stereo combat set, including unique flak, rift, heavy-alien-fire, system-install, artifact, streak, graze, sub and engine cues
 - routed Phaser's loaded samples and adaptive music through the real dynamic-range compressor, added world-position stereo placement and distance control, and preserved the procedural path only as failure recovery
 - separated weapon, kill, reward and progression identities so routine events no longer reuse the same mobile-style UI samples

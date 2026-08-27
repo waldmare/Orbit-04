@@ -4,7 +4,7 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const requiredAssets=[
   'assets/visuals/background-dead-universe-v1.png','assets/visuals/background-alien-veil-v1.png',
   'assets/visuals/player-last-ark-v1.png','assets/visuals/enemy-void-larva-v1.png','assets/visuals/enemy-ossuary-v1.png','assets/visuals/enemy-witness-v1.png','assets/visuals/boss-conquest-leviathan-v1.png',
-  'assets/audio/pulse.wav','assets/audio/pulse_alt.wav','assets/audio/rail.wav','assets/audio/flak.wav','assets/audio/rift.wav','assets/audio/enemy_heavy_shot.wav','assets/audio/system_install.wav','assets/audio/achievement.wav','assets/audio/artifact.wav','assets/audio/sub_bass.wav','assets/audio/engine_loop.wav',
+  'assets/audio/professional/lentikula/pulse-a.wav','assets/audio/professional/lentikula/pulse-b.wav','assets/audio/professional/lentikula/rail.wav','assets/audio/professional/lentikula/flak.wav','assets/audio/professional/lentikula/rift.wav','assets/audio/professional/lentikula/hostile-heavy.wav','assets/audio/professional/obsydianx/ui-confirm.wav','assets/audio/professional/obsydianx/ui-reward.wav','assets/audio/professional/opengameart/mechanical-explosion.wav','assets/audio/professional/opengameart/low-explosion.wav','assets/audio/sub_bass.wav','assets/audio/engine_loop.wav',
   'assets/audio/premium/music-last-human-dystopian-ambient.mp3','assets/audio/premium/music-hostile-choir-dystopian-thriller.mp3','assets/audio/premium/music-leviathan-blood-red-sky.mp3'
 ];
 for(const asset of requiredAssets){const full=path.join(root,asset);if(!fs.existsSync(full)||fs.statSync(full).size<44)throw new Error(`missing engine asset: ${asset}`)}

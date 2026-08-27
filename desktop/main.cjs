@@ -262,10 +262,10 @@ function createWindow() {
       if (automatedMode && rendererState.boot !== 'ok') return app.exit(1);
       if (audioSmokeMode && rendererState.boot === 'ok') {
         await win.webContents.executeJavaScript(`(() => {save.settings.audio='ON';save.settings.audioMix='BALANCED';save.settings.sfxVolume='100%';save.settings.musicVolume='100%';AUDIO.syncEnabled();startRun();AUDIO.testOutput();AUDIO.sfx('enemyShot',0,{x:state.p.x+320,y:state.p.y});return true})()`);
-        await delay(1400);
+        await delay(2300);
         const audio = await win.webContents.executeJavaScript(`AUDIO.status()`);
         console.log(`[audio-smoke] ${JSON.stringify(audio)}`);
-        if (!audio.enabled || audio.locked || audio.muted || audio.managerVolume < .9 || audio.sampleContext !== 'running' || audio.musicPlaying < 1 || !audio.ambiencePlaying || audio.mix !== 'STUDIO' || audio.spatialVoices < 1 || !audio.confirmed || audio.attempts < 4) process.exitCode = 1;
+        if (!audio.enabled || audio.locked || audio.muted || audio.managerVolume < .9 || audio.sampleContext !== 'running' || audio.musicPlaying < 1 || !audio.ambiencePlaying || audio.mix !== 'STUDIO' || audio.library !== 'CURATED CC0' || audio.spatialVoices < 1 || !audio.confirmed || audio.attempts < 5) process.exitCode = 1;
         return app.exit(process.exitCode || 0);
       }
       if (smokeMode && rendererState.boot === 'ok') {
