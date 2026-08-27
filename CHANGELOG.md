@@ -2,6 +2,9 @@
 
 ## Unreleased — Display Clarity and Motion Correction
 
+- corrected the shared Three.js sprite rotation transform so projectile bodies, dark silhouettes, and trails align with their actual velocity in every firing direction
+- added earned Ark Reliquaries to boss encounters, with distinct world silhouettes and staged one-, three-, or five-reward recovery sequences
+- guaranteed a three-reward first Reliquary, added dry-streak protection, keyboard/gamepad and instant-reveal controls, and persistent recovery statistics
 - replaced the generated combat and reward cues with a curated commercial-safe CC0 library from Lentikula, ObsydianX, Spring Spring and NenadSimic
 - assigned distinct full-length weapon, hostile, phase, destruction, interface and reward recordings, then retuned voice levels and cooldowns for the mastered source material
 - added third-party provenance, source URLs, per-file processing notes and runtime checks for every active external sound

@@ -163,6 +163,23 @@
     </div>
   </section>
 
+  <section id="reliquaryScreen" class="overlay reliquaryOverlay" role="dialog" aria-modal="true" aria-labelledby="reliquaryTitle">
+    <div id="reliquaryPanel" class="panel reliquaryPanel" data-tier="single">
+      <div class="reliquaryHeader">
+        <div><span class="reliquaryEyebrow">RECOVERED ARK RELIQUARY</span><h1 id="reliquaryTitle">SIGNAL SEALED</h1></div>
+        <div id="reliquaryTier" class="reliquaryTier">ANALYZING</div>
+      </div>
+      <div class="reliquaryCore" aria-hidden="true"><i></i><i></i><i></i><b id="reliquaryCount">?</b></div>
+      <p id="reliquaryStatus" class="reliquaryStatus" aria-live="polite">Synchronizing the dead signal...</p>
+      <div id="reliquarySlots" class="reliquarySlots" aria-live="polite"></div>
+      <div class="reliquaryActions">
+        <button id="reliquarySkipBtn">REVEAL NOW <b>SPACE</b></button>
+        <button id="reliquaryClaimBtn" class="primary hidden">CLAIM TRANSMISSION <b>ENTER</b></button>
+      </div>
+      <div class="reliquaryFoot">Boss reliquary · earned in play · no paid keys</div>
+    </div>
+  </section>
+
   <section id="doctrineScreen" class="overlay">
     <div class="panel levelPanel">
       <div class="headerSplit"><div><h1>SURVIVAL INSTINCT</h1><h2>CHOOSE WHAT THE LAST CREW IS WILLING TO BECOME</h2></div><div id="doctrineMeta" class="tag"></div></div>

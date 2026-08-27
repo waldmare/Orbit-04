@@ -36,6 +36,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - optional Ascension mode after completing the base run
 - persistent credits, research upgrades, frame mastery, operations, achievements, and Codex data
 - projectile grazing, kill chains, Signal Rush, Overdrive, caches, anomalies, and hostile conversion
+- earned Ark Reliquaries from boss encounters, with paced one-, three-, or five-reward reveals, a first-open guarantee, dry-streak protection, and an instant-reveal control
 - continuous directional travel with camera-safe world scrolling and active-encounter preservation
 - deterministic conquered-universe generation beyond the starting view, including ash fields, wreckage, alien formations, and void sites
 - six exploration signals: repair, combat amplification, salvage, archive fragments, risk/reward relics, and hostile jammers
@@ -79,6 +80,7 @@ The renderer includes:
 - glance-readable hostile roles: chargers, tanks, gunners, splitters, and snipers use consistent ashen-color accents, compact intent glyphs, and priority-scaled threat rings
 - class-tuned organic locomotion with lateral sway, speed stretch, weapon recoil, turning compression, and short motion wakes instead of static sprites translated across the arena
 - dark separation rings around hostile projectiles and thicker priority health bars for reliable reads against bright weapons and animated backgrounds
+- velocity-locked projectile headings so every body, silhouette, and trail follows the exact screen-space travel vector
 - separate environment and combat color grades: the world remains desaturated and oppressive while combat silhouettes retain restrained corpse-green, rust, arterial-red, and cold-blue identities
 - readable environmental midtones, brighter star structure, and a softer outer vignette keep the dead universe visible without competing with hostiles or projectiles
 - enlarged dark backplates behind hostile organisms and friendly projectiles, preserving the crowded-survival readability of the combat field without changing collision geometry
