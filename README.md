@@ -39,9 +39,8 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - earned Ark Reliquaries from boss encounters, with paced one-, three-, or five-reward reveals, a first-open guarantee, dry-streak protection, and an instant-reveal control
 - continuous directional travel with camera-safe world scrolling and active-encounter preservation
 - deterministic conquered-universe generation beyond the starting view, including ash fields, wreckage, alien formations, and void sites
-- six exploration signals: repair, combat amplification, salvage, archive fragments, risk/reward relics, and hostile jammers
-- 18 persistent in-world crew records written for ORBIT//04, with no quotation or attribution to real authors or published works
-- a persistent, pausing Archive Reader with manual dismissal and deferred data rewards
+- six exploration signals: repair, combat amplification, salvage, rare Time Fractures, risk/reward relics, and hostile jammers
+- rare Time Fractures that slow hostiles, projectiles, effects, spawning, backgrounds, and the soundtrack while preserving full player thrust
 - tiered reward ribbons for chains, Signal Rush, Overdrive, captured signals, and boss defeats
 - an off-screen priority compass for bosses, Echo Hunters, and timed signal targets
 - level-end pickup convergence, boss-clear salvage sweeps, and correctly queued multi-level rewards
@@ -49,7 +48,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - concise level-up cards showing one immediate effect and one relevant build link, with full mechanical detail retained in tooltips and accessible labels
 - selectable automatic targeting priorities for nearest, damaged, or elite hostiles
 - a low-noise combat tracker for the build's nearest weapon evolution
-- an in-run signal scanner that filters procedural discoveries by support, archive, or risk category
+- an in-run signal scanner that filters procedural discoveries by support, time anomaly, or risk category
 - a timestamped install log in Run Intel plus last-install and scanner summaries on pause
 - configurable focus-loss pausing to protect active runs during task switching
 - one concise Field Directive per run, rotating between exploration, travel, and attrition objectives with existing-system rewards
@@ -66,7 +65,7 @@ Detailed balance targets are documented in [BALANCE.md](BALANCE.md). Historical 
 
 The renderer includes:
 
-- a technological player vessel contrasted with four transparent organic creature plates covering six enemy behaviors and the Conqueror boss
+- a technological player vessel contrasted with transparent organic creature plates covering nine enemy behaviors and the Conqueror boss
 - a dedicated last-human ark sprite with a visible life-support core, asymmetric repair detail, responsive engines, preserved aspect ratio, and configuration-neutral hull materials
 - aspect-ratio-preserving sprite scaling
 - matte-free ship textures selected for the active camera scale
@@ -76,8 +75,8 @@ The renderer includes:
 - movement-derived hostile and allied headings, with shortest-path turns and silhouette compression used for banking instead of corrupting the facing angle
 - a forward-biased player hull with damped limited-angle steering, lateral banking, movement inertia, acceleration stretch, and independently loaded engines instead of either rigid sliding or full-axis rotation
 - visible maneuvering thrusters and a load-responsive life-support core that keep the ark animated during strafing, acceleration, braking, and idle flight
-- semantic, color-coded pickup silhouettes for experience, caches, repair, combat flux, salvage, archives, relics, and jammers
-- glance-readable hostile roles: chargers, tanks, gunners, splitters, and snipers use consistent ashen-color accents, compact intent glyphs, and priority-scaled threat rings
+- semantic, color-coded pickup silhouettes for experience, caches, repair, combat flux, salvage, Time Fractures, relics, and jammers
+- glance-readable hostile roles: chargers, tanks, gunners, splitters, snipers, flankers, paired-shot weavers, and support wardens use consistent accents, compact intent glyphs, and priority-scaled threat rings
 - class-tuned organic locomotion with lateral sway, speed stretch, weapon recoil, turning compression, and short motion wakes instead of static sprites translated across the arena
 - dark separation rings around hostile projectiles and thicker priority health bars for reliable reads against bright weapons and animated backgrounds
 - velocity-locked projectile headings so every body, silhouette, and trail follows the exact screen-space travel vector
@@ -90,7 +89,7 @@ The renderer includes:
 - damped impact shake and background parallax instead of per-frame random jitter
 - artifact-free vector glow, shields, elite markers, and telegraphs drawn in a dedicated additive pass
 - configurable particles, background detail, contrast, and graphics quality
-- two generated ashen environment plates, reused across four runtime states with restrained eclipse, rift, and dying-supernova animation
+- two generated ashen environment plates, graded across six runtime states with pulsar, rift, eclipse, wreck-field, and dying-supernova animation
 - the retained Phaser renderer as a compatibility fallback when the Three.js presentation layer is unavailable
 - a quality-aware Three.js WebGL presentation profile with antialiasing, high-refresh frame pacing, ACES filmic tone mapping, restrained color grading, and additive emissive effects
 - an automatic clarity-first Canvas fallback through the Phaser host when WebGL is unavailable
@@ -107,7 +106,7 @@ This 1440 × 810 image was captured from the active 0.88.1 Electron/Three.js Web
 
 ## Audio implementation
 
-Gameplay sound effects use a curated CC0 library instead of the previous procedural and prototype cues. The active set combines Lentikula's manually designed 48 kHz / 24-bit sci-fi weapons, trimmed ObsydianX interface cues, a mechanical destruction recording by Spring Spring, and NenadSimic's low explosion tail. Rapid weapons, rifles, beams, hostile fire, phase systems and destruction events now use source recordings selected for their role; only low engine ambience and an emergency playback fallback remain from the internal generator. Important impacts add controlled sub and material layers, while hostile fire, kills, critical hits, mines, rifts and rewards are positioned across the stereo field from their world location. Phaser's real master output is routed through the selected dynamic-range compressor, so CINEMA, BALANCED and NIGHT shape loaded samples and music. Music uses three licensed dark-ambient tracks assigned to exploration, combat and boss states, with adaptive crossfades and priority ducking. The Settings output check plays a spaced weapon-and-reward reference sequence and reports the active curated library and mixer.
+Gameplay sound effects use a curated CC0 library instead of the previous procedural and prototype cues. The active set combines Lentikula's manually designed 48 kHz / 24-bit sci-fi weapons, trimmed ObsydianX interface cues, a mechanical destruction recording by Spring Spring, and NenadSimic's low explosion tail. Rapid weapons, rifles, beams, hostile fire, phase systems and destruction events now use source recordings selected for their role; only low engine ambience and an emergency playback fallback remain from the internal generator. Important impacts add controlled sub and material layers, while hostile fire, kills, critical hits, mines, rifts and rewards are positioned across the stereo field from their world location. Phaser's real master output is routed through the selected dynamic-range compressor, so CINEMA, BALANCED and NIGHT shape loaded samples and music. Music uses seven licensed full-length tracks: alternating exploration, combat, and boss pairs plus a dedicated Time Fracture layer. The score crossfades by pressure and encounter state, ducks under priority cues, and slows with the simulation during a fracture. The Settings output check plays a spaced weapon-and-reward reference sequence and reports the active curated library and mixer.
 
 License and source information is listed in [THIRD_PARTY.md](THIRD_PARTY.md).
 
@@ -170,7 +169,7 @@ The install step runs `postinstall`, which copies the pinned Phaser compatibilit
 | Mouse position | Steer toward the cursor in `FOLLOW` mode |
 | Left stick or D-pad | Move with a gamepad |
 | `Shift` | Phase Dash |
-| `N` | Cycle the field scanner through all, support, archive, and risk signals |
+| `N` | Cycle the field scanner through all, support, time-anomaly, and risk signals |
 | `P` or `Esc` | Pause or resume |
 | `Tab` or `B` | Open or close Run Intel during a run |
 | `M` | Toggle audio |

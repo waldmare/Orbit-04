@@ -2,6 +2,13 @@
 
 ## Unreleased — Display Clarity and Motion Correction
 
+- replaced quote-based field pickups with rare Time Fractures that slow the full simulation, animated environment, and music while retaining full player movement speed
+- added a dedicated Time Fracture music layer, slowed playback rates, a countdown HUD, kill-extension milestones, and persistent recovery statistics
+- expanded the adaptive score from three to seven full-length licensed tracks with alternating exploration, combat, and boss arrangements
+- fixed piercing projectiles so one overlap cannot consume multiple penetration charges on the same target
+- reduced hostile inflow and disabled elite additions during the 20-second boss approach window
+- added three distinct hostile behaviors: flanking Veil Stalkers, paired-shot Needle Weavers, and protective Pale Wardens
+- expanded the environment director to six states and cooled the launch palette to remove the yellow cast while preserving the neon-decay theme
 - corrected the shared Three.js sprite rotation transform so projectile bodies, dark silhouettes, and trails align with their actual velocity in every firing direction
 - added earned Ark Reliquaries to boss encounters, with distinct world silhouettes and staged one-, three-, or five-reward recovery sequences
 - guaranteed a three-reward first Reliquary, added dry-streak protection, keyboard/gamepad and instant-reveal controls, and persistent recovery statistics

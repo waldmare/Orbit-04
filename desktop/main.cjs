@@ -89,11 +89,11 @@ async function configureCaptureScene(win, preset) {
       ['scout',false,205,145],['charger',false,755,165],
       ['tank',true,190,395],['gunner',false,770,390],
       ['splitter',false,380,105],['sniper',true,585,445],
-      ['scout',false,285,70],['charger',false,690,475],
-      ['gunner',false,865,275],['splitter',false,95,255]
+      ['stalker',false,285,70],['weaver',false,690,475],
+      ['warden',false,865,275],['splitter',false,95,255]
     ];
     for(const [type,elite,x,y] of layout)spawnEnemy(type,elite,{x,y});
-    const captureSignals=[['repair',305,355],['archive',655,365],['jammer',840,205]];
+    const captureSignals=[['repair',305,355],['fracture',655,365],['jammer',840,205]];
     for(const [index,[type,x,y]] of captureSignals.entries()){const meta=WORLD_NODE_TYPES[type];state.worldNodes.push({id:'capture:'+type,type,wx:state.worldX+x,wy:state.worldY+y,x,y,r:16,color:meta.color,disposition:meta.disposition,collected:false,active:true,pulse:index*.8})}
     if(preset.boss){
       spawnBoss(2);
@@ -102,7 +102,7 @@ async function configureCaptureScene(win, preset) {
     }
     state.rifts.push({x:675,y:280,r:74,life:2.5,maxLife:2.7,tick:0,damage:0,pull:0});
     state.arcs.push({x1:300,y1:300,x2:205,y2:145,life:1,color:'#69dfff'});
-    const shooters=state.enemies.filter(enemy=>enemy.boss||enemy.type==='gunner'||enemy.type==='sniper').slice(0,preset.boss?4:3);
+    const shooters=state.enemies.filter(enemy=>enemy.boss||enemy.type==='gunner'||enemy.type==='sniper'||enemy.type==='weaver').slice(0,preset.boss?4:3);
     for(const enemy of shooters)enemyShoot(enemy);
     state.enemyBullets.forEach((bullet,index)=>{const travel=.14+(index%6)*.09;bullet.x+=bullet.vx*travel;bullet.y+=bullet.vy*travel});
     for(const target of state.enemies.slice(0,6))fireProjectile(state.p.x,state.p.y,target,360,1,{r:3,life:2,color:'#9ffaff',weaponId:'capture'});
@@ -156,7 +156,7 @@ async function captureScene(win, preset, destination, expectedSize) {
   if (setup.presentation.renderWidth < expectedSize.width || setup.presentation.renderHeight < expectedSize.height) {
     throw new Error(`presentation buffer is below capture resolution: ${JSON.stringify(setup.presentation)}`);
   }
-  if (!['repair','archive','jammer'].every(kind => setup.presentation.pickupKinds.includes(kind))) {
+  if (!['repair','fracture','jammer'].every(kind => setup.presentation.pickupKinds.includes(kind))) {
     throw new Error(`capture does not expose semantic pickup icons: ${JSON.stringify(setup.presentation.pickupKinds)}`);
   }
   await delay(700);
@@ -276,11 +276,11 @@ function createWindow() {
           const enemy=spawnEnemy('scout',false,{x:state.p.x+220,y:state.p.y}); enemy.smokeProbe=true;
           damageEnemy(enemy,10,false,'smoke',false);
           enemy.hp=enemy.maxHp=1e6;
-          for(const [index,type] of ['charger','tank','gunner','splitter','sniper'].entries()){const roleProbe=spawnEnemy(type,false,{x:180+index*145,y:index%2?155:390});roleProbe.hp=roleProbe.maxHp=1e6;roleProbe.roleProbe=true}
+          for(const [index,type] of ['charger','tank','gunner','splitter','sniper','stalker','weaver','warden'].entries()){const roleProbe=spawnEnemy(type,false,{x:125+(index%4)*235,y:index<4?155:390});roleProbe.hp=roleProbe.maxHp=1e6;roleProbe.roleProbe=true}
           state.enemyBullets.push({x:75,y:360,r:4,life:99,damage:0,grazed:false,vx:0,vy:0});
           state.orbs.push({x:70,y:455,r:3,val:1,dead:false});
           state.caches.push({x:120,y:455,r:8,rarity:'RARE',life:99,dead:false});
-          for(const [index,type] of ['repair','flux','salvage','archive','relic','jammer'].entries()){const meta=WORLD_NODE_TYPES[type],x=120+index*125,y=110;state.worldNodes.push({id:'smoke:'+type,type,wx:state.worldX+x,wy:state.worldY+y,x,y,r:16,color:meta.color,disposition:meta.disposition,collected:false,active:true,pulse:index*.4})}
+          for(const [index,type] of ['repair','flux','salvage','fracture','relic','jammer'].entries()){const meta=WORLD_NODE_TYPES[type],x=120+index*125,y=110;state.worldNodes.push({id:'smoke:'+type,type,wx:state.worldX+x,wy:state.worldY+y,x,y,r:16,color:meta.color,disposition:meta.disposition,collected:false,active:true,pulse:index*.4})}
           draw();
           const layer=document.getElementById('gameThree');return {dashed,floaters:state.floaters.length,dashCooldown:state.p.dashCooldown,playerStart:{x:state.p.x,y:state.p.y},playerVisualStart:{x:visualEngine?.player?.position?.x||0,y:visualEngine?.player?.position?.y||0},enemyStart:{x:enemy.x,y:enemy.y},presentation:{clientWidth:layer?.clientWidth||0,clientHeight:layer?.clientHeight||0,renderWidth:Number(layer?.dataset.renderWidth||0),renderHeight:Number(layer?.dataset.renderHeight||0)}};
         })()`);
@@ -290,8 +290,8 @@ function createWindow() {
         const forwardMotion=await win.webContents.executeJavaScript(`(() => {keys.w=false;return {surge:visualEngine?.playerMotion?.surge??0,hullHeight:visualEngine?.player?.scale?.y||0,hullWidth:visualEngine?.player?.scale?.x||0,trailLength:visualEngine?.playerTrail?.scale?.x||0}})()`);
         console.log(`[gameplay-smoke] ${JSON.stringify({ ...setup, ...gameplay, forwardMotion })}`);
         const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),angleDistance=(a,b)=>Math.abs(Math.atan2(Math.sin(a-b),Math.cos(a-b)));
-        const pickupSet=new Set(gameplay.pickupKinds),pickupIcons=['orb','cache','repair','flux','salvage','archive','relic','jammer'].every(kind=>pickupSet.has(kind));
-        const roleSet=new Set(gameplay.enemyRoles),roleMarkers=['charger','tank','gunner','splitter','sniper'].every(role=>roleSet.has(role));
+        const pickupSet=new Set(gameplay.pickupKinds),pickupIcons=['orb','cache','repair','flux','salvage','fracture','relic','jammer'].every(kind=>pickupSet.has(kind));
+        const roleSet=new Set(gameplay.enemyRoles),roleMarkers=['charger','tank','gunner','splitter','sniper','stalker','weaver','warden'].every(role=>roleSet.has(role));
         const playerYaw=angleDistance(gameplay.playerHeading,-Math.PI/2),engineSplit=Math.abs(gameplay.leftEngineLength-gameplay.rightEngineLength);
         if (!setup.dashed || setup.floaters < 1 || gameplay.mode !== 'run' || gameplay.time <= 0 || gameplay.enemies < 1 || gameplay.floaterPool < 1 || !pickupIcons || !roleMarkers || gameplay.enemyRingCount<5 || gameplay.enemyWakeCount<1 || gameplay.hostileOutlineCount<1 || gameplay.playerCoreOpacity<.30 || gameplay.attitudeThrusters<1 || setup.presentation.renderWidth<setup.presentation.clientWidth || setup.presentation.renderHeight<setup.presentation.clientHeight || distance(gameplay.player,setup.playerStart)<40 || distance(gameplay.playerVisual,setup.playerVisualStart)<30 || distance(gameplay.enemy,setup.enemyStart)<5 || distance(gameplay.enemyVisual,setup.enemyStart)<3 || distance(gameplay.enemyVisual,gameplay.enemy)>30 || playerYaw<.08 || playerYaw>.30 || Math.abs(gameplay.playerBank)<.08 || Math.abs(gameplay.playerStrafe)<.25 || gameplay.playerRimOpacity<.14 || engineSplit<8 || forwardMotion.surge<.45 || forwardMotion.hullHeight<82 || forwardMotion.trailLength<54 || angleDistance(Math.abs(gameplay.enemyHeading),Math.PI)>.55) process.exitCode = 1;
         return app.exit(process.exitCode || 0);

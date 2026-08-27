@@ -39,15 +39,15 @@ The adaptive dark-space synthwave soundtrack uses these Creative Commons Zero 1.
 
 The CC0 dedication permits copying, modification, distribution and commercial use without attribution. These notices are retained for provenance and project auditability.
 
-## Pixabay music — inactive legacy files
+## Pixabay music — active Time Fracture layer and retained legacy files
 
-Earlier builds used three tracks under the Pixabay Content License: **Dystopian Ambient** and **Dystopian Thriller** by leberch, and **Blood Red Sky** by ShadowsAndEchoes. They are no longer referenced by the supported runtime but remain in source history.
+**Dystopian Ambient** by leberch is the active Time Fracture layer under the Pixabay Content License. **Dystopian Thriller** by leberch and **Blood Red Sky** by ShadowsAndEchoes remain inactive legacy files.
 
 License summary: https://pixabay.com/service/license-summary/
 
-## Mixkit music — inactive legacy files
+## Mixkit music — active alternate soundtrack
 
-Older builds used these tracks under the Mixkit Free License. The files may remain in source history but are not referenced by version 0.80.0:
+The adaptive score uses these alternate tracks under the Mixkit Free License:
 
 - **Spirit in the Woods** — Alejandro Magaña (A. M.)
 - **Sci-Fi Score** — Arulo
