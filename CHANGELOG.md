@@ -2,6 +2,8 @@
 
 ## Unreleased — Display Clarity and Motion Correction
 
+- shortened level-up and doctrine cards to one mechanical effect plus one compact build link, while retaining full details in native tooltips and accessibility labels
+- lifted environmental midtones, star visibility, ash-field separation, and navigation guides while reducing the stacked dark filter and outer vignette
 - rebuilt the launch hangar around three primary decisions, one deployment action, compact frame comparisons, and an optional collapsed progression summary
 - replaced text-heavy configuration cards with labeled semantic SVG icons, persistent accessible descriptions, and native hover tooltips
 - introduced a neon-noir interface palette using cyan, magenta, acid green, violet, and amber as functional signals over damaged near-black surfaces

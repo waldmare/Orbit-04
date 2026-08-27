@@ -45,6 +45,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - an off-screen priority compass for bosses, Echo Hunters, and timed signal targets
 - level-end pickup convergence, boss-clear salvage sweeps, and correctly queued multi-level rewards
 - rerolls protected against returning an identical draw, with one upgrade card optionally pinned through the reroll
+- concise level-up cards showing one immediate effect and one relevant build link, with full mechanical detail retained in tooltips and accessible labels
 - selectable automatic targeting priorities for nearest, damaged, or elite hostiles
 - a low-noise combat tracker for the build's nearest weapon evolution
 - an in-run signal scanner that filters procedural discoveries by support, archive, or risk category
@@ -79,6 +80,7 @@ The renderer includes:
 - class-tuned organic locomotion with lateral sway, speed stretch, weapon recoil, turning compression, and short motion wakes instead of static sprites translated across the arena
 - dark separation rings around hostile projectiles and thicker priority health bars for reliable reads against bright weapons and animated backgrounds
 - separate environment and combat color grades: the world remains desaturated and oppressive while combat silhouettes retain restrained corpse-green, rust, arterial-red, and cold-blue identities
+- readable environmental midtones, brighter star structure, and a softer outer vignette keep the dead universe visible without competing with hostiles or projectiles
 - enlarged dark backplates behind hostile organisms and friendly projectiles, preserving the crowded-survival readability of the combat field without changing collision geometry
 - organic breathing, undulation, and asymmetric locomotion for alien bodies instead of spacecraft engine plumes
 - directional weapon recoil, generated transparent muzzle plates, per-weapon projectile silhouettes, hostile firing flashes, beam lines, turning response, and dash afterimages

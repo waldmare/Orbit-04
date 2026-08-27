@@ -93,7 +93,8 @@ vm.runInContext(`
   if(!renderRunIntel()||!document.getElementById('loadoutContent').innerHTML.includes('LAST SIGNAL')||!document.getElementById('loadoutContent').innerHTML.includes('CALIBRATION TEST')||!document.getElementById('loadoutContent').innerHTML.includes('INSTALL LOG')) throw new Error('run intel did not render the active build and install history');
   state.choosing=true;state.choiceMode='level';renderOffers();
   if(!document.getElementById('buildCompass').innerHTML.includes('NEAREST BREAKPOINT')) throw new Error('build compass did not expose the nearest evolution');
-  if(!document.getElementById('choices').children.some(card=>card.innerHTML.includes('IMPACT ·')&&card.innerHTML.includes('EVOLUTION ·'))) throw new Error('upgrade cards did not expose scoped impact and one build connection');
+  const upgradeCards=document.getElementById('choices').children;if(upgradeCards.some(card=>card.innerHTML.includes('class="impact"')||((card.innerHTML.match(/class="desc">([^<]*)/)||[])[1]||'').length>72)) throw new Error('upgrade cards did not keep visible copy concise');
+  if(!upgradeCards.some(card=>card.title.includes('IMPACT ·')&&card.title.includes('EVOLUTION ·'))) throw new Error('upgrade cards did not preserve full scoped impact and build connection details');
   const pinnedOffer=state.currentOffers[0];if(!togglePinnedOffer(pinnedOffer.key)||state.pinnedOfferKey!==pinnedOffer.key) throw new Error('upgrade pin control failed');
   const previousDraw=state.currentOffers.map(offer=>offer.key),previousUnpinned=previousDraw.filter(key=>key!==pinnedOffer.key).sort().join('|'),originalRandom=Math.random;Math.random=()=>0;renderOffers(previousDraw,pinnedOffer);Math.random=originalRandom;
   if(!state.currentOffers.some(offer=>offer.key===pinnedOffer.key)||!document.getElementById('offerPins').children.some(button=>button.className.includes('selected'))) throw new Error('pinned offer did not survive reroll');
