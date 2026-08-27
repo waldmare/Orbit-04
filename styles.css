@@ -216,3 +216,9 @@ button:hover:not(:disabled){border-color:rgba(195,190,140,.78);background:linear
 
 @media(max-width:900px){.choiceGuide{grid-template-columns:1fr 1fr}.choice{min-height:218px}.choiceScope{display:grid}.choiceScope b{text-align:left}}
 @media(max-width:780px){.choiceGuide{grid-template-columns:1fr}.choiceGuide>span:not(.guideAction){display:none}.choiceGrid{gap:7px}.choice{min-height:188px}.choice .desc{min-height:0}.choiceAction kbd{display:none}#titleScreen .optionDetail{-webkit-line-clamp:3}}
+
+/* Combat readability: vivid silhouettes over a subdued field, with denser HUD contrast. */
+#wrap[data-effect-clarity="HIGH"] #game{filter:saturate(.72) contrast(1.09) brightness(.91)}
+#wrap[data-effect-clarity="HIGH"] #gameThree,#wrap[data-contrast="HIGH"] #gameThree{filter:saturate(1.34) contrast(1.24) brightness(1.16)}
+#wrap[data-contrast="HIGH"] #hudTop>div{border-color:rgba(53,239,255,.48);background:linear-gradient(180deg,rgba(12,11,20,.97),rgba(3,10,14,.92));backdrop-filter:blur(10px);box-shadow:inset 3px 0 rgba(255,45,130,.24),inset 0 1px rgba(255,255,255,.08),0 10px 30px rgba(0,0,0,.48)}
+#wrap[data-contrast="HIGH"] .hudMetric i{color:#aeb9bb}#wrap[data-contrast="HIGH"] .hudMetric b{font-size:1.10em;color:#fff}#wrap[data-contrast="HIGH"] #hudSub{border-left-color:var(--hm-magenta);background:rgba(7,5,12,.94);color:#d4dde0}
