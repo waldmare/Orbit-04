@@ -34,7 +34,7 @@ Run the packaged executable directly before uploading:
 out\ORBIT-04-win32-x64\ORBIT-04.exe
 ```
 
-Complete at least one fresh-profile 12-minute run and one restart. Verify pause/resume, audio sliders and mute, fullscreen, resizing, keyboard, mouse, gamepad, save persistence, save export/import, and offline launch.
+Complete at least one fresh-profile 12-minute run and one restart. Verify the first-deployment briefing, pause countdown, focus-loss recovery, controller disconnect/reconnect, active-run exit banking, audio sliders and mute, fullscreen, resizing, keyboard, mouse, gamepad, save persistence, save export/import, and offline launch.
 
 ## Steam store media
 

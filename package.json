@@ -24,6 +24,7 @@
     "start": "npm run vendor && electron .",
     "screenshot": "npm run vendor && electron . -- --orbit-capture",
     "screenshot:menu": "npm run vendor && electron . -- --orbit-menu-capture",
+    "screenshot:briefing": "npm run vendor && electron . -- --orbit-briefing-capture",
     "screenshot:level": "npm run vendor && electron . -- --orbit-level-capture",
     "screenshot:settings": "npm run vendor && electron . -- --orbit-settings-capture",
     "screenshot:steam": "npm run vendor && electron . -- --orbit-steam-capture",

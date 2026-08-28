@@ -29,6 +29,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 
 - 10 configurations of the single ORBIT//04 ark, each with individual statistics, a starting weapon, and a trait
 - a focused launch hangar with an authentic vector preview of every frame, explicit previous/next deployment controls, comparable ratings, and a final launch summary
+- a one-screen first-deployment briefing that explains automatic fire, movement, upgrades, signal colors, keyboard controls, and standard gamepad controls without interrupting later runs
 - 11 automatic weapon systems rethemed around grief, survival instinct, memory, and absence
 - concise level-up cards that expose immediate impact and one nearest evolution or synergy without presenting the full build graph at once
 - 3 difficulty levels, 4 sectors, and 4 optional run contracts
@@ -52,9 +53,11 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - an in-run signal scanner that filters procedural discoveries by support, time anomaly, or risk category and states each signal's exact benefit or risk before collection
 - a timestamped install log in Run Intel plus a focused pause command deck showing transmission time, hull, frame level, and current priority
 - configurable focus-loss pausing to protect active runs during task switching
+- a three-count safe return from manual pause plus automatic run protection when a connected controller is removed
 - one concise Field Directive per run, rotating between exploration, travel, and attrition objectives with existing-system rewards
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
 - keyboard, mouse, and gamepad movement
+- native desktop exit handling that can bank an active run before closing instead of silently discarding earned progress
 - layered 48 kHz stereo sound playback with automatic context recovery, verified mixer status, mute warnings, and an in-game output check
 - local save export, import, and reset controls
 
@@ -101,6 +104,10 @@ The renderer includes:
 ![ORBIT//04 version 0.92.0 studio launch hangar](docs/launch-hangar-v0.92.0.png)
 
 The launch hangar capture shows the selected runtime frame, compact visual frame bay, three icon-led mission decisions, collapsed optional progression data, and the single primary deployment action at the same 1440 × 810 presentation used by the desktop build. Cyan, magenta, acid green, violet, and amber identify functions and risk while the underlying surfaces remain damaged and near-black.
+
+![ORBIT//04 version 0.92.0 first-deployment pilot briefing](docs/pilot-briefing-v0.92.0.png)
+
+The first-deployment briefing states the automatic-fire rule and the three actions a new player must understand: move, collect and install, and read signal risk. It pauses the world until acknowledged, supports keyboard and gamepad confirmation, appears only when requested, and can be armed again from Settings.
 
 ![ORBIT//04 version 0.92.0 Last Ark runtime capture](docs/runtime-screenshot-v0.92.0.png)
 
@@ -214,6 +221,12 @@ Capture the launch hangar and verify that it has no horizontal overflow:
 
 ```bat
 npm.cmd run screenshot:menu
+```
+
+Capture and overflow-check the first-deployment briefing:
+
+```bat
+npm.cmd run screenshot:briefing
 ```
 
 Capture and overflow-check the level-up interface:

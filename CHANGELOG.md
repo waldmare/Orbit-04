@@ -23,6 +23,11 @@
 - connected field-signal collection to the ship's pickup radius while preserving direct-contact confirmation for hazardous and risk-bearing signals
 - raised the regular encounter budget and early multi-spawn cadence, then delayed population braking so the field remains active without crowding boss approaches
 - regenerated and automatically validated all five 1920 × 1080 Steam screenshots from the current Three.js gameplay renderer
+- added a concise first-deployment briefing covering automatic fire, movement, upgrades, signal risk, keyboard, mouse, and standard gamepad controls; it can be re-enabled from Settings
+- added a protected three-count return from manual pause so the player is never dropped immediately into a live collision
+- added controller hot-plug feedback and automatic run pausing when the active controller disconnects
+- added a visible `EXIT TO DESKTOP` action and native active-run confirmation that banks earned progress before closing
+- added deterministic Electron capture and overflow validation for the pilot briefing, and refreshed the launch hangar capture with the desktop exit control
 
 ## 0.91.0 — Navigation and Survival HUD
 

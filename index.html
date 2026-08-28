@@ -141,7 +141,20 @@
         </div>
       </div>
 
-      <div class="footerHelp"><span><kbd>WASD</kbd> MOVE</span><span><kbd>SHIFT</kbd> PHASE DASH</span><span><kbd>N</kbd> SIGNAL SCAN</span><span><kbd>TAB</kbd> RUN INTEL</span><span><kbd>ESC</kbd> PAUSE</span></div>
+      <div class="titleFooter"><div class="footerHelp"><span><kbd>WASD</kbd> MOVE</span><span><kbd>SHIFT</kbd> PHASE DASH</span><span><kbd>N</kbd> SIGNAL SCAN</span><span><kbd>TAB</kbd> RUN INTEL</span><span><kbd>ESC</kbd> PAUSE</span><span><kbd>PAD</kbd> SUPPORTED</span></div><button id="quitBtn" class="quitDesktopBtn">EXIT TO DESKTOP</button></div>
+    </div>
+  </section>
+
+  <section id="briefingScreen" class="overlay briefingOverlay" role="dialog" aria-modal="true" aria-labelledby="briefingTitle">
+    <div class="panel briefingPanel">
+      <div class="briefingHeader"><span>FIRST DEPLOYMENT</span><h1 id="briefingTitle">PILOT BRIEFING</h1><p>Your weapons fire automatically. Your job is to move, read the field, and keep the last human vessel alive.</p></div>
+      <div class="briefingSteps">
+        <article data-tone="move"><i>01</i><span><b>KEEP MOVING</b><small>WASD, arrows, mouse, or left stick. Enemies track your position.</small></span></article>
+        <article data-tone="build"><i>02</i><span><b>COLLECT AND INSTALL</b><small>Recover XP, then choose one clear upgrade whenever the frame levels up.</small></span></article>
+        <article data-tone="survive"><i>03</i><span><b>READ THE SIGNALS</b><small>Cyan helps. Violet alters time. Magenta and red mark danger. Survive the signatures.</small></span></article>
+      </div>
+      <div class="briefingControls"><span><kbd>SHIFT</kbd><b>PHASE DASH</b><small>Escape contact</small></span><span><kbd>N</kbd><b>SIGNAL FILTER</b><small>Find field pickups</small></span><span><kbd>ESC</kbd><b>PAUSE</b><small>Review the run</small></span><span><kbd>A / B</kbd><b>PAD UI</b><small>Select / back</small></span></div>
+      <div class="briefingFooter"><small>Shown on first deployment. It can be enabled again in Settings.</small><button id="briefingLaunchBtn" class="primary">BEGIN TRANSMISSION <kbd>ENTER</kbd></button></div>
     </div>
   </section>
 
@@ -215,7 +228,7 @@
     <div class="panel pausePanel">
       <div class="pauseHeader"><span>RUN SUSPENDED</span><h1>PAUSED</h1><p>Review the situation, then return to the field.</p></div>
       <div id="pauseSnapshot" class="pauseSnapshot"></div>
-      <div class="pauseActions"><button id="resumeBtn" class="primary">RETURN TO COMBAT <b>ESC</b></button><div class="pauseTools"><button id="pauseLoadoutBtn">RUN INTEL</button><button id="pauseSettingsBtn">SETTINGS</button><button id="pauseBankBtn" class="hidden">BANK ASCENSION</button></div><div class="pauseDanger"><button id="restartRunBtn">RESTART RUN</button><button id="menuBtn">ABORT RUN</button></div></div>
+      <div class="pauseActions"><button id="resumeBtn" class="primary" aria-live="polite">RETURN TO COMBAT <b>ESC</b></button><div class="pauseTools"><button id="pauseLoadoutBtn">RUN INTEL</button><button id="pauseSettingsBtn">SETTINGS</button><button id="pauseBankBtn" class="hidden">BANK ASCENSION</button></div><div class="pauseDanger"><button id="restartRunBtn">RESTART RUN</button><button id="menuBtn">ABORT RUN</button></div></div>
     </div>
   </section>
 
@@ -300,7 +313,7 @@
         <div class="settingRow"><div><b>MUSIC VOLUME</b><div class="tiny">Adaptive soundtrack intensity.</div></div><button id="musicVolumeSetting"></button></div>
         <div class="settingRow audioCheckRow"><div><b>AUDIO OUTPUT CHECK</b><div id="audioStatusText" class="tiny">Waiting for desktop mixer.</div></div><button id="testAudioBtn">PLAY LAYERED TEST</button></div>
       </div>
-      <div class="dataActions"><button id="exportSaveBtn">EXPORT SAVE</button><button id="importSaveBtn">IMPORT SAVE</button><button id="resetSaveBtn" class="danger">RESET SAVE</button></div>
+      <div class="dataActions"><button id="briefingResetBtn">SHOW BRIEFING NEXT RUN</button><button id="exportSaveBtn">EXPORT SAVE</button><button id="importSaveBtn">IMPORT SAVE</button><button id="resetSaveBtn" class="danger">RESET SAVE</button></div>
       <div class="menuRow"><button id="settingsBackBtn">BACK</button></div>
     </div>
   </section>

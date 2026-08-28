@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, session, shell } = require('electron');
+const { app, BrowserWindow, Menu, session, shell, dialog } = require('electron');
 const { appendFile, mkdir, writeFile } = require('node:fs/promises');
 const path = require('node:path');
 
@@ -10,10 +10,11 @@ const smokeMode = process.argv.includes('--orbit-smoke');
 const audioSmokeMode = process.argv.includes('--orbit-audio-smoke');
 const runtimeCaptureMode = process.argv.includes('--orbit-capture');
 const menuCaptureMode = process.argv.includes('--orbit-menu-capture');
+const briefingCaptureMode = process.argv.includes('--orbit-briefing-capture');
 const levelCaptureMode = process.argv.includes('--orbit-level-capture');
 const settingsCaptureMode = process.argv.includes('--orbit-settings-capture');
 const steamCaptureMode = process.argv.includes('--orbit-steam-capture');
-const captureMode = runtimeCaptureMode || menuCaptureMode || levelCaptureMode || settingsCaptureMode || steamCaptureMode;
+const captureMode = runtimeCaptureMode || menuCaptureMode || briefingCaptureMode || levelCaptureMode || settingsCaptureMode || steamCaptureMode;
 const automatedMode = smokeMode || audioSmokeMode || captureMode;
 const windowedMode = process.argv.includes('--windowed');
 const entryFile = path.join(__dirname, '..', 'index.html');
@@ -83,6 +84,7 @@ async function configureCaptureScene(win, preset) {
     save.settings.motion='FULL';
     save.settings.effectClarity='HIGH';
     applyDisplaySettings();
+    save.briefingSeen=true;
     startRun();
     toastStack.innerHTML='';
     state.time=preset.time;
@@ -228,6 +230,7 @@ async function captureLevel(win) {
     save.settings.uiScale='XL';
     save.settings.motion='REDUCED';
     applyDisplaySettings();
+    save.briefingSeen=true;
     startRun();
     state.level=2;
     state.rerolls=2;
@@ -261,6 +264,40 @@ async function captureLevel(win) {
   safeConsole('log', `[level-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
 }
 
+async function captureBriefing(win) {
+  const setup = await win.webContents.executeJavaScript(`(() => {
+    save.settings.audio='OFF';
+    save.settings.uiScale='XL';
+    save.settings.motion='REDUCED';
+    save.briefingSeen=false;
+    applyDisplaySettings();
+    startRun();
+    openPilotBriefing();
+    void document.body.offsetHeight;
+    const panel=document.querySelector('#briefingScreen .briefingPanel');
+    return {
+      paused:state.paused,
+      steps:document.querySelectorAll('#briefingScreen .briefingSteps article').length,
+      controls:document.querySelectorAll('#briefingScreen .briefingControls > span').length,
+      visibleScreens:screens.filter(id=>$(id).classList.contains('show')),
+      horizontalOverflow:panel.scrollWidth>panel.clientWidth,
+      verticalOverflow:panel.scrollHeight>panel.clientHeight
+    };
+  })()`);
+  if (!setup.paused || setup.steps !== 3 || setup.controls !== 4 || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'briefingScreen' || setup.horizontalOverflow || setup.verticalOverflow) {
+    throw new Error(`pilot briefing capture not ready: ${JSON.stringify(setup)}`);
+  }
+  await delay(700);
+  await win.capturePage(undefined, { stayHidden: true });
+  const image = await win.capturePage(undefined, { stayHidden: true });
+  const size = image.getSize();
+  if (image.isEmpty() || size.width !== 1440 || size.height !== 810) throw new Error(`pilot briefing capture invalid: ${JSON.stringify(size)}`);
+  const output = path.join(__dirname, '..', 'docs', 'pilot-briefing-v0.92.0.png');
+  await mkdir(path.dirname(output), { recursive: true });
+  await writeFile(output, image.toPNG());
+  safeConsole('log', `[briefing-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
+}
+
 async function captureSettings(win) {
   const setup = await win.webContents.executeJavaScript(`(() => {
     save.settings.uiScale='L';
@@ -276,10 +313,11 @@ async function captureSettings(win) {
       rows:document.querySelectorAll('#settingsScreen .settingRow').length,
       visibleScreens:screens.filter(id=>$(id).classList.contains('show')),
       horizontalOverflow:panel.scrollWidth>panel.clientWidth,
-      presetButtons:document.querySelectorAll('#settingsScreen .presetButtons button').length
+      presetButtons:document.querySelectorAll('#settingsScreen .presetButtons button').length,
+      dataButtons:document.querySelectorAll('#settingsScreen .dataActions button').length
     };
   })()`);
-  if (setup.rows < 20 || setup.presetButtons !== 4 || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'settingsScreen' || setup.horizontalOverflow) {
+  if (setup.rows < 20 || setup.presetButtons !== 4 || setup.dataButtons !== 4 || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'settingsScreen' || setup.horizontalOverflow) {
     throw new Error(`settings capture not ready: ${JSON.stringify(setup)}`);
   }
   await delay(700);
@@ -295,6 +333,7 @@ async function captureSettings(win) {
 
 async function runAutomatedCapture(win) {
   if (menuCaptureMode) return captureMenu(win);
+  if (briefingCaptureMode) return captureBriefing(win);
   if (levelCaptureMode) return captureLevel(win);
   if (settingsCaptureMode) return captureSettings(win);
   if (steamCaptureMode) {
@@ -342,6 +381,42 @@ function createWindow() {
 
   Menu.setApplicationMenu(null);
   win.setMenuBarVisibility(false);
+  let closeApproved = automatedMode;
+  let closeCheckPending = false;
+  win.on('close', event => {
+    if (closeApproved || automatedMode) return;
+    event.preventDefault();
+    if (closeCheckPending) return;
+    closeCheckPending = true;
+    void (async () => {
+      let exitState = { active: false, time: 0, credits: 0, frame: 'NONE' };
+      try { exitState = await win.webContents.executeJavaScript(`typeof desktopExitState === 'function' ? desktopExitState() : ({ active: false })`); }
+      catch (error) { reportError('exit-state', error); }
+      if (exitState.active) {
+        const minutes = Math.floor((exitState.time || 0) / 60);
+        const seconds = Math.floor((exitState.time || 0) % 60).toString().padStart(2, '0');
+        const result = await dialog.showMessageBox(win, {
+          type: 'warning',
+          title: 'Exit ORBIT//04',
+          message: 'Bank this run and exit to desktop?',
+          detail: `${exitState.frame} · ${minutes}:${seconds} transmission · ${Math.floor(exitState.credits || 0)} run credits\nThe run will count as aborted, but earned progress will be preserved.`,
+          buttons: ['BANK RUN & EXIT', 'KEEP PLAYING'],
+          defaultId: 1,
+          cancelId: 1,
+          noLink: true
+        });
+        if (result.response !== 0) { win.focus(); return; }
+      }
+      try { await win.webContents.executeJavaScript(`typeof prepareDesktopExit === 'function' ? prepareDesktopExit() : true`); }
+      catch (error) { reportError('exit-save', error); }
+      closeApproved = true;
+      win.close();
+    })().catch(error => {
+      reportError('exit-flow', error);
+      closeApproved = true;
+      win.close();
+    }).finally(() => { closeCheckPending = false; });
+  });
   const toggleWindowMode = () => {
     const fullscreen = !win.isFullScreen();
     win.setFullScreen(fullscreen);
@@ -374,7 +449,7 @@ function createWindow() {
       safeConsole('log', `[renderer-ready] ${JSON.stringify(rendererState)}`);
       if (automatedMode && rendererState.boot !== 'ok') return app.exit(1);
       if (audioSmokeMode && rendererState.boot === 'ok') {
-        await win.webContents.executeJavaScript(`(() => {save.settings.audio='ON';save.settings.audioMix='BALANCED';save.settings.sfxVolume='100%';save.settings.musicVolume='100%';AUDIO.syncEnabled();startRun();AUDIO.testOutput();AUDIO.sfx('enemyShot',0,{x:state.p.x+320,y:state.p.y});return true})()`);
+        await win.webContents.executeJavaScript(`(() => {save.briefingSeen=true;save.settings.audio='ON';save.settings.audioMix='BALANCED';save.settings.sfxVolume='100%';save.settings.musicVolume='100%';AUDIO.syncEnabled();startRun();AUDIO.testOutput();AUDIO.sfx('enemyShot',0,{x:state.p.x+320,y:state.p.y});return true})()`);
         await delay(2300);
         const audio = await win.webContents.executeJavaScript(`AUDIO.status()`);
         safeConsole('log', `[audio-smoke] ${JSON.stringify(audio)}`);
@@ -383,7 +458,7 @@ function createWindow() {
       }
       if (smokeMode && rendererState.boot === 'ok') {
         const setup = await win.webContents.executeJavaScript(`(() => {
-          save.settings.audio='OFF'; save.settings.damageNumbers='ALL'; save.settings.motion='FULL'; save.settings.effectClarity='HIGH'; startRun();
+          save.briefingSeen=true; save.settings.audio='OFF'; save.settings.damageNumbers='ALL'; save.settings.motion='FULL'; save.settings.effectClarity='HIGH'; startRun();
           keys.d=true; const dashed=tryPhaseDash();
           const enemy=spawnEnemy('scout',false,{x:state.p.x+220,y:state.p.y}); enemy.smokeProbe=true;
           damageEnemy(enemy,10,false,'smoke',false);
@@ -400,12 +475,15 @@ function createWindow() {
         const gameplay = await win.webContents.executeJavaScript(`(() => {keys.d=false;const enemy=state.enemies.find(item=>item.smokeProbe),active=state.enemies.filter(item=>!item.dead),enemyIndex=active.indexOf(enemy),enemySprite=visualEngine?.pools?.enemies?.[enemyIndex],enemyVisual=enemySprite?.position,pickupKinds=[...new Set((visualEngine?.pools?.loot||[]).filter(item=>item.visible).map(item=>item.userData?.pickupKind).filter(Boolean))],enemyRoles=[...new Set((visualEngine?.pools?.enemyMarkers||[]).filter(item=>item.visible).map(item=>item.userData?.enemyRole).filter(Boolean))];return {mode:state.mode,time:state.time,enemies:state.enemies.length,dashCooldown:state.p.dashCooldown,floaterPool:visualEngine?.pools?.floaters?.length||0,player:{x:state.p.x,y:state.p.y},playerVisual:{x:visualEngine?.player?.position?.x||0,y:visualEngine?.player?.position?.y||0},playerHeading:visualEngine?.playerMotion?.angle??99,playerBank:visualEngine?.playerMotion?.bank??0,playerStrafe:visualEngine?.playerMotion?.strafe??0,playerRimOpacity:visualEngine?.playerRim?.material?.opacity||0,playerCoreOpacity:visualEngine?.playerCore?.material?.opacity||0,attitudeThrusters:[visualEngine?.playerAttitudeLeft,visualEngine?.playerAttitudeRight].filter(item=>item?.visible).length,leftEngineLength:visualEngine?.playerEngineLeft?.scale?.x||0,rightEngineLength:visualEngine?.playerEngineRight?.scale?.x||0,enemy:{x:enemy?.x||0,y:enemy?.y||0},enemyVisual:{x:enemyVisual?.x||0,y:enemyVisual?.y||0},enemyHeading:enemySprite?.userData?.motion?.angle??99,pickupKinds,enemyRoles,enemyRingCount:(visualEngine?.pools?.enemyRings||[]).filter(item=>item.visible).length,enemyWakeCount:(visualEngine?.pools?.enemyWakes||[]).filter(item=>item.visible).length,hostileOutlineCount:(visualEngine?.pools?.hostileBulletOutlines||[]).filter(item=>item.visible).length}})()`);
         await win.webContents.executeJavaScript(`keys.w=true`);await delay(360);
         const forwardMotion=await win.webContents.executeJavaScript(`(() => {keys.w=false;return {surge:visualEngine?.playerMotion?.surge??0,hullHeight:visualEngine?.player?.scale?.y||0,hullWidth:visualEngine?.player?.scale?.x||0,trailLength:visualEngine?.playerTrail?.scale?.x||0}})()`);
-        safeConsole('log', `[gameplay-smoke] ${JSON.stringify({ ...setup, ...gameplay, forwardMotion })}`);
+        const resumeQueued=await win.webContents.executeJavaScript(`(() => {pause(true);const requested=resumeRun();return {requested,paused:state.paused,countdown:state.resumeCountdown===true,buttonDisabled:document.getElementById('resumeBtn').disabled}})()`);
+        await delay(1400);
+        const resumeFinished=await win.webContents.executeJavaScript(`({paused:state.paused,countdown:state.resumeCountdown===true,pauseVisible:document.getElementById('pauseScreen').classList.contains('show'),buttonDisabled:document.getElementById('resumeBtn').disabled})`);
+        safeConsole('log', `[gameplay-smoke] ${JSON.stringify({ ...setup, ...gameplay, forwardMotion, resumeQueued, resumeFinished })}`);
         const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),angleDistance=(a,b)=>Math.abs(Math.atan2(Math.sin(a-b),Math.cos(a-b)));
         const pickupSet=new Set(gameplay.pickupKinds),pickupIcons=['orb','cache','repair','flux','salvage','fracture','relic','jammer'].every(kind=>pickupSet.has(kind));
         const roleSet=new Set(gameplay.enemyRoles),roleMarkers=['charger','tank','gunner','splitter','sniper','stalker','weaver','warden','moth','anchor'].every(role=>roleSet.has(role));
         const playerYaw=angleDistance(gameplay.playerHeading,-Math.PI/2),engineSplit=Math.abs(gameplay.leftEngineLength-gameplay.rightEngineLength);
-        if (!setup.dashed || setup.floaters < 1 || gameplay.mode !== 'run' || gameplay.time <= 0 || gameplay.enemies < 1 || gameplay.floaterPool < 1 || !pickupIcons || !roleMarkers || gameplay.enemyRingCount<5 || gameplay.enemyWakeCount<1 || gameplay.hostileOutlineCount<1 || gameplay.playerCoreOpacity<.30 || gameplay.attitudeThrusters<1 || setup.presentation.renderWidth<setup.presentation.clientWidth || setup.presentation.renderHeight<setup.presentation.clientHeight || distance(gameplay.player,setup.playerStart)<40 || distance(gameplay.playerVisual,setup.playerVisualStart)<30 || distance(gameplay.enemy,setup.enemyStart)<5 || distance(gameplay.enemyVisual,setup.enemyStart)<3 || distance(gameplay.enemyVisual,gameplay.enemy)>30 || playerYaw<.08 || playerYaw>.30 || Math.abs(gameplay.playerBank)<.08 || Math.abs(gameplay.playerStrafe)<.25 || gameplay.playerRimOpacity<.14 || engineSplit<8 || forwardMotion.surge<.45 || forwardMotion.hullHeight<82 || forwardMotion.trailLength<54 || angleDistance(Math.abs(gameplay.enemyHeading),Math.PI)>.55) process.exitCode = 1;
+        if (!setup.dashed || setup.floaters < 1 || gameplay.mode !== 'run' || gameplay.time <= 0 || gameplay.enemies < 1 || gameplay.floaterPool < 1 || !pickupIcons || !roleMarkers || gameplay.enemyRingCount<5 || gameplay.enemyWakeCount<1 || gameplay.hostileOutlineCount<1 || gameplay.playerCoreOpacity<.30 || gameplay.attitudeThrusters<1 || setup.presentation.renderWidth<setup.presentation.clientWidth || setup.presentation.renderHeight<setup.presentation.clientHeight || distance(gameplay.player,setup.playerStart)<40 || distance(gameplay.playerVisual,setup.playerVisualStart)<30 || distance(gameplay.enemy,setup.enemyStart)<5 || distance(gameplay.enemyVisual,setup.enemyStart)<3 || distance(gameplay.enemyVisual,gameplay.enemy)>30 || playerYaw<.08 || playerYaw>.30 || Math.abs(gameplay.playerBank)<.08 || Math.abs(gameplay.playerStrafe)<.25 || gameplay.playerRimOpacity<.14 || engineSplit<8 || forwardMotion.surge<.45 || forwardMotion.hullHeight<82 || forwardMotion.trailLength<54 || angleDistance(Math.abs(gameplay.enemyHeading),Math.PI)>.55 || !resumeQueued.requested || !resumeQueued.paused || !resumeQueued.countdown || !resumeQueued.buttonDisabled || resumeFinished.paused || resumeFinished.countdown || resumeFinished.pauseVisible || resumeFinished.buttonDisabled) process.exitCode = 1;
         return app.exit(process.exitCode || 0);
       }
       if (captureMode && rendererState.boot === 'ok') {
