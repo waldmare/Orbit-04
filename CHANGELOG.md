@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased — Display Clarity and Motion Correction
+## 0.89.0 — Encounter and Presentation Director
+
+- replaced the 700-hostile runtime ceiling with a progression-aware encounter budget that scales by difficulty, sector, contract, boss state, and ascension
+- added population-pressure braking before the active cap, reduced burst-packet size, and reserved space for readable elite and boss encounters
+- added audio-group budgets, cue priorities, short focus windows, crowd-aware attenuation, and narrower pitch variance so routine fire cannot bury impacts or rewards
+- expanded the Three.js presentation pipeline with contact shadows, hostile rim lighting, stronger player grounding, and quality-scaled depth layers
+- preserved weapon damage, hostile health, boss timing, upgrade probabilities, input behavior, and save compatibility
 
 - replaced quote-based field pickups with rare Time Fractures that slow the full simulation, animated environment, and music while retaining full player movement speed
 - added a dedicated Time Fracture music layer, slowed playback rates, a countdown HUD, kill-extension milestones, and persistent recovery statistics
