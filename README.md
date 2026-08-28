@@ -1,7 +1,7 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.91.0-35cfe0)
+![Version](https://img.shields.io/badge/version-0.92.0-35cfe0)
 ![Three.js](https://img.shields.io/badge/Three.js-r185-b39a63)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90%20host-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
@@ -9,7 +9,7 @@
 
 ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.91.0`
+Current version: `0.92.0`
 
 ## Runtime overview
 
@@ -45,6 +45,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - an off-screen priority compass for bosses, Echo Hunters, and timed signal targets
 - level-end pickup convergence, boss-clear salvage sweeps, and correctly queued multi-level rewards
 - rerolls protected against returning an identical draw, with one upgrade card optionally pinned through the reroll
+- an optional Resonance Draw that spends one earned reroll, discloses its 65% / 27% / 8% outcome table, and never uses real-money currency
 - concise level-up cards showing one immediate effect and one relevant build link, with full mechanical detail retained in tooltips and accessible labels
 - selectable automatic targeting priorities for nearest, damaged, or elite hostiles
 - a low-noise combat tracker for the build's nearest weapon evolution
@@ -65,7 +66,7 @@ Detailed balance targets are documented in [BALANCE.md](BALANCE.md). Historical 
 
 The renderer includes:
 
-- a technological player vessel contrasted with transparent organic creature plates covering eleven enemy behaviors and the Conqueror boss
+- a technological player vessel contrasted with transparent organic creature plates covering thirteen enemy behaviors and the Conqueror boss
 - a dedicated last-human ark sprite with a visible life-support core, asymmetric repair detail, responsive engines, preserved aspect ratio, and configuration-neutral hull materials
 - aspect-ratio-preserving sprite scaling
 - matte-free ship textures selected for the active camera scale
@@ -76,7 +77,7 @@ The renderer includes:
 - a forward-biased player hull with damped limited-angle steering, lateral banking, movement inertia, acceleration stretch, and independently loaded engines instead of either rigid sliding or full-axis rotation
 - visible maneuvering thrusters and a load-responsive life-support core that keep the ark animated during strafing, acceleration, braking, and idle flight
 - semantic, color-coded pickup silhouettes for experience, caches, repair, combat flux, salvage, Time Fractures, relics, and jammers
-- glance-readable hostile roles: chargers, tanks, gunners, splitters, snipers, flankers, paired-shot weavers, support wardens, dash reapers, and three-needle harriers use consistent accents, compact intent glyphs, and priority-scaled threat rings
+- glance-readable hostile roles: chargers, tanks, gunners, splitters, snipers, flankers, paired-shot weavers, support wardens, dash reapers, three-needle harriers, weaving Grave Moths, and radial-fire Null Anchors use consistent accents, compact intent glyphs, and priority-scaled threat rings
 - class-tuned organic locomotion with lateral sway, speed stretch, weapon recoil, turning compression, and short motion wakes instead of static sprites translated across the arena
 - quality-scaled contact shadows and restrained hostile rim lights that ground moving silhouettes and separate their shapes from the environment
 - dark separation rings around hostile projectiles and thicker priority health bars for reliable reads against bright weapons and animated backgrounds
@@ -97,13 +98,17 @@ The renderer includes:
 
 ## Runtime screenshot
 
-![ORBIT//04 version 0.91.0 studio launch hangar](docs/launch-hangar-v0.91.0.png)
+![ORBIT//04 version 0.92.0 studio launch hangar](docs/launch-hangar-v0.92.0.png)
 
 The launch hangar capture shows the selected runtime frame, compact visual frame bay, three icon-led mission decisions, collapsed optional progression data, and the single primary deployment action at the same 1440 × 810 presentation used by the desktop build. Cyan, magenta, acid green, violet, and amber identify functions and risk while the underlying surfaces remain damaged and near-black.
 
-![ORBIT//04 version 0.91.0 Last Ark runtime capture](docs/runtime-screenshot-v0.91.0.png)
+![ORBIT//04 version 0.92.0 Last Ark runtime capture](docs/runtime-screenshot-v0.92.0.png)
 
-This 1440 × 810 image was captured from the active 0.91.0 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, contact shadows, rim lighting, current combat effects, the dedicated hull and experience HUD, and animated ashen environment as rendered during gameplay. The presentation buffer follows the actual desktop display size and system DPI rather than stretching a fixed frame. The versioned filename prevents repository front-page image caches from presenting an older build.
+This 1440 × 810 image was captured from the active 0.92.0 Electron/Three.js WebGL build. It shows the Last Ark player vessel, thirteen alien behavior classes, contact shadows, rim lighting, current combat effects, the dedicated hull and experience HUD, and animated ashen environment as rendered during gameplay. The presentation buffer follows the actual desktop display size and system DPI rather than stretching a fixed frame. The versioned filename prevents repository front-page image caches from presenting an older build.
+
+![ORBIT//04 version 0.92.0 level-up interface](docs/level-up-v0.92.0.png)
+
+The level-up capture verifies the cold cyan-violet hierarchy, plain-language `NEW MODULE` and `NEW SYSTEM` states, exact immediate benefits, and the disclosed earned-reroll Resonance Draw at the same desktop resolution.
 
 ## Audio implementation
 
@@ -199,12 +204,18 @@ Capture the documented gameplay scene from the local Electron/WebGL build:
 npm.cmd run screenshot
 ```
 
-The capture command writes `docs/runtime-screenshot-v0.91.0.png` only after the Three.js presentation engine, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+The capture command writes `docs/runtime-screenshot-v0.92.0.png` only after the Three.js presentation engine, gameplay state, HUD, and enemy scene pass runtime readiness checks.
 
 Capture the launch hangar and verify that it has no horizontal overflow:
 
 ```bat
 npm.cmd run screenshot:menu
+```
+
+Capture and overflow-check the level-up interface:
+
+```bat
+npm.cmd run screenshot:level
 ```
 
 The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, Three.js presentation integration, English runtime copy, weapon-effect assets, media file signatures, image dimensions, and both local rendering bundles.
@@ -239,7 +250,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.91.0 focuses on moment-to-moment navigation and survival readability. A dedicated hull instrument now exposes current integrity, percentage, damage state, critical threshold, frame identity, and thrust without competing with score telemetry. The larger experience instrument separates current level, progress, and the exact distance to the next system. Directional damage feedback identifies the incoming bearing, while the launch hangar adds a three-step deployment flow, Q/E frame cycling, a visible Enter shortcut, and compact semantic control hints. Phaser remains the simulation, audio, environment, and compatibility host, with Three.js providing the active top-down combat presentation. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.92.0 raises regular encounter pressure while retaining population braking and reduced boss-approach inflow. Grave Moths add fast alternating pursuit lines; Null Anchors hold range and broadcast a readable six-way projectile lattice. The level-up screen removes the remaining yellow cast, identifies first acquisitions as `NEW MODULE` or `NEW SYSTEM`, and adds an optional Resonance Draw with visible probabilities and an earned-resource cost. Phaser remains the simulation, audio, environment, and compatibility host, with Three.js providing the active top-down combat presentation. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

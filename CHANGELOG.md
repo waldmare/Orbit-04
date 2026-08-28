@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.92.0 — Hostile Ecology and Resonance
+
+- raised regular-wave population and spawn cadence while retaining pressure braking, boss-approach relief, and the existing boss scaling
+- added Grave Moths with rapid alternating pursuit cuts and Null Anchors with range-holding six-way needle lattices
+- added distinct silhouettes, motion profiles, accents, intent markers, telegraphs, and Codex descriptions for both new hostile classes
+- replaced first-acquisition `LV 0 → 1` labels with `NEW MODULE` and `NEW SYSTEM`, while preserving the exact immediate effect under `YOU GET`
+- removed the remaining yellow level-up controls in favor of cold cyan, magenta, and violet hierarchy
+- added the optional Resonance Draw: one earned reroll buys a disclosed 65% fresh, 27% build-tuned, or 8% resonant result, with no paid currency
+- added deterministic gameplay coverage and a dedicated 1440 × 810 Electron capture for the level-up interface
+
 ## 0.91.0 — Navigation and Survival HUD
 
 - added a dedicated high-contrast hull instrument with current integrity, percentage, damage state, critical threshold, frame identity, and thrust

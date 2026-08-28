@@ -10,8 +10,9 @@ const smokeMode = process.argv.includes('--orbit-smoke');
 const audioSmokeMode = process.argv.includes('--orbit-audio-smoke');
 const runtimeCaptureMode = process.argv.includes('--orbit-capture');
 const menuCaptureMode = process.argv.includes('--orbit-menu-capture');
+const levelCaptureMode = process.argv.includes('--orbit-level-capture');
 const steamCaptureMode = process.argv.includes('--orbit-steam-capture');
-const captureMode = runtimeCaptureMode || menuCaptureMode || steamCaptureMode;
+const captureMode = runtimeCaptureMode || menuCaptureMode || levelCaptureMode || steamCaptureMode;
 const automatedMode = smokeMode || audioSmokeMode || captureMode;
 const entryFile = path.join(__dirname, '..', 'index.html');
 const iconFile = path.join(__dirname, '..', 'assets', 'branding', 'orbit-app-icon.ico');
@@ -90,7 +91,9 @@ async function configureCaptureScene(win, preset) {
       ['tank',true,190,395],['gunner',false,770,390],
       ['splitter',false,380,105],['sniper',true,585,445],
       ['stalker',false,285,70],['weaver',false,690,475],
-      ['warden',false,865,275],['splitter',false,95,255]
+      ['warden',false,865,275],['splitter',false,95,255],
+      ['moth',false,420,465],['anchor',false,885,465],
+      ['scout',false,125,90],['charger',false,845,90]
     ];
     for(const [type,elite,x,y] of layout)spawnEnemy(type,elite,{x,y});
     const captureSignals=[['repair',305,355],['fracture',655,365],['jammer',840,205]];
@@ -192,19 +195,59 @@ async function captureMenu(win) {
   if (setup.frames !== 10 || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'titleScreen' || setup.horizontalOverflow) {
     throw new Error(`launch hangar not ready: ${JSON.stringify(setup)}`);
   }
-  await delay(700);
   await win.capturePage(undefined, { stayHidden: true });
+  await delay(700);
   const image = await win.capturePage(undefined, { stayHidden: true });
   const size = image.getSize();
   if (image.isEmpty() || size.width !== 1440 || size.height !== 810) throw new Error(`launch hangar capture invalid: ${JSON.stringify(size)}`);
-  const output = path.join(__dirname, '..', 'docs', 'launch-hangar-v0.91.0.png');
+  const output = path.join(__dirname, '..', 'docs', 'launch-hangar-v0.92.0.png');
   await mkdir(path.dirname(output), { recursive: true });
   await writeFile(output, image.toPNG());
   console.log(`[menu-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
 }
 
+async function captureLevel(win) {
+  const setup = await win.webContents.executeJavaScript(`(() => {
+    save.settings.audio='OFF';
+    save.settings.uiScale='XL';
+    save.settings.motion='REDUCED';
+    applyDisplaySettings();
+    startRun();
+    state.level=2;
+    state.rerolls=2;
+    openLevel();
+    const originalRandom=Math.random;
+    Math.random=()=>.01;
+    document.getElementById('signalDrawBtn').click();
+    Math.random=originalRandom;
+    void document.body.offsetHeight;
+    const panel=document.querySelector('#levelScreen .panel');
+    return {
+      level:state.level,
+      rerolls:state.rerolls,
+      offers:state.currentOffers.map(offer=>({name:offer.name,lvl:offer.lvl,signal:offer.signalTier||''})),
+      visibleScreens:screens.filter(id=>$(id).classList.contains('show')),
+      horizontalOverflow:panel.scrollWidth>panel.clientWidth,
+      verticalOverflow:panel.scrollHeight>panel.clientHeight
+    };
+  })()`);
+  if (setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'levelScreen' || setup.horizontalOverflow || setup.verticalOverflow || !setup.offers.some(offer => offer.signal === 'RESONANT')) {
+    throw new Error(`level-up capture not ready: ${JSON.stringify(setup)}`);
+  }
+  await delay(700);
+  await win.capturePage(undefined, { stayHidden: true });
+  const image = await win.capturePage(undefined, { stayHidden: true });
+  const size = image.getSize();
+  if (image.isEmpty() || size.width !== 1440 || size.height !== 810) throw new Error(`level-up capture invalid: ${JSON.stringify(size)}`);
+  const output = path.join(__dirname, '..', 'docs', 'level-up-v0.92.0.png');
+  await mkdir(path.dirname(output), { recursive: true });
+  await writeFile(output, image.toPNG());
+  console.log(`[level-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
+}
+
 async function runAutomatedCapture(win) {
   if (menuCaptureMode) return captureMenu(win);
+  if (levelCaptureMode) return captureLevel(win);
   if (steamCaptureMode) {
     const output = path.join(__dirname, '..', 'steam', 'store', 'screenshots');
     for (const preset of STEAM_CAPTURE_PRESETS) {
@@ -213,7 +256,7 @@ async function runAutomatedCapture(win) {
     return;
   }
   const preset = STEAM_CAPTURE_PRESETS[1];
-  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.91.0.png');
+  const output = path.join(__dirname, '..', 'docs', 'runtime-screenshot-v0.92.0.png');
   await captureScene(win, preset, output, { width: 1440, height: 810 });
 }
 
@@ -276,7 +319,7 @@ function createWindow() {
           const enemy=spawnEnemy('scout',false,{x:state.p.x+220,y:state.p.y}); enemy.smokeProbe=true;
           damageEnemy(enemy,10,false,'smoke',false);
           enemy.hp=enemy.maxHp=1e6;
-          for(const [index,type] of ['charger','tank','gunner','splitter','sniper','stalker','weaver','warden'].entries()){const roleProbe=spawnEnemy(type,false,{x:125+(index%4)*235,y:index<4?155:390});roleProbe.hp=roleProbe.maxHp=1e6;roleProbe.roleProbe=true}
+          for(const [index,type] of ['charger','tank','gunner','splitter','sniper','stalker','weaver','warden','moth','anchor'].entries()){const roleProbe=spawnEnemy(type,false,{x:125+(index%5)*185,y:index<5?155:390});roleProbe.hp=roleProbe.maxHp=1e6;roleProbe.roleProbe=true}
           state.enemyBullets.push({x:75,y:360,r:4,life:99,damage:0,grazed:false,vx:0,vy:0});
           state.orbs.push({x:70,y:455,r:3,val:1,dead:false});
           state.caches.push({x:120,y:455,r:8,rarity:'RARE',life:99,dead:false});
@@ -291,7 +334,7 @@ function createWindow() {
         console.log(`[gameplay-smoke] ${JSON.stringify({ ...setup, ...gameplay, forwardMotion })}`);
         const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),angleDistance=(a,b)=>Math.abs(Math.atan2(Math.sin(a-b),Math.cos(a-b)));
         const pickupSet=new Set(gameplay.pickupKinds),pickupIcons=['orb','cache','repair','flux','salvage','fracture','relic','jammer'].every(kind=>pickupSet.has(kind));
-        const roleSet=new Set(gameplay.enemyRoles),roleMarkers=['charger','tank','gunner','splitter','sniper','stalker','weaver','warden'].every(role=>roleSet.has(role));
+        const roleSet=new Set(gameplay.enemyRoles),roleMarkers=['charger','tank','gunner','splitter','sniper','stalker','weaver','warden','moth','anchor'].every(role=>roleSet.has(role));
         const playerYaw=angleDistance(gameplay.playerHeading,-Math.PI/2),engineSplit=Math.abs(gameplay.leftEngineLength-gameplay.rightEngineLength);
         if (!setup.dashed || setup.floaters < 1 || gameplay.mode !== 'run' || gameplay.time <= 0 || gameplay.enemies < 1 || gameplay.floaterPool < 1 || !pickupIcons || !roleMarkers || gameplay.enemyRingCount<5 || gameplay.enemyWakeCount<1 || gameplay.hostileOutlineCount<1 || gameplay.playerCoreOpacity<.30 || gameplay.attitudeThrusters<1 || setup.presentation.renderWidth<setup.presentation.clientWidth || setup.presentation.renderHeight<setup.presentation.clientHeight || distance(gameplay.player,setup.playerStart)<40 || distance(gameplay.playerVisual,setup.playerVisualStart)<30 || distance(gameplay.enemy,setup.enemyStart)<5 || distance(gameplay.enemyVisual,setup.enemyStart)<3 || distance(gameplay.enemyVisual,gameplay.enemy)>30 || playerYaw<.08 || playerYaw>.30 || Math.abs(gameplay.playerBank)<.08 || Math.abs(gameplay.playerStrafe)<.25 || gameplay.playerRimOpacity<.14 || engineSplit<8 || forwardMotion.surge<.45 || forwardMotion.hullHeight<82 || forwardMotion.trailLength<54 || angleDistance(Math.abs(gameplay.enemyHeading),Math.PI)>.55) process.exitCode = 1;
         return app.exit(process.exitCode || 0);
