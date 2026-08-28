@@ -28,6 +28,12 @@
 - added controller hot-plug feedback and automatic run pausing when the active controller disconnects
 - added a visible `EXIT TO DESKTOP` action and native active-run confirmation that banks earned progress before closing
 - added deterministic Electron capture and overflow validation for the pilot briefing, and refreshed the launch hangar capture with the desktop exit control
+- added a factual launch-hangar content overview sourced directly from runtime data: frames, weapons, hostile forms, resonance links, and sectors
+- added a visible premium ownership promise for offline play without advertising or microtransactions
+- added one-click recommended first-run configuration and an immediately accessible `HOW TO PLAY` briefing without starting a run
+- expanded launch capture validation to reject missing ownership information or any horizontal or vertical clipping
+- replaced the misleading four-state SFX and music selectors with real 0–100% sliders, 5% adjustment steps, visible values, keyboard control, and gamepad-friendly minus/plus buttons
+- moved the automated settings capture to the audio section and made it reject missing, hidden, or incorrectly stepped volume controls
 
 ## 0.91.0 — Navigation and Survival HUD
 

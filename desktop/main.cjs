@@ -206,11 +206,16 @@ async function captureMenu(win) {
       version:GAME_VERSION,
       selected:save.selected,
       frames:Object.keys(SHIPS).length,
+      contentMetrics:document.querySelectorAll('.releaseMetrics > div').length,
+      ownershipPromise:document.querySelector('.releaseOverviewHeading p')?.textContent||'',
       visibleScreens:screens.filter(id => $(id).classList.contains('show')),
-      horizontalOverflow:$('titleScreen').querySelector('.titlePanel').scrollWidth>$('titleScreen').querySelector('.titlePanel').clientWidth
+      panelClientHeight:$('titleScreen').querySelector('.titlePanel').clientHeight,
+      panelScrollHeight:$('titleScreen').querySelector('.titlePanel').scrollHeight,
+      horizontalOverflow:$('titleScreen').querySelector('.titlePanel').scrollWidth>$('titleScreen').querySelector('.titlePanel').clientWidth,
+      verticalOverflow:$('titleScreen').querySelector('.titlePanel').scrollHeight>$('titleScreen').querySelector('.titlePanel').clientHeight
     };
   })()`);
-  if (setup.frames !== 10 || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'titleScreen' || setup.horizontalOverflow) {
+  if (setup.frames !== 10 || setup.contentMetrics !== 5 || !setup.ownershipPromise.includes('NO MICROTRANSACTIONS') || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'titleScreen' || setup.horizontalOverflow || setup.verticalOverflow) {
     throw new Error(`launch hangar not ready: ${JSON.stringify(setup)}`);
   }
   await win.capturePage(undefined, { stayHidden: true });
@@ -307,17 +312,21 @@ async function captureSettings(win) {
     renderSettings();
     show('settingsScreen');
     const panel=document.querySelector('#settingsScreen .settingsPanel');
-    panel.scrollTop=0;
+    panel.scrollTop=panel.scrollHeight;
     void document.body.offsetHeight;
+    const slider=$('sfxVolumeSlider').getBoundingClientRect(),panelRect=panel.getBoundingClientRect();
     return {
       rows:document.querySelectorAll('#settingsScreen .settingRow').length,
+      volumeSliders:document.querySelectorAll('#settingsScreen input[type="range"]').length,
+      volumeStep:$('sfxVolumeSlider').step,
+      volumeVisible:slider.top>=panelRect.top&&slider.bottom<=panelRect.bottom,
       visibleScreens:screens.filter(id=>$(id).classList.contains('show')),
       horizontalOverflow:panel.scrollWidth>panel.clientWidth,
       presetButtons:document.querySelectorAll('#settingsScreen .presetButtons button').length,
       dataButtons:document.querySelectorAll('#settingsScreen .dataActions button').length
     };
   })()`);
-  if (setup.rows < 20 || setup.presetButtons !== 4 || setup.dataButtons !== 4 || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'settingsScreen' || setup.horizontalOverflow) {
+  if (setup.rows < 20 || setup.volumeSliders !== 2 || setup.volumeStep !== '5' || !setup.volumeVisible || setup.presetButtons !== 4 || setup.dataButtons !== 4 || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'settingsScreen' || setup.horizontalOverflow) {
     throw new Error(`settings capture not ready: ${JSON.stringify(setup)}`);
   }
   await delay(700);

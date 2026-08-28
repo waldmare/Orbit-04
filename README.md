@@ -29,6 +29,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 
 - 10 configurations of the single ORBIT//04 ark, each with individual statistics, a starting weapon, and a trait
 - a focused launch hangar with an authentic vector preview of every frame, explicit previous/next deployment controls, comparable ratings, and a final launch summary
+- a data-driven content overview in the launch hangar that states the shipped frame, weapon, hostile, synergy, and sector counts alongside the offline, advertising-free ownership model
 - a one-screen first-deployment briefing that explains automatic fire, movement, upgrades, signal colors, keyboard controls, and standard gamepad controls without interrupting later runs
 - 11 automatic weapon systems rethemed around grief, survival instinct, memory, and absence
 - concise level-up cards that expose immediate impact and one nearest evolution or synergy without presenting the full build graph at once
@@ -59,6 +60,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - keyboard, mouse, and gamepad movement
 - native desktop exit handling that can bank an active run before closing instead of silently discarding earned progress
 - layered 48 kHz stereo sound playback with automatic context recovery, verified mixer status, mute warnings, and an in-game output check
+- independent 0–100% SFX and music sliders with 5% precision, immediate mix updates, and keyboard/gamepad adjustment controls
 - local save export, import, and reset controls
 
 Detailed balance targets are documented in [BALANCE.md](BALANCE.md). Historical changes are recorded in [CHANGELOG.md](CHANGELOG.md).
@@ -103,7 +105,7 @@ The renderer includes:
 
 ![ORBIT//04 version 0.92.0 studio launch hangar](docs/launch-hangar-v0.92.0.png)
 
-The launch hangar capture shows the selected runtime frame, compact visual frame bay, three icon-led mission decisions, collapsed optional progression data, and the single primary deployment action at the same 1440 × 810 presentation used by the desktop build. Cyan, magenta, acid green, violet, and amber identify functions and risk while the underlying surfaces remain damaged and near-black.
+The launch hangar capture shows the selected runtime frame, compact visual frame bay, three icon-led mission decisions, collapsed optional progression data, a factual five-part content overview, one-click recommended setup, and the single primary deployment action at the same 1440 × 810 presentation used by the desktop build. Its ownership strip states offline play, no advertising, and no microtransactions. Cyan, magenta, acid green, violet, and amber identify functions and risk while the underlying surfaces remain damaged and near-black.
 
 ![ORBIT//04 version 0.92.0 first-deployment pilot briefing](docs/pilot-briefing-v0.92.0.png)
 

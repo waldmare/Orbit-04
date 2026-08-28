@@ -100,10 +100,23 @@
           </div>
           <div class="rosterHeading"><h2>FRAME BAY</h2><span id="frameRosterCount"></span></div>
           <div id="shipGrid" class="shipGrid"></div>
+          <section class="releaseOverview" aria-labelledby="releaseOverviewTitle">
+            <div class="releaseOverviewHeading">
+              <div><span>COMPLETE SURVIVAL PACKAGE</span><h2 id="releaseOverviewTitle">WHAT YOUR RUN CAN BECOME</h2></div>
+              <p><b>OFFLINE</b><i>NO ADS</i><i>NO MICROTRANSACTIONS</i></p>
+            </div>
+            <div class="releaseMetrics">
+              <div data-tone="frame"><b id="contentFrameCount">10</b><span>PLAYABLE FRAMES</span><small>Distinct starting weapons and traits</small></div>
+              <div data-tone="weapon"><b id="contentWeaponCount">11</b><span>WEAPON SYSTEMS</span><small>Every system has an evolution</small></div>
+              <div data-tone="enemy"><b id="contentEnemyCount">13</b><span>HOSTILE FORMS</span><small>Plus sovereign encounters</small></div>
+              <div data-tone="link"><b id="contentLinkCount">9</b><span>RESONANCE LINKS</span><small>Build interactions to discover</small></div>
+              <div data-tone="route"><b id="contentSectorCount">4</b><span>SECTORS</span><small>12-minute signal, then endless ascent</small></div>
+            </div>
+          </section>
         </div>
         <div class="sideMenu">
           <div class="menuFlow" aria-label="Deployment steps"><span><b>1</b> PICK SHIP</span><span><b>2</b> SET RUN</span><span><b>3</b> SURVIVE</span></div>
-          <div class="sectionHeading"><div><span>DEPLOYMENT</span><h2>MISSION SETUP</h2></div><i>3 CHOICES</i></div>
+          <div class="sectionHeading"><div><span>DEPLOYMENT</span><h2>MISSION SETUP</h2></div><button id="recommendedSetupBtn" class="recommendedSetupBtn" title="Restore the balanced first-run route">RECOMMENDED SETUP</button></div>
           <div class="runOption difficultyOption">
             <div class="runOptionHeader"><span><svg class="uiIcon optionIcon"><use href="#icon-threat"/></svg> DIFFICULTY</span><i>THREAT</i></div>
             <div class="optionStepper"><button id="difficultyPrev" class="stepArrow" aria-label="Previous difficulty">‹</button><button id="difficultyBtn" class="stepValue"></button><button id="difficultyNext" class="stepArrow" aria-label="Next difficulty">›</button></div>
@@ -136,6 +149,7 @@
             <button id="achievementsBtn"><svg class="uiIcon"><use href="#icon-achievements"/></svg><span>ACHIEVEMENTS</span></button>
             <button id="codexBtn"><svg class="uiIcon"><use href="#icon-codex"/></svg><span>CODEX / STATS</span></button>
             <button id="settingsBtn"><svg class="uiIcon"><use href="#icon-settings"/></svg><span>SETTINGS</span></button>
+            <button id="briefingMenuBtn"><svg class="uiIcon"><use href="#icon-codex"/></svg><span>HOW TO PLAY</span></button>
             <button id="supportBtn" class="hidden">SUPPORT DEVELOPMENT</button>
           </div>
         </div>
@@ -309,8 +323,8 @@
         <div class="settingsGroupHeader settings-cyan"><span>05</span><b>AUDIO</b><small>Mix, music and impact volume</small></div>
         <div class="settingRow"><div><b>AUDIO</b><div class="tiny">Desktop music, engine ambience, weapons and impact samples.</div></div><button id="audioSetting"></button></div>
         <div class="settingRow"><div><b>DYNAMIC RANGE</b><div class="tiny">CINEMA is widest · NIGHT keeps impacts controlled and dialogue-like cues clear.</div></div><button id="audioMixSetting"></button></div>
-        <div class="settingRow"><div><b>SFX VOLUME</b><div class="tiny">Weapons, impacts and interface feedback.</div></div><button id="sfxVolumeSetting"></button></div>
-        <div class="settingRow"><div><b>MUSIC VOLUME</b><div class="tiny">Adaptive soundtrack intensity.</div></div><button id="musicVolumeSetting"></button></div>
+        <div class="settingRow volumeSettingRow"><div><b>SFX VOLUME</b><div class="tiny">Weapons, impacts and interface feedback. Adjustable in 5% steps.</div></div><div class="volumeControl"><button id="sfxVolumeDown" aria-label="Decrease sound effects volume">−</button><input id="sfxVolumeSlider" type="range" min="0" max="100" step="5" value="100" aria-label="Sound effects volume"><output id="sfxVolumeSetting" for="sfxVolumeSlider">100%</output><button id="sfxVolumeUp" aria-label="Increase sound effects volume">+</button></div></div>
+        <div class="settingRow volumeSettingRow"><div><b>MUSIC VOLUME</b><div class="tiny">Adaptive soundtrack intensity. Adjustable in 5% steps.</div></div><div class="volumeControl"><button id="musicVolumeDown" aria-label="Decrease music volume">−</button><input id="musicVolumeSlider" type="range" min="0" max="100" step="5" value="70" aria-label="Music volume"><output id="musicVolumeSetting" for="musicVolumeSlider">70%</output><button id="musicVolumeUp" aria-label="Increase music volume">+</button></div></div>
         <div class="settingRow audioCheckRow"><div><b>AUDIO OUTPUT CHECK</b><div id="audioStatusText" class="tiny">Waiting for desktop mixer.</div></div><button id="testAudioBtn">PLAY LAYERED TEST</button></div>
       </div>
       <div class="dataActions"><button id="briefingResetBtn">SHOW BRIEFING NEXT RUN</button><button id="exportSaveBtn">EXPORT SAVE</button><button id="importSaveBtn">IMPORT SAVE</button><button id="resetSaveBtn" class="danger">RESET SAVE</button></div>
