@@ -11,8 +11,9 @@ const audioSmokeMode = process.argv.includes('--orbit-audio-smoke');
 const runtimeCaptureMode = process.argv.includes('--orbit-capture');
 const menuCaptureMode = process.argv.includes('--orbit-menu-capture');
 const levelCaptureMode = process.argv.includes('--orbit-level-capture');
+const settingsCaptureMode = process.argv.includes('--orbit-settings-capture');
 const steamCaptureMode = process.argv.includes('--orbit-steam-capture');
-const captureMode = runtimeCaptureMode || menuCaptureMode || levelCaptureMode || steamCaptureMode;
+const captureMode = runtimeCaptureMode || menuCaptureMode || levelCaptureMode || settingsCaptureMode || steamCaptureMode;
 const automatedMode = smokeMode || audioSmokeMode || captureMode;
 const entryFile = path.join(__dirname, '..', 'index.html');
 const iconFile = path.join(__dirname, '..', 'assets', 'branding', 'orbit-app-icon.ico');
@@ -245,9 +246,42 @@ async function captureLevel(win) {
   console.log(`[level-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
 }
 
+async function captureSettings(win) {
+  const setup = await win.webContents.executeJavaScript(`(() => {
+    save.settings.uiScale='L';
+    save.settings.motion='REDUCED';
+    applyDisplaySettings();
+    hideAll();
+    renderSettings();
+    show('settingsScreen');
+    const panel=document.querySelector('#settingsScreen .settingsPanel');
+    panel.scrollTop=0;
+    void document.body.offsetHeight;
+    return {
+      rows:document.querySelectorAll('#settingsScreen .settingRow').length,
+      visibleScreens:screens.filter(id=>$(id).classList.contains('show')),
+      horizontalOverflow:panel.scrollWidth>panel.clientWidth,
+      presetButtons:document.querySelectorAll('#settingsScreen .presetButtons button').length
+    };
+  })()`);
+  if (setup.rows < 20 || setup.presetButtons !== 4 || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'settingsScreen' || setup.horizontalOverflow) {
+    throw new Error(`settings capture not ready: ${JSON.stringify(setup)}`);
+  }
+  await delay(700);
+  await win.capturePage(undefined, { stayHidden: true });
+  const image = await win.capturePage(undefined, { stayHidden: true });
+  const size = image.getSize();
+  if (image.isEmpty() || size.width !== 1440 || size.height !== 810) throw new Error(`settings capture invalid: ${JSON.stringify(size)}`);
+  const output = path.join(__dirname, '..', 'docs', 'settings-v0.92.0.png');
+  await mkdir(path.dirname(output), { recursive: true });
+  await writeFile(output, image.toPNG());
+  console.log(`[settings-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
+}
+
 async function runAutomatedCapture(win) {
   if (menuCaptureMode) return captureMenu(win);
   if (levelCaptureMode) return captureLevel(win);
+  if (settingsCaptureMode) return captureSettings(win);
   if (steamCaptureMode) {
     const output = path.join(__dirname, '..', 'steam', 'store', 'screenshots');
     for (const preset of STEAM_CAPTURE_PRESETS) {

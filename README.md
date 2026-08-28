@@ -136,6 +136,10 @@ The settings screen provides:
 - three dynamic-range profiles with independent music and sound-effect volume
 - curated Readability, Cinematic, Performance, and Defaults profiles with individually editable controls
 
+![ORBIT//04 version 0.92.0 settings interface](docs/settings-v0.92.0.png)
+
+The settings capture is generated from the desktop build. Cyan groups information and combat readability, mint identifies controls, magenta marks motion and comfort effects, and violet identifies presentation quality. The palette remains dark without relying on yellow or grey-only state changes.
+
 ## Requirements
 
 - Node.js 22 or 24 LTS (Node 22 is used by CI)
@@ -216,6 +220,12 @@ Capture and overflow-check the level-up interface:
 
 ```bat
 npm.cmd run screenshot:level
+```
+
+Capture and inspect the settings palette:
+
+```bat
+npm.cmd run screenshot:settings
 ```
 
 The suite checks JavaScript syntax, core combat and progression behavior, boss timing, commercial systems, Ascension, Three.js presentation integration, English runtime copy, weapon-effect assets, media file signatures, image dimensions, and both local rendering bundles.

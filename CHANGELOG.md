@@ -9,6 +9,9 @@
 - removed the remaining yellow level-up controls in favor of cold cyan, magenta, and violet hierarchy
 - added the optional Resonance Draw: one earned reroll buys a disclosed 65% fresh, 27% build-tuned, or 8% resonant result, with no paid currency
 - added deterministic gameplay coverage and a dedicated 1440 × 810 Electron capture for the level-up interface
+- assigned stable magenta, cyan, and violet identities to difficulty, sector, and contract selection instead of presenting every mission choice in the same grey hierarchy
+- rebuilt the settings palette around restrained readability, control, motion, visual, and audio accents, including a matching non-yellow scrollbar
+- added an automated 1440 × 810 settings capture and refreshed the Steam release runbook to the current build
 
 ## 0.91.0 — Navigation and Survival HUD
 

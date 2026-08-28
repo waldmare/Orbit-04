@@ -1,6 +1,6 @@
 # ORBIT//04 — Steam release runbook
 
-Version `0.64.0` produces a validated, offline Windows package. Publishing still requires a Steamworks partner account, a paid app credit, assigned App/depot IDs, completed store and content forms, and Valve review.
+Version `0.92.0` produces a validated, offline Windows package. Publishing still requires a Steamworks partner account, a paid app credit, assigned App/depot IDs, completed store and content forms, and Valve review.
 
 ## Supported launch target
 
