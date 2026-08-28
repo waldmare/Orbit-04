@@ -1,7 +1,7 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.89.0-35cfe0)
+![Version](https://img.shields.io/badge/version-0.90.0-35cfe0)
 ![Three.js](https://img.shields.io/badge/Three.js-r185-b39a63)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90%20host-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
@@ -9,7 +9,7 @@
 
 ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.89.0`
+Current version: `0.90.0`
 
 ## Runtime overview
 
@@ -48,8 +48,8 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - concise level-up cards showing one immediate effect and one relevant build link, with full mechanical detail retained in tooltips and accessible labels
 - selectable automatic targeting priorities for nearest, damaged, or elite hostiles
 - a low-noise combat tracker for the build's nearest weapon evolution
-- an in-run signal scanner that filters procedural discoveries by support, time anomaly, or risk category
-- a timestamped install log in Run Intel plus last-install and scanner summaries on pause
+- an in-run signal scanner that filters procedural discoveries by support, time anomaly, or risk category and states each signal's exact benefit or risk before collection
+- a timestamped install log in Run Intel plus a focused pause command deck showing transmission time, hull, frame level, and current priority
 - configurable focus-loss pausing to protect active runs during task switching
 - one concise Field Directive per run, rotating between exploration, travel, and attrition objectives with existing-system rewards
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
@@ -65,7 +65,7 @@ Detailed balance targets are documented in [BALANCE.md](BALANCE.md). Historical 
 
 The renderer includes:
 
-- a technological player vessel contrasted with transparent organic creature plates covering nine enemy behaviors and the Conqueror boss
+- a technological player vessel contrasted with transparent organic creature plates covering eleven enemy behaviors and the Conqueror boss
 - a dedicated last-human ark sprite with a visible life-support core, asymmetric repair detail, responsive engines, preserved aspect ratio, and configuration-neutral hull materials
 - aspect-ratio-preserving sprite scaling
 - matte-free ship textures selected for the active camera scale
@@ -76,7 +76,7 @@ The renderer includes:
 - a forward-biased player hull with damped limited-angle steering, lateral banking, movement inertia, acceleration stretch, and independently loaded engines instead of either rigid sliding or full-axis rotation
 - visible maneuvering thrusters and a load-responsive life-support core that keep the ark animated during strafing, acceleration, braking, and idle flight
 - semantic, color-coded pickup silhouettes for experience, caches, repair, combat flux, salvage, Time Fractures, relics, and jammers
-- glance-readable hostile roles: chargers, tanks, gunners, splitters, snipers, flankers, paired-shot weavers, and support wardens use consistent accents, compact intent glyphs, and priority-scaled threat rings
+- glance-readable hostile roles: chargers, tanks, gunners, splitters, snipers, flankers, paired-shot weavers, support wardens, dash reapers, and three-needle harriers use consistent accents, compact intent glyphs, and priority-scaled threat rings
 - class-tuned organic locomotion with lateral sway, speed stretch, weapon recoil, turning compression, and short motion wakes instead of static sprites translated across the arena
 - quality-scaled contact shadows and restrained hostile rim lights that ground moving silhouettes and separate their shapes from the environment
 - dark separation rings around hostile projectiles and thicker priority health bars for reliable reads against bright weapons and animated backgrounds
@@ -97,17 +97,17 @@ The renderer includes:
 
 ## Runtime screenshot
 
-![ORBIT//04 version 0.89.0 studio launch hangar](docs/launch-hangar-v0.89.0.png)
+![ORBIT//04 version 0.90.0 studio launch hangar](docs/launch-hangar-v0.90.0.png)
 
 The launch hangar capture shows the selected runtime frame, compact visual frame bay, three icon-led mission decisions, collapsed optional progression data, and the single primary deployment action at the same 1440 × 810 presentation used by the desktop build. Cyan, magenta, acid green, violet, and amber identify functions and risk while the underlying surfaces remain damaged and near-black.
 
-![ORBIT//04 version 0.89.0 Last Ark runtime capture](docs/runtime-screenshot-v0.89.0.png)
+![ORBIT//04 version 0.90.0 Last Ark runtime capture](docs/runtime-screenshot-v0.90.0.png)
 
-This 1440 × 810 image was captured from the active 0.89.0 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, contact shadows, rim lighting, current combat effects, world-space HUD, and ashen environment as rendered during gameplay. The presentation buffer follows the actual desktop display size and system DPI rather than stretching a fixed frame. The versioned filename prevents repository front-page image caches from presenting an older build.
+This 1440 × 810 image was captured from the active 0.90.0 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, contact shadows, rim lighting, current combat effects, world-space HUD, and animated ashen environment as rendered during gameplay. The presentation buffer follows the actual desktop display size and system DPI rather than stretching a fixed frame. The versioned filename prevents repository front-page image caches from presenting an older build.
 
 ## Audio implementation
 
-Gameplay sound effects use a curated CC0 library instead of the previous procedural and prototype cues. The active set combines Lentikula's manually designed 48 kHz / 24-bit sci-fi weapons, trimmed ObsydianX interface cues, a mechanical destruction recording by Spring Spring, and NenadSimic's low explosion tail. Rapid weapons, rifles, beams, hostile fire, phase systems and destruction events use source recordings selected for their role; only low engine ambience and an emergency playback fallback remain from the internal generator. The mixer now budgets weapons, hostile fire, impacts, pickups, and interface cues as separate groups. Heavy attacks, player damage, elites, bosses, and rewards receive short priority windows, while routine shots and kills attenuate as the encounter grows. Important impacts retain controlled sub and material layers, and spatial cues remain positioned from their world location. Phaser's master output is routed through the selected dynamic-range compressor, so CINEMA, BALANCED and NIGHT shape loaded samples and music. Music uses seven licensed full-length tracks: alternating exploration, combat, and boss pairs plus a dedicated Time Fracture layer. The score crossfades by pressure and encounter state, ducks under priority cues, and slows with the simulation during a fracture. The Settings output check plays a spaced weapon-and-reward reference sequence and reports the active curated library and mixer.
+Gameplay sound effects use a curated CC0 library instead of the previous procedural and prototype cues. The active set combines Lentikula's manually designed 48 kHz / 24-bit sci-fi weapons, trimmed ObsydianX interface cues, a mechanical destruction recording by Spring Spring, and NenadSimic's low explosion tail. Rapid weapons, rifles, beams, hostile fire, phase systems and destruction events use source recordings selected for their role; only low engine ambience and an emergency playback fallback remain from the internal generator. The mixer budgets weapons, hostile fire, impacts, pickups, and interface cues as separate groups. Heavy attacks, player damage, elites, bosses, and rewards receive short priority windows, while routine shots and kills attenuate as the encounter grows. Important impacts retain controlled sub and material layers, and spatial cues remain positioned from their world location. Phaser's master output is routed through the selected dynamic-range compressor, so CINEMA, BALANCED and NIGHT shape loaded samples and music. Music uses nine licensed full-length tracks: alternating exploration, combat, and boss pairs, a high-pressure layer, a final boss-phase layer, and a dedicated Time Fracture layer. The score crossfades by pressure and encounter state, ducks under priority cues, and slows with the simulation during a fracture. The Settings output check plays a spaced weapon-and-reward reference sequence and reports the active curated library and mixer.
 
 License and source information is listed in [THIRD_PARTY.md](THIRD_PARTY.md).
 
@@ -199,7 +199,7 @@ Capture the documented gameplay scene from the local Electron/WebGL build:
 npm.cmd run screenshot
 ```
 
-The capture command writes `docs/runtime-screenshot-v0.89.0.png` only after the Three.js presentation engine, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+The capture command writes `docs/runtime-screenshot-v0.90.0.png` only after the Three.js presentation engine, gameplay state, HUD, and enemy scene pass runtime readiness checks.
 
 Capture the launch hangar and verify that it has no horizontal overflow:
 
@@ -239,7 +239,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.89.0 adds an encounter director that brakes hostile inflow before visual saturation and keeps boss approaches readable without changing weapon damage or hostile durability. The Three.js layer adds contact shadows and hostile rim lighting, while the audio director gives important attacks, impacts, warnings, and rewards priority over routine fire. Phaser remains the simulation, audio, environment, and compatibility host during the staged migration. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.90.0 focuses on player-facing clarity and motion: pause and reward screens prioritize concrete outcomes, scanner targets disclose their benefit or risk before collection, the Ark accelerates more decisively, and the environment responds visibly to travel. Two new hostile roles expand late-run encounter composition, while the nine-track score adds dedicated pressure and final boss-phase layers. Phaser remains the simulation, audio, environment, and compatibility host, with Three.js providing the active top-down combat presentation. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

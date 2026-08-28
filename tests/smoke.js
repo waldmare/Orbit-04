@@ -94,7 +94,7 @@ vm.runInContext(`
   state.choosing=true;state.choiceMode='level';renderOffers();
   if(!document.getElementById('buildCompass').innerHTML.includes('NEAREST BREAKPOINT')) throw new Error('build compass did not expose the nearest evolution');
   const upgradeCards=document.getElementById('choices').children;if(upgradeCards.some(card=>card.innerHTML.includes('class="impact"')||((card.innerHTML.match(/class="desc">([^<]*)/)||[])[1]||'').length>72)) throw new Error('upgrade cards did not keep visible copy concise');
-  if(!upgradeCards.every(card=>card.dataset.tone&&card.innerHTML.includes('choiceGlyph')&&card.innerHTML.includes('choiceScope')&&card.innerHTML.includes('choiceAction'))) throw new Error('guided semantic upgrade cards are incomplete');
+  if(!upgradeCards.every(card=>card.dataset.tone&&card.innerHTML.includes('choiceGlyph')&&card.innerHTML.includes('choiceBenefit')&&card.innerHTML.includes('choiceAction'))) throw new Error('guided semantic upgrade cards are incomplete');
   if(!upgradeCards.every(card=>card.title.includes('IMPACT ·'))||state.currentOffers.some((offer,index)=>offerConnection(offer)&&!upgradeCards[index].title.includes(offerConnection(offer)))) throw new Error('upgrade cards did not preserve full scoped impact and build connection details');
   const pinnedOffer=state.currentOffers[0];if(!togglePinnedOffer(pinnedOffer.key)||state.pinnedOfferKey!==pinnedOffer.key) throw new Error('upgrade pin control failed');
   const previousDraw=state.currentOffers.map(offer=>offer.key),previousUnpinned=previousDraw.filter(key=>key!==pinnedOffer.key).sort().join('|'),originalRandom=Math.random;Math.random=()=>0;renderOffers(previousDraw,pinnedOffer);Math.random=originalRandom;
@@ -116,7 +116,7 @@ vm.runInContext(`
   if(state.rush<=0||state.rushActivations!==1||save.stats.signalRushes!==1) throw new Error('SIGNAL RUSH did not activate');
   if(!document.getElementById('rewardRibbon').classList.contains('show')||!document.getElementById('rewardRibbonTitle').textContent.includes('SIGNAL RUSH')) throw new Error('reward milestone ribbon failed');
   if(!state.deathFx.length||state.deathFx[0].maxLife<=0) throw new Error('persistent destruction animation was not created');
-  const destructionLife=state.deathFx[0].life; update(.05); if(state.deathFx[0].life>=destructionLife) throw new Error('destruction animation did not advance');
+  state.hitStop=0;const destructionLife=state.deathFx[0].life; update(.05); if(state.deathFx[0].life>=destructionLife) throw new Error('destruction animation did not advance');
   spawnBoss(1); const sweepBoss=state.enemies.find(enemy=>enemy.boss&&!enemy.dead),installCount=state.upgradeHistory.length; killEnemy(sweepBoss); if(state.salvageSweep<=0) throw new Error('boss salvage sweep did not activate');
   const bossReliquary=state.caches.find(cache=>cache.rarity==='RELIQUARY');if(!bossReliquary) throw new Error('boss did not emit an Ark Reliquary');openCache(bossReliquary);
   if(!bossReliquary.dead||state.reliquariesOpened!==1||state.reliquaryOpen||state.ceremony||state.paused||state.upgradeHistory.length<installCount+2) throw new Error('Ark Reliquary reveal did not grant and resume correctly');state.hitStop=0;

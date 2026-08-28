@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.90.0 — Clarity, Motion and Encounter Variety
+
+- rebuilt the in-run pause screen as a focused neon command deck with four essential status readouts and a dominant return-to-combat action
+- replaced ambiguous pickup labels with pre-collection benefit or risk summaries and explicit post-collection results
+- reduced level-up cards to a single `YOU GET` statement plus one optional build-path hint; Reliquary slots now reveal exact mechanical benefits
+- increased baseline player thrust by 6%, strengthened engine trails, and added movement-relative star and environment parallax
+- added Sable Reaper dash predators and Bone Harrier three-needle strafers with distinct colors, silhouettes, intent markers, and Codex entries
+- raised the normal encounter budget slightly while retaining population-pressure braking and reduced boss-approach inflow
+- expanded the licensed adaptive score from seven to nine tracks with pressure and final boss-phase layers
+- strengthened background animation and cool neon separation without compromising hostile or projectile readability
+
 ## 0.89.0 — Encounter and Presentation Director
 
 - replaced the 700-hostile runtime ceiling with a progression-aware encounter budget that scales by difficulty, sector, contract, boss state, and ascension

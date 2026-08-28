@@ -15,9 +15,9 @@
     oracle:0xc5c0c4,vector:0xd2c7c8,talon:0xc6b9ac,halo:0xc8c5c7,event:0xb8b1b6
   };
   const enemyTint={
-    scout:0xd27f9a,charger:0xdb876c,tank:0xb89a67,gunner:0xd66e96,splitter:0xba7290,sniper:0xa28bd0,stalker:0xd86cc5,weaver:0x8993df,warden:0x74bba6,boss:0xe36d86
+    scout:0xd27f9a,charger:0xdb876c,tank:0xb89a67,gunner:0xd66e96,splitter:0xba7290,sniper:0xa28bd0,stalker:0xd86cc5,weaver:0x8993df,warden:0x74bba6,reaper:0xa7c966,harrower:0xd99563,boss:0xe36d86
   };
-  const enemyTexture={scout:'enemy-scout-v3',charger:'enemy-charger-v3',tank:'enemy-tank-v3',gunner:'enemy-gunner-v3',splitter:'enemy-splitter-v3',sniper:'enemy-sniper-v3',stalker:'enemy-stalker-v3',weaver:'enemy-weaver-v3',warden:'enemy-warden-v3',boss:'boss-carrier-v3'};
+  const enemyTexture={scout:'enemy-scout-v3',charger:'enemy-charger-v3',tank:'enemy-tank-v3',gunner:'enemy-gunner-v3',splitter:'enemy-splitter-v3',sniper:'enemy-sniper-v3',stalker:'enemy-stalker-v3',weaver:'enemy-weaver-v3',warden:'enemy-warden-v3',reaper:'enemy-reaper-v3',harrower:'enemy-harrower-v3',boss:'boss-carrier-v3'};
   const clamp=(value,min=0,max=1)=>Math.max(min,Math.min(max,value));
   const smoothValue=(current,target,response,delta)=>target+(current-target)*Math.exp(-response*delta);
   const smoothAngle=(current,target,response,delta)=>current+Math.atan2(Math.sin(target-current),Math.cos(target-current))*(1-Math.exp(-response*delta));

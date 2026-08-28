@@ -39,9 +39,9 @@ The adaptive dark-space synthwave soundtrack uses these Creative Commons Zero 1.
 
 The CC0 dedication permits copying, modification, distribution and commercial use without attribution. These notices are retained for provenance and project auditability.
 
-## Pixabay music — active Time Fracture layer and retained legacy files
+## Pixabay music — active adaptive soundtrack layers
 
-**Dystopian Ambient** by leberch is the active Time Fracture layer under the Pixabay Content License. **Dystopian Thriller** by leberch and **Blood Red Sky** by ShadowsAndEchoes remain inactive legacy files.
+The runtime uses **Dystopian Ambient** by leberch for Time Fracture, **Dystopian Thriller** by leberch for high-pressure encounters, and **Blood Red Sky** by ShadowsAndEchoes for final boss phases. All three are used under the Pixabay Content License.
 
 License summary: https://pixabay.com/service/license-summary/
 

@@ -45,7 +45,7 @@
     <div id="timeFractureHud" class="hidden" aria-live="polite"><small>TIME FRACTURE</small><b id="timeFractureTime">9.0 SEC · ×0</b></div>
     <div id="evolutionTracker" class="hidden" aria-live="polite"><small>TRACKED EVOLUTION</small><b id="evolutionTrackerText"></b></div>
     <div id="abilityBar"><div id="dashWidget" class="ready"><b>SHIFT</b><span id="dashStatus">PHASE DASH · READY</span><i><em id="dashCharge"></em></i></div></div>
-    <div id="navigationSignal" class="hidden" data-disposition="boon"><span id="navigationSignalLabel">SCANNER ALL · N TO CYCLE</span><b id="navigationSignalText"></b></div>
+    <div id="navigationSignal" class="hidden" data-disposition="boon"><span id="navigationSignalLabel">SCANNER ALL · N TO CYCLE</span><b id="navigationSignalText"></b><small id="navigationSignalEffect"></small></div>
     <div id="prioritySignal" class="hidden" data-tone="boss" aria-live="polite"><i id="prioritySignalArrow">▲</i><span><small>OFF-SCREEN PRIORITY</small><b id="prioritySignalText"></b></span></div>
     <div id="directiveTracker" class="hidden" aria-live="polite"><small>FIELD DIRECTIVE</small><b id="directiveTrackerText"></b><span id="directiveTrackerReward"></span></div>
     <div id="xpbar"><div id="xpfill"></div><div id="xptext"></div></div>
@@ -199,10 +199,10 @@
   </section>
 
   <section id="pauseScreen" class="overlay">
-    <div class="panel smallPanel centered">
-      <h1>PAUSED</h1><p class="muted">The dark waits. The crew does not sleep.</p>
+    <div class="panel pausePanel">
+      <div class="pauseHeader"><span>RUN SUSPENDED</span><h1>PAUSED</h1><p>Review the situation, then return to the field.</p></div>
       <div id="pauseSnapshot" class="pauseSnapshot"></div>
-      <div class="menuRow centered"><button id="resumeBtn" class="primary">RESUME</button><button id="pauseLoadoutBtn">RUN INTEL</button><button id="pauseBankBtn" class="hidden">BANK ASCENSION</button><button id="restartRunBtn">RESTART RUN</button><button id="pauseSettingsBtn">SETTINGS</button><button id="menuBtn">ABORT RUN</button></div>
+      <div class="pauseActions"><button id="resumeBtn" class="primary">RETURN TO COMBAT <b>ESC</b></button><div class="pauseTools"><button id="pauseLoadoutBtn">RUN INTEL</button><button id="pauseSettingsBtn">SETTINGS</button><button id="pauseBankBtn" class="hidden">BANK ASCENSION</button></div><div class="pauseDanger"><button id="restartRunBtn">RESTART RUN</button><button id="menuBtn">ABORT RUN</button></div></div>
     </div>
   </section>
 
