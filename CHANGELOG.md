@@ -16,6 +16,13 @@
 - rebuilt upgrade cards around a large name, a dominant instant-effect panel, direct `UPGRADE TO LV` language, and number-key selection without repeating instructions
 - divided the settings list into combat readability, controls, comfort, graphics, and audio sections while retaining presets and individual controls
 - refreshed all three automated interface captures after desktop rendering and overflow verification
+- made borderless fullscreen the default desktop launch mode, with `F`, `F11`, and `Alt+Enter` toggles plus an explicit `--windowed` diagnostic override
+- prevented packaged Explorer launches from crashing on detached-console `EPIPE` writes while retaining file-based diagnostics in the application data directory
+- fixed Alt+Tab focus recovery by clearing held keyboard, pointer, touch, and gamepad state without treating the system shortcut as an in-game `Tab` action
+- rebuilt soundtrack direction into four 56-second passages that rotate both exploration and combat recordings before boss, climax, and Time Fracture overrides
+- connected field-signal collection to the ship's pickup radius while preserving direct-contact confirmation for hazardous and risk-bearing signals
+- raised the regular encounter budget and early multi-spawn cadence, then delayed population braking so the field remains active without crowding boss approaches
+- regenerated and automatically validated all five 1920 × 1080 Steam screenshots from the current Three.js gameplay renderer
 
 ## 0.91.0 — Navigation and Survival HUD
 

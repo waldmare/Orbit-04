@@ -183,7 +183,7 @@ The install step runs `postinstall`, which copies the pinned Phaser compatibilit
 | `P` or `Esc` | Pause or resume |
 | `Tab` or `B` | Open or close Run Intel during a run |
 | `M` | Toggle audio |
-| `F` | Toggle fullscreen |
+| `F`, `F11`, or `Alt+Enter` | Toggle borderless fullscreen |
 | `R` | Restart after a completed or failed run |
 
 Weapons fire automatically.
@@ -260,7 +260,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.92.0 raises regular encounter pressure while retaining population braking and reduced boss-approach inflow. Grave Moths add fast alternating pursuit lines; Null Anchors hold range and broadcast a readable six-way projectile lattice. The level-up screen removes the remaining yellow cast, identifies first acquisitions as `NEW MODULE` or `NEW SYSTEM`, and adds an optional Resonance Draw with visible probabilities and an earned-resource cost. Phaser remains the simulation, audio, environment, and compatibility host, with Three.js providing the active top-down combat presentation. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.92.0 raises regular encounter pressure while retaining population braking and reduced boss-approach inflow. Grave Moths add fast alternating pursuit lines; Null Anchors hold range and broadcast a readable six-way projectile lattice. Alt+Tab now clears all held input state, safe field signals use the ship's full pickup radius, and the soundtrack rotates through four shorter exploration/combat passages. The level-up screen removes the remaining yellow cast, identifies first acquisitions as `NEW MODULE` or `NEW SYSTEM`, and adds an optional Resonance Draw with visible probabilities and an earned-resource cost. Phaser remains the simulation, audio, environment, and compatibility host, with Three.js providing the active top-down combat presentation. The repository can generate and validate the offline desktop package and current 1920 × 1080 gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

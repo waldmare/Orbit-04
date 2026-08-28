@@ -15,6 +15,7 @@ const settingsCaptureMode = process.argv.includes('--orbit-settings-capture');
 const steamCaptureMode = process.argv.includes('--orbit-steam-capture');
 const captureMode = runtimeCaptureMode || menuCaptureMode || levelCaptureMode || settingsCaptureMode || steamCaptureMode;
 const automatedMode = smokeMode || audioSmokeMode || captureMode;
+const windowedMode = process.argv.includes('--windowed');
 const entryFile = path.join(__dirname, '..', 'index.html');
 const iconFile = path.join(__dirname, '..', 'assets', 'branding', 'orbit-app-icon.ico');
 const STEAM_CAPTURE_PRESETS = [
@@ -27,15 +28,29 @@ const STEAM_CAPTURE_PRESETS = [
 
 const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
+// Packaged Windows GUI applications do not own a durable console when opened
+// from Explorer. A renderer log written to that detached pipe can otherwise
+// terminate the main process with EPIPE before the game reaches the menu.
+for (const stream of [process.stdout, process.stderr]) {
+  stream?.on?.('error', error => {
+    if (error?.code !== 'EPIPE') process.exitCode = process.exitCode || 1;
+  });
+}
+const consoleAvailable = !app.isPackaged || automatedMode;
+function safeConsole(method, message) {
+  if (!consoleAvailable) return;
+  try { console[method](message); } catch (_error) {}
+}
+
 function reportError(scope, error) {
   const message = error instanceof Error ? `${error.message}\n${error.stack || ''}` : String(error);
-  console.error(`[${scope}] ${message}`);
+  safeConsole('error', `[${scope}] ${message}`);
   if (!app.isReady()) return;
   const directory = path.join(app.getPath('userData'), 'logs');
   const line = `${new Date().toISOString()} [${scope}] ${message}\n`;
   void mkdir(directory, { recursive: true })
     .then(() => appendFile(path.join(directory, 'orbit.log'), line, 'utf8'))
-    .catch(logError => console.error(`[diagnostic-log] ${logError.message}`));
+    .catch(logError => safeConsole('error', `[diagnostic-log] ${logError.message}`));
 }
 
 async function waitForRenderer(win, timeoutMs = 20000) {
@@ -174,7 +189,7 @@ async function captureScene(win, preset, destination, expectedSize) {
   }
   await mkdir(path.dirname(destination), { recursive: true });
   await writeFile(destination, image.toPNG());
-  console.log(`[runtime-capture] ${JSON.stringify({ ...setup, path: destination, size })}`);
+  safeConsole('log', `[runtime-capture] ${JSON.stringify({ ...setup, path: destination, size })}`);
 }
 
 async function captureMenu(win) {
@@ -204,7 +219,7 @@ async function captureMenu(win) {
   const output = path.join(__dirname, '..', 'docs', 'launch-hangar-v0.92.0.png');
   await mkdir(path.dirname(output), { recursive: true });
   await writeFile(output, image.toPNG());
-  console.log(`[menu-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
+  safeConsole('log', `[menu-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
 }
 
 async function captureLevel(win) {
@@ -243,7 +258,7 @@ async function captureLevel(win) {
   const output = path.join(__dirname, '..', 'docs', 'level-up-v0.92.0.png');
   await mkdir(path.dirname(output), { recursive: true });
   await writeFile(output, image.toPNG());
-  console.log(`[level-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
+  safeConsole('log', `[level-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
 }
 
 async function captureSettings(win) {
@@ -275,7 +290,7 @@ async function captureSettings(win) {
   const output = path.join(__dirname, '..', 'docs', 'settings-v0.92.0.png');
   await mkdir(path.dirname(output), { recursive: true });
   await writeFile(output, image.toPNG());
-  console.log(`[settings-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
+  safeConsole('log', `[settings-capture] ${JSON.stringify({ ...setup, path: output, size })}`);
 }
 
 async function runAutomatedCapture(win) {
@@ -296,10 +311,13 @@ async function runAutomatedCapture(win) {
 
 function createWindow() {
   const captureSize = steamCaptureMode ? { width: 1920, height: 1080 } : { width: 1440, height: 810 };
+  const launchFullscreen = !automatedMode && !windowedMode;
   const win = new BrowserWindow({
     ...captureSize,
     useContentSize: captureMode,
-    frame: !captureMode,
+    frame: false,
+    fullscreen: launchFullscreen,
+    fullscreenable: true,
     show: !captureMode,
     minWidth: 960,
     minHeight: 540,
@@ -323,9 +341,26 @@ function createWindow() {
   });
 
   Menu.setApplicationMenu(null);
+  win.setMenuBarVisibility(false);
+  const toggleWindowMode = () => {
+    const fullscreen = !win.isFullScreen();
+    win.setFullScreen(fullscreen);
+    if (!fullscreen) {
+      win.setSize(1440, 810);
+      win.center();
+    }
+  };
+  win.webContents.on('before-input-event', (event, input) => {
+    const key = String(input.key || '').toLowerCase();
+    if (input.type !== 'keyDown' || input.isAutoRepeat) return;
+    if (key === 'f11' || (key === 'f' && !input.control && !input.meta && !input.shift) || (key === 'enter' && input.alt)) {
+      event.preventDefault();
+      toggleWindowMode();
+    }
+  });
   win.webContents.on('console-message', event => {
     const message = event?.message;
-    if (message) console.log(`[renderer] ${message}`);
+    if (message) safeConsole('log', `[renderer] ${message}`);
   });
   win.webContents.on('did-fail-load', (_event, code, description, url) => {
     reportError('renderer-load', `${code} ${description} ${url}`);
@@ -336,13 +371,13 @@ function createWindow() {
   win.webContents.on('did-finish-load', async () => {
     try {
       const rendererState = await waitForRenderer(win);
-      console.log(`[renderer-ready] ${JSON.stringify(rendererState)}`);
+      safeConsole('log', `[renderer-ready] ${JSON.stringify(rendererState)}`);
       if (automatedMode && rendererState.boot !== 'ok') return app.exit(1);
       if (audioSmokeMode && rendererState.boot === 'ok') {
         await win.webContents.executeJavaScript(`(() => {save.settings.audio='ON';save.settings.audioMix='BALANCED';save.settings.sfxVolume='100%';save.settings.musicVolume='100%';AUDIO.syncEnabled();startRun();AUDIO.testOutput();AUDIO.sfx('enemyShot',0,{x:state.p.x+320,y:state.p.y});return true})()`);
         await delay(2300);
         const audio = await win.webContents.executeJavaScript(`AUDIO.status()`);
-        console.log(`[audio-smoke] ${JSON.stringify(audio)}`);
+        safeConsole('log', `[audio-smoke] ${JSON.stringify(audio)}`);
         if (!audio.enabled || audio.locked || audio.muted || audio.managerVolume < .9 || audio.sampleContext !== 'running' || audio.musicPlaying < 1 || !audio.ambiencePlaying || audio.mix !== 'STUDIO' || !audio.library.startsWith('CURATED CC0') || audio.spatialVoices < 1 || !audio.confirmed || audio.attempts < 5) process.exitCode = 1;
         return app.exit(process.exitCode || 0);
       }
@@ -365,7 +400,7 @@ function createWindow() {
         const gameplay = await win.webContents.executeJavaScript(`(() => {keys.d=false;const enemy=state.enemies.find(item=>item.smokeProbe),active=state.enemies.filter(item=>!item.dead),enemyIndex=active.indexOf(enemy),enemySprite=visualEngine?.pools?.enemies?.[enemyIndex],enemyVisual=enemySprite?.position,pickupKinds=[...new Set((visualEngine?.pools?.loot||[]).filter(item=>item.visible).map(item=>item.userData?.pickupKind).filter(Boolean))],enemyRoles=[...new Set((visualEngine?.pools?.enemyMarkers||[]).filter(item=>item.visible).map(item=>item.userData?.enemyRole).filter(Boolean))];return {mode:state.mode,time:state.time,enemies:state.enemies.length,dashCooldown:state.p.dashCooldown,floaterPool:visualEngine?.pools?.floaters?.length||0,player:{x:state.p.x,y:state.p.y},playerVisual:{x:visualEngine?.player?.position?.x||0,y:visualEngine?.player?.position?.y||0},playerHeading:visualEngine?.playerMotion?.angle??99,playerBank:visualEngine?.playerMotion?.bank??0,playerStrafe:visualEngine?.playerMotion?.strafe??0,playerRimOpacity:visualEngine?.playerRim?.material?.opacity||0,playerCoreOpacity:visualEngine?.playerCore?.material?.opacity||0,attitudeThrusters:[visualEngine?.playerAttitudeLeft,visualEngine?.playerAttitudeRight].filter(item=>item?.visible).length,leftEngineLength:visualEngine?.playerEngineLeft?.scale?.x||0,rightEngineLength:visualEngine?.playerEngineRight?.scale?.x||0,enemy:{x:enemy?.x||0,y:enemy?.y||0},enemyVisual:{x:enemyVisual?.x||0,y:enemyVisual?.y||0},enemyHeading:enemySprite?.userData?.motion?.angle??99,pickupKinds,enemyRoles,enemyRingCount:(visualEngine?.pools?.enemyRings||[]).filter(item=>item.visible).length,enemyWakeCount:(visualEngine?.pools?.enemyWakes||[]).filter(item=>item.visible).length,hostileOutlineCount:(visualEngine?.pools?.hostileBulletOutlines||[]).filter(item=>item.visible).length}})()`);
         await win.webContents.executeJavaScript(`keys.w=true`);await delay(360);
         const forwardMotion=await win.webContents.executeJavaScript(`(() => {keys.w=false;return {surge:visualEngine?.playerMotion?.surge??0,hullHeight:visualEngine?.player?.scale?.y||0,hullWidth:visualEngine?.player?.scale?.x||0,trailLength:visualEngine?.playerTrail?.scale?.x||0}})()`);
-        console.log(`[gameplay-smoke] ${JSON.stringify({ ...setup, ...gameplay, forwardMotion })}`);
+        safeConsole('log', `[gameplay-smoke] ${JSON.stringify({ ...setup, ...gameplay, forwardMotion })}`);
         const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),angleDistance=(a,b)=>Math.abs(Math.atan2(Math.sin(a-b),Math.cos(a-b)));
         const pickupSet=new Set(gameplay.pickupKinds),pickupIcons=['orb','cache','repair','flux','salvage','fracture','relic','jammer'].every(kind=>pickupSet.has(kind));
         const roleSet=new Set(gameplay.enemyRoles),roleMarkers=['charger','tank','gunner','splitter','sniper','stalker','weaver','warden','moth','anchor'].every(role=>roleSet.has(role));
