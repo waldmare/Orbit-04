@@ -40,6 +40,13 @@
   <div id="hud" class="hidden" aria-live="polite">
     <div id="hudTop"><div id="hudLeft"></div><div id="hudRight"></div></div>
     <div id="hudSub"></div>
+    <div id="shipStatus" data-state="stable" aria-label="Player ship status">
+      <div class="shipStatusHeader"><span><svg class="uiIcon"><use href="#icon-hull"/></svg> LAST HUMAN VESSEL</span><b id="shipHullPercent">100%</b></div>
+      <div class="shipHullReadout"><strong id="shipHullValue">88 / 88</strong><small id="shipHullState">HULL STABLE</small></div>
+      <div id="shipHullTrack"><i id="shipHullFill"></i><em id="shipHullMarker"></em></div>
+      <div class="shipStatusFooter"><span id="shipFrameLabel">WATCHKEEPER</span><span id="shipThrustLabel">THRUST 222</span></div>
+    </div>
+    <div id="damageDirection" aria-hidden="true"><i></i></div>
     <div id="bossBar" class="hidden"><div id="bossLabel"></div><div class="bar"><div id="bossFill"></div></div></div>
     <div id="rushMeter" class="hidden"><div id="rushLabel"></div><div class="bar"><div id="rushFill"></div></div></div>
     <div id="timeFractureHud" class="hidden" aria-live="polite"><small>TIME FRACTURE</small><b id="timeFractureTime">9.0 SEC · ×0</b></div>
@@ -48,7 +55,11 @@
     <div id="navigationSignal" class="hidden" data-disposition="boon"><span id="navigationSignalLabel">SCANNER ALL · N TO CYCLE</span><b id="navigationSignalText"></b><small id="navigationSignalEffect"></small></div>
     <div id="prioritySignal" class="hidden" data-tone="boss" aria-live="polite"><i id="prioritySignalArrow">▲</i><span><small>OFF-SCREEN PRIORITY</small><b id="prioritySignalText"></b></span></div>
     <div id="directiveTracker" class="hidden" aria-live="polite"><small>FIELD DIRECTIVE</small><b id="directiveTrackerText"></b><span id="directiveTrackerReward"></span></div>
-    <div id="xpbar"><div id="xpfill"></div><div id="xptext"></div></div>
+    <div id="xpbar">
+      <div class="xpIdentity"><small>LEVEL</small><b id="xpLevelValue">1</b></div>
+      <div class="xpProgress"><div class="xpTrack"><div id="xpfill"></div></div><div id="xptext">0 / 8 XP · 0%</div></div>
+      <div class="xpNext"><small>NEXT SYSTEM</small><b id="xpNextValue">8 XP</b></div>
+    </div>
   </div>
   <div id="centerMessage"></div>
   <div id="rewardRibbon" aria-live="polite"><b id="rewardRibbonTitle"></b><span id="rewardRibbonDetail"></span></div>
@@ -68,6 +79,7 @@
               <canvas id="framePreview" width="520" height="300" aria-label="Selected frame preview"></canvas>
               <span class="frameVisualLabel">ACTIVE FRAME</span>
               <span id="frameAvailability" class="frameAvailability"></span>
+              <div class="frameCycle" aria-label="Cycle unlocked frames"><button id="framePrevBtn" aria-label="Previous unlocked frame">‹ <b>Q</b></button><button id="frameNextBtn" aria-label="Next unlocked frame"><b>E</b> ›</button></div>
             </div>
             <div class="frameBrief">
               <div class="frameHeading">
@@ -90,6 +102,7 @@
           <div id="shipGrid" class="shipGrid"></div>
         </div>
         <div class="sideMenu">
+          <div class="menuFlow" aria-label="Deployment steps"><span><b>1</b> SELECT FRAME</span><span><b>2</b> SET MISSION</span><span><b>3</b> DEPLOY</span></div>
           <div class="sectionHeading"><div><span>DEPLOYMENT</span><h2>CHOOSE YOUR RUN</h2></div><i>3 DECISIONS</i></div>
           <div class="runOption difficultyOption">
             <div class="runOptionHeader"><span><svg class="uiIcon optionIcon"><use href="#icon-threat"/></svg> DIFFICULTY</span><i>THREAT</i></div>
@@ -117,7 +130,7 @@
           </details>
           <div class="menuStack">
             <div id="launchSummary" class="launchSummary" aria-live="polite"></div>
-            <button id="startBtn" class="primary"><svg class="uiIcon"><use href="#icon-launch"/></svg><span>START RUN</span></button>
+            <button id="startBtn" class="primary" aria-keyshortcuts="Enter"><svg class="uiIcon"><use href="#icon-launch"/></svg><span>START RUN</span><kbd>ENTER</kbd></button>
             <button id="researchBtn"><svg class="uiIcon"><use href="#icon-research"/></svg><span>RESEARCH</span></button>
             <button id="operationsBtn"><svg class="uiIcon"><use href="#icon-operations"/></svg><span>OPERATIONS</span></button>
             <button id="achievementsBtn"><svg class="uiIcon"><use href="#icon-achievements"/></svg><span>ACHIEVEMENTS</span></button>
@@ -128,7 +141,7 @@
         </div>
       </div>
 
-      <div class="footerHelp">WASD / ARROW KEYS / MOUSE — MOVE   ·   SHIFT — PHASE DASH   ·   N — SIGNAL SCAN   ·   M — AUDIO   ·   P / ESC — PAUSE</div>
+      <div class="footerHelp"><span><kbd>WASD</kbd> MOVE</span><span><kbd>SHIFT</kbd> PHASE DASH</span><span><kbd>N</kbd> SIGNAL SCAN</span><span><kbd>TAB</kbd> RUN INTEL</span><span><kbd>ESC</kbd> PAUSE</span></div>
     </div>
   </section>
 

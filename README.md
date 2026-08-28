@@ -1,7 +1,7 @@
 # ORBIT//04
 
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-0.90.0-35cfe0)
+![Version](https://img.shields.io/badge/version-0.91.0-35cfe0)
 ![Three.js](https://img.shields.io/badge/Three.js-r185-b39a63)
 ![Phaser](https://img.shields.io/badge/Phaser-3.90%20host-8dffd6)
 ![Electron](https://img.shields.io/badge/Electron-43-9d8cff)
@@ -9,7 +9,7 @@
 
 ORBIT//04 is a single-player, top-down survival game about the last human-crewed vessel crossing a universe occupied by an alien organism. Weapons fire automatically while the player controls movement, positioning, and a short-range dash. A standard run lasts 12 minutes and ends with a confrontation against the Conqueror.
 
-Current version: `0.90.0`
+Current version: `0.91.0`
 
 ## Runtime overview
 
@@ -97,13 +97,13 @@ The renderer includes:
 
 ## Runtime screenshot
 
-![ORBIT//04 version 0.90.0 studio launch hangar](docs/launch-hangar-v0.90.0.png)
+![ORBIT//04 version 0.91.0 studio launch hangar](docs/launch-hangar-v0.91.0.png)
 
 The launch hangar capture shows the selected runtime frame, compact visual frame bay, three icon-led mission decisions, collapsed optional progression data, and the single primary deployment action at the same 1440 × 810 presentation used by the desktop build. Cyan, magenta, acid green, violet, and amber identify functions and risk while the underlying surfaces remain damaged and near-black.
 
-![ORBIT//04 version 0.90.0 Last Ark runtime capture](docs/runtime-screenshot-v0.90.0.png)
+![ORBIT//04 version 0.91.0 Last Ark runtime capture](docs/runtime-screenshot-v0.91.0.png)
 
-This 1440 × 810 image was captured from the active 0.90.0 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, contact shadows, rim lighting, current combat effects, world-space HUD, and animated ashen environment as rendered during gameplay. The presentation buffer follows the actual desktop display size and system DPI rather than stretching a fixed frame. The versioned filename prevents repository front-page image caches from presenting an older build.
+This 1440 × 810 image was captured from the active 0.91.0 Electron/Three.js WebGL build. It shows the Last Ark player vessel, alien organism silhouettes, contact shadows, rim lighting, current combat effects, the dedicated hull and experience HUD, and animated ashen environment as rendered during gameplay. The presentation buffer follows the actual desktop display size and system DPI rather than stretching a fixed frame. The versioned filename prevents repository front-page image caches from presenting an older build.
 
 ## Audio implementation
 
@@ -199,7 +199,7 @@ Capture the documented gameplay scene from the local Electron/WebGL build:
 npm.cmd run screenshot
 ```
 
-The capture command writes `docs/runtime-screenshot-v0.90.0.png` only after the Three.js presentation engine, gameplay state, HUD, and enemy scene pass runtime readiness checks.
+The capture command writes `docs/runtime-screenshot-v0.91.0.png` only after the Three.js presentation engine, gameplay state, HUD, and enemy scene pass runtime readiness checks.
 
 Capture the launch hangar and verify that it has no horizontal overflow:
 
@@ -239,7 +239,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing, asset licensing, and 
 
 ## Release status
 
-Version 0.90.0 focuses on player-facing clarity and motion: pause and reward screens prioritize concrete outcomes, scanner targets disclose their benefit or risk before collection, the Ark accelerates more decisively, and the environment responds visibly to travel. Two new hostile roles expand late-run encounter composition, while the nine-track score adds dedicated pressure and final boss-phase layers. Phaser remains the simulation, audio, environment, and compatibility host, with Three.js providing the active top-down combat presentation. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
+Version 0.91.0 focuses on moment-to-moment navigation and survival readability. A dedicated hull instrument now exposes current integrity, percentage, damage state, critical threshold, frame identity, and thrust without competing with score telemetry. The larger experience instrument separates current level, progress, and the exact distance to the next system. Directional damage feedback identifies the incoming bearing, while the launch hangar adds a three-step deployment flow, Q/E frame cycling, a visible Enter shortcut, and compact semantic control hints. Phaser remains the simulation, audio, environment, and compatibility host, with Three.js providing the active top-down combat presentation. The repository can generate and validate the offline desktop package and real gameplay captures. A public Steam release still requires external playtesting, minimum-hardware performance validation, a Steamworks App ID and depot, final store capsules, Steam client installation testing, and Valve approval.
 
 ## License
 

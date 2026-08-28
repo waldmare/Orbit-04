@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.91.0 — Navigation and Survival HUD
+
+- added a dedicated high-contrast hull instrument with current integrity, percentage, damage state, critical threshold, frame identity, and thrust
+- rebuilt the experience bar into a larger three-part instrument showing current level, exact progress, and XP remaining to the next system
+- added directional damage-bearing feedback so off-angle hits are immediately legible during dense encounters
+- removed duplicate hull telemetry from the top status rail to preserve a cleaner information hierarchy
+- added Q/E frame cycling, a visible Enter deployment shortcut, and a compact three-step launch flow to the hangar
+- replaced the launch footer sentence with semantic key prompts that can be scanned without reading a paragraph
+- added automated coverage for hull state, damage direction, XP anticipation, frame cycling, and the new interface controls
+
 ## 0.90.0 — Clarity, Motion and Encounter Variety
 
 - rebuilt the in-run pause screen as a focused neon command deck with four essential status readouts and a dominant return-to-combat action
