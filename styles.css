@@ -318,3 +318,93 @@ button:hover:not(:disabled){border-color:rgba(195,190,140,.78);background:linear
 #settingsScreen .settingRow:hover{border-color:color-mix(in srgb,var(--setting-accent) 48%,#34313e);background:linear-gradient(105deg,color-mix(in srgb,var(--setting-accent) 10%,rgba(18,8,20,.90)),rgba(3,13,17,.88));box-shadow:0 0 21px color-mix(in srgb,var(--setting-accent) 6%,transparent)}
 #settingsScreen .settingRow b{color:#f0edf2}#settingsScreen .settingRow .tiny{color:#8e929d}#settingsScreen .settingRow button{border-color:color-mix(in srgb,var(--setting-accent) 48%,#32303b);background:linear-gradient(180deg,color-mix(in srgb,var(--setting-accent) 11%,#17111b),#07090d);color:color-mix(in srgb,var(--setting-accent) 66%,#fff);box-shadow:inset 0 1px color-mix(in srgb,var(--setting-accent) 13%,transparent)}#settingsScreen .settingRow button:hover{border-color:var(--setting-accent);color:#fff;box-shadow:0 0 17px color-mix(in srgb,var(--setting-accent) 11%,transparent)}
 #settingsScreen .audioCheckRow{--setting-accent:var(--settings-violet)!important;background:linear-gradient(105deg,rgba(48,22,72,.40),rgba(3,19,24,.80))}#settingsScreen .dataActions{padding-top:12px;border-top:1px solid rgba(53,231,255,.14)}#settingsScreen .dataActions button{border-color:rgba(53,231,255,.30);background:rgba(5,16,20,.82);color:#a9dce1}#settingsScreen .dataActions .danger{border-color:rgba(255,61,145,.40);background:rgba(31,6,18,.72);color:#d78aa9}#settingsScreen #settingsBackBtn{border-color:rgba(159,124,255,.48);color:#c9bdff;background:rgba(20,12,32,.84)}
+
+/* 0.93 — survivor-first information hierarchy. Large decisions, quiet metadata. */
+#titleScreen .sectionHeading h2{font-size:calc(13px * var(--ui-scale));letter-spacing:.12em;color:#f0edf2}
+#titleScreen .sectionHeading span,#titleScreen .sectionHeading>i{font-size:calc(7px * var(--ui-scale))}
+#titleScreen .runOption{padding:9px 9px 8px;border-radius:5px}
+#titleScreen .runOptionHeader>span{font-size:calc(8px * var(--ui-scale));letter-spacing:.13em}
+#titleScreen .runOption .stepValue{min-height:34px;font-size:calc(12px * var(--ui-scale));font-weight:850;letter-spacing:.07em}
+#titleScreen .runOption .stepArrow{min-height:34px;font-size:18px}
+#titleScreen .optionDetail{display:block!important;min-height:13px!important;margin-top:6px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:calc(8.4px * var(--ui-scale))!important;line-height:1.25!important;color:#b7b2bc!important}
+#titleScreen .menuStack button{min-height:34px;font-size:calc(9px * var(--ui-scale));font-weight:800;letter-spacing:.06em}
+#titleScreen .menuStack .primary{min-height:45px;font-size:calc(11px * var(--ui-scale));letter-spacing:.075em}
+#titleScreen .launchSummary{min-height:39px;font-size:calc(8px * var(--ui-scale))}
+#titleScreen .footerHelp{margin-top:6px;padding-top:6px}
+
+#titleScreen .shipCard{position:relative;height:104px;padding:8px;isolation:isolate}
+#titleScreen .shipCardBadge{position:absolute;z-index:3;top:7px;left:7px;padding:4px 5px;border:1px solid rgba(255,255,255,.16);border-radius:3px;background:rgba(5,7,10,.88);font:850 calc(6.5px * var(--ui-scale))/1 var(--mono);letter-spacing:.10em;color:#77747c}
+#titleScreen .shipCard[data-state="selected"] .shipCardBadge{border-color:var(--ship-accent);color:var(--ship-accent);box-shadow:0 0 13px color-mix(in srgb,var(--ship-accent) 17%,transparent)}
+#titleScreen .shipCard[data-state="available"] .shipCardBadge{color:#8be9dc}
+#titleScreen .shipCard[data-state="locked"]{filter:saturate(.42);opacity:.72}
+#titleScreen .shipCard[data-state="locked"]:hover{filter:saturate(.72);opacity:.94}
+#titleScreen .shipThumb{top:2px;right:3px;width:66px!important;height:66px!important;margin:0}
+#titleScreen .shipCardTop{position:absolute;z-index:2;left:7px;right:7px;top:32px;display:block;max-width:none;margin:0}
+#titleScreen .shipName{max-width:75%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(11px * var(--ui-scale));letter-spacing:.035em}
+#titleScreen .shipCardTop i{position:absolute;left:auto;right:0;top:61px;bottom:auto;font-size:calc(7px * var(--ui-scale));font-weight:850}
+#titleScreen .shipCardRole{position:absolute;z-index:2;left:7px;right:67px;top:56px;display:flex;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(6.8px * var(--ui-scale));letter-spacing:.07em}
+#titleScreen .shipCardStatus{position:absolute;z-index:2;left:7px;right:38px;bottom:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(6.5px * var(--ui-scale));font-weight:800;letter-spacing:.075em}
+
+#levelScreen .headerSplit{margin-bottom:9px;padding-bottom:10px}
+#levelScreen .headerSplit h1{font-size:calc(29px * var(--ui-scale))}
+#levelScreen .headerSplit h2{margin-top:4px;font-size:calc(10px * var(--ui-scale));color:#a4c7cb}
+#levelScreen .choiceGuide{grid-template-columns:1.35fr repeat(3,.72fr);padding:5px;margin-bottom:7px;background:linear-gradient(90deg,rgba(25,8,23,.62),rgba(3,15,18,.68))}
+#levelScreen .choiceGuide>span{grid-template-columns:22px auto;padding:6px 8px}
+#levelScreen .choiceGuide small{font-size:calc(7.5px * var(--ui-scale))}
+#levelScreen .buildCompass{padding:8px 10px;margin-bottom:8px}
+#levelScreen .choice{position:relative;min-height:218px;padding:17px 15px 14px;overflow:hidden}
+#levelScreen .choiceNumber{position:absolute;right:-3px;bottom:-16px;z-index:-1;font:950 108px/1 var(--sans);color:color-mix(in srgb,var(--choice-accent) 8%,transparent);pointer-events:none}
+#levelScreen .choiceGlyph{width:44px;height:44px;flex-basis:44px}
+#levelScreen .choiceGlyph .uiIcon{width:22px;height:22px}
+#levelScreen .choice .kind{font-size:calc(8.5px * var(--ui-scale));letter-spacing:.14em}
+#levelScreen .choice .name{font-size:calc(16px * var(--ui-scale));line-height:1.08;letter-spacing:.02em}
+#levelScreen .choice .lvl{min-width:98px;font-size:calc(8.5px * var(--ui-scale));font-weight:850}
+#levelScreen .choiceBenefit{min-height:64px;padding:11px 12px;border-width:2px}
+#levelScreen .choiceBenefit small{font-size:calc(7.5px * var(--ui-scale));letter-spacing:.16em}
+#levelScreen .choiceBenefit b{font-size:calc(11.5px * var(--ui-scale));line-height:1.35;letter-spacing:.015em}
+#levelScreen .choice .connection{font-size:calc(8.5px * var(--ui-scale));font-weight:750}
+#levelScreen .choiceAction{font-size:calc(8.3px * var(--ui-scale));color:#f0edf2}
+#levelScreen .choiceAction kbd{font-size:calc(7.5px * var(--ui-scale));color:var(--choice-accent)}
+#levelScreen .offerPin{padding:8px;font-size:calc(7.5px * var(--ui-scale));letter-spacing:.055em}
+#levelScreen .levelFooter{min-height:65px}
+
+#settingsScreen .settingsList{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px}
+#settingsScreen .settingsGroupHeader{--group-accent:var(--settings-cyan);grid-column:1/-1;display:grid;grid-template-columns:32px auto 1fr;align-items:center;gap:9px;margin:8px 0 1px;padding:8px 10px;border-left:3px solid var(--group-accent);background:linear-gradient(90deg,color-mix(in srgb,var(--group-accent) 11%,rgba(9,8,14,.96)),rgba(4,11,14,.42));box-shadow:inset 0 1px color-mix(in srgb,var(--group-accent) 12%,transparent)}
+#settingsScreen .settingsGroupHeader:first-child{margin-top:0}
+#settingsScreen .settingsGroupHeader span{display:grid;place-items:center;width:27px;height:20px;border:1px solid color-mix(in srgb,var(--group-accent) 48%,#302b37);border-radius:3px;font:850 8px/1 var(--mono);color:var(--group-accent)}
+#settingsScreen .settingsGroupHeader b{font-size:10px;letter-spacing:.13em;color:#f1edf3}
+#settingsScreen .settingsGroupHeader small{justify-self:end;font:650 8px/1 var(--mono);letter-spacing:.035em;color:#777b86}
+#settingsScreen .settingsGroupHeader.settings-mint{--group-accent:var(--settings-mint)}
+#settingsScreen .settingsGroupHeader.settings-magenta{--group-accent:var(--settings-magenta)}
+#settingsScreen .settingsGroupHeader.settings-violet{--group-accent:var(--settings-violet)}
+#settingsScreen .settingsGroupHeader.settings-cyan:first-child + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-cyan:first-child + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-cyan:first-child + .settingRow + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-cyan:first-child + .settingRow + .settingRow + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-cyan:first-child + .settingRow + .settingRow + .settingRow + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-cyan:first-child + .settingRow + .settingRow + .settingRow + .settingRow + .settingRow + .settingRow{--setting-accent:var(--settings-cyan)}
+#settingsScreen .settingsGroupHeader.settings-mint + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-mint + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-mint + .settingRow + .settingRow + .settingRow{--setting-accent:var(--settings-mint)}
+#settingsScreen .settingsGroupHeader.settings-magenta + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-magenta + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-magenta + .settingRow + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-magenta + .settingRow + .settingRow + .settingRow + .settingRow{--setting-accent:var(--settings-magenta)}
+#settingsScreen .settingsGroupHeader.settings-violet + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-violet + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-violet + .settingRow + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-violet + .settingRow + .settingRow + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-violet + .settingRow + .settingRow + .settingRow + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-violet + .settingRow + .settingRow + .settingRow + .settingRow + .settingRow + .settingRow{--setting-accent:var(--settings-violet)}
+#settingsScreen .settingsGroupHeader.settings-cyan:not(:first-child) + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-cyan:not(:first-child) + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-cyan:not(:first-child) + .settingRow + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-cyan:not(:first-child) + .settingRow + .settingRow + .settingRow + .settingRow,
+#settingsScreen .settingsGroupHeader.settings-cyan:not(:first-child) + .settingRow + .settingRow + .settingRow + .settingRow + .settingRow{--setting-accent:var(--settings-cyan)}
+#settingsScreen .settingRow{min-height:58px;padding:9px 10px;border-radius:4px}
+#settingsScreen .settingRow b{font-size:calc(9px * var(--ui-scale));letter-spacing:.065em}
+#settingsScreen .settingRow .tiny{margin-top:4px;font-size:calc(8px * var(--ui-scale));line-height:1.25}
+#settingsScreen .settingRow button{min-width:118px;font-size:calc(9px * var(--ui-scale));font-weight:850}
+
+@media(max-width:900px){#settingsScreen .settingsList{grid-template-columns:1fr}#settingsScreen .settingsGroupHeader{grid-column:1}}
+@media(max-width:780px){#settingsScreen .settingsGroupHeader small{display:none}#levelScreen .choiceGuide{grid-template-columns:1fr 1fr}#levelScreen .choice{min-height:170px}}

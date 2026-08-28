@@ -12,6 +12,10 @@
 - assigned stable magenta, cyan, and violet identities to difficulty, sector, and contract selection instead of presenting every mission choice in the same grey hierarchy
 - rebuilt the settings palette around restrained readability, control, motion, visual, and audio accents, including a matching non-yellow scrollbar
 - added an automated 1440 × 810 settings capture and refreshed the Steam release runbook to the current build
+- rebuilt the launch hierarchy around three plain-language steps, larger mission values, one-line run summaries, and explicit selected, ready, and locked frame states
+- rebuilt upgrade cards around a large name, a dominant instant-effect panel, direct `UPGRADE TO LV` language, and number-key selection without repeating instructions
+- divided the settings list into combat readability, controls, comfort, graphics, and audio sections while retaining presets and individual controls
+- refreshed all three automated interface captures after desktop rendering and overflow verification
 
 ## 0.91.0 — Navigation and Survival HUD
 

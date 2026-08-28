@@ -108,7 +108,7 @@ This 1440 × 810 image was captured from the active 0.92.0 Electron/Three.js Web
 
 ![ORBIT//04 version 0.92.0 level-up interface](docs/level-up-v0.92.0.png)
 
-The level-up capture verifies the cold cyan-violet hierarchy, plain-language `NEW MODULE` and `NEW SYSTEM` states, exact immediate benefits, and the disclosed earned-reroll Resonance Draw at the same desktop resolution.
+The level-up capture verifies the cold cyan-violet hierarchy, plain-language `NEW MODULE`, `NEW SYSTEM`, and `UPGRADE TO LV` states, dominant instant-effect summaries, and the disclosed earned-reroll Resonance Draw at the same desktop resolution.
 
 ## Audio implementation
 
@@ -138,7 +138,7 @@ The settings screen provides:
 
 ![ORBIT//04 version 0.92.0 settings interface](docs/settings-v0.92.0.png)
 
-The settings capture is generated from the desktop build. Cyan groups information and combat readability, mint identifies controls, magenta marks motion and comfort effects, and violet identifies presentation quality. The palette remains dark without relying on yellow or grey-only state changes.
+The settings capture is generated from the desktop build. Numbered section headers separate combat readability, controls, comfort, graphics, and audio before the individual controls begin. Cyan groups information and combat readability, mint identifies controls, magenta marks motion and comfort effects, and violet identifies presentation quality. The palette remains dark without relying on yellow or grey-only state changes.
 
 ## Requirements
 

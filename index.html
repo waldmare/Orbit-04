@@ -102,8 +102,8 @@
           <div id="shipGrid" class="shipGrid"></div>
         </div>
         <div class="sideMenu">
-          <div class="menuFlow" aria-label="Deployment steps"><span><b>1</b> SELECT FRAME</span><span><b>2</b> SET MISSION</span><span><b>3</b> DEPLOY</span></div>
-          <div class="sectionHeading"><div><span>DEPLOYMENT</span><h2>CHOOSE YOUR RUN</h2></div><i>3 DECISIONS</i></div>
+          <div class="menuFlow" aria-label="Deployment steps"><span><b>1</b> PICK SHIP</span><span><b>2</b> SET RUN</span><span><b>3</b> SURVIVE</span></div>
+          <div class="sectionHeading"><div><span>DEPLOYMENT</span><h2>MISSION SETUP</h2></div><i>3 CHOICES</i></div>
           <div class="runOption difficultyOption">
             <div class="runOptionHeader"><span><svg class="uiIcon optionIcon"><use href="#icon-threat"/></svg> DIFFICULTY</span><i>THREAT</i></div>
             <div class="optionStepper"><button id="difficultyPrev" class="stepArrow" aria-label="Previous difficulty">‹</button><button id="difficultyBtn" class="stepValue"></button><button id="difficultyNext" class="stepArrow" aria-label="Next difficulty">›</button></div>
@@ -147,12 +147,12 @@
 
   <section id="levelScreen" class="overlay">
     <div class="panel levelPanel">
-      <div class="headerSplit"><div><h1>LEVEL UP</h1><h2>INSTALL ONE MODULE</h2></div><div id="levelMeta" class="tag"></div></div>
+      <div class="headerSplit"><div><h1>LEVEL UP</h1><h2>CHOOSE ONE UPGRADE</h2></div><div id="levelMeta" class="tag"></div></div>
       <div class="choiceGuide" aria-label="Upgrade choice guide">
-        <span class="guideAction"><b>1–3</b><em>CHOOSE ONE</em><small>Installs immediately</small></span>
-        <span data-tone="weapon"><svg class="uiIcon" aria-hidden="true"><use href="#icon-weapon"/></svg><em>WEAPON</em><small>Adds or improves auto-fire</small></span>
-        <span data-tone="module"><svg class="uiIcon" aria-hidden="true"><use href="#icon-trait"/></svg><em>MODULE</em><small>Improves your whole build</small></span>
-        <span data-tone="breakpoint"><svg class="uiIcon" aria-hidden="true"><use href="#icon-output"/></svg><em>BREAKPOINT</em><small>Major power step</small></span>
+        <span class="guideAction"><b>1–3</b><em>PICK A CARD</em><small>The effect applies now</small></span>
+        <span data-tone="weapon"><svg class="uiIcon" aria-hidden="true"><use href="#icon-weapon"/></svg><em>CYAN</em><small>Weapon</small></span>
+        <span data-tone="module"><svg class="uiIcon" aria-hidden="true"><use href="#icon-trait"/></svg><em>VIOLET</em><small>Build module</small></span>
+        <span data-tone="breakpoint"><svg class="uiIcon" aria-hidden="true"><use href="#icon-output"/></svg><em>BRIGHT</em><small>Power spike</small></span>
       </div>
       <div id="buildCompass" class="buildCompass" aria-live="polite"></div>
       <div id="choices" class="choiceGrid"></div>
@@ -270,25 +270,30 @@
         <div class="presetButtons"><button id="readabilityPresetBtn">READABILITY</button><button id="cinematicPresetBtn">CINEMATIC</button><button id="performancePresetBtn">PERFORMANCE</button><button id="defaultsPresetBtn">DEFAULTS</button></div>
       </div>
       <div class="settingsList">
+        <div class="settingsGroupHeader settings-cyan"><span>01</span><b>COMBAT READABILITY</b><small>Health, XP and threat information</small></div>
         <div class="settingRow"><div><b>PLAYER HP</b><div class="tiny">HUD value and/or bar above frame.</div></div><button id="playerHpSetting"></button></div>
         <div class="settingRow"><div><b>ENEMY HP</b><div class="tiny">Hostile health bars.</div></div><button id="enemyHpSetting"></button></div>
         <div class="settingRow"><div><b>XP READOUT</b><div class="tiny">Numeric progress above XP bar.</div></div><button id="xpSetting"></button></div>
         <div class="settingRow"><div><b>DAMAGE NUMBERS</b><div class="tiny">CRITS keeps important spikes visible without combat clutter.</div></div><button id="damageNumbersSetting"></button></div>
         <div class="settingRow"><div><b>ATTACK TELEGRAPHS</b><div class="tiny">Aim lines and charge rings before dangerous attacks.</div></div><button id="telegraphSetting"></button></div>
         <div class="settingRow"><div><b>PILOT HINTS</b><div class="tiny">Short control and objective reminders when a run begins.</div></div><button id="hintsSetting"></button></div>
+        <div class="settingsGroupHeader settings-mint"><span>02</span><b>CONTROLS</b><small>Movement and targeting behavior</small></div>
         <div class="settingRow"><div><b>MOUSE CONTROL</b><div class="tiny">HOLD: steer while holding LMB · FOLLOW: steer toward cursor.</div></div><button id="mouseSetting"></button></div>
         <div class="settingRow"><div><b>AUTO-TARGET PRIORITY</b><div class="tiny">NEAREST, LOW HULL, or ELITES FIRST. Applies to ORBIT//04 weapons only.</div></div><button id="targetPrioritySetting"></button></div>
         <div class="settingRow"><div><b>PAUSE ON FOCUS LOSS</b><div class="tiny">Automatically pauses an active run when another window takes focus.</div></div><button id="autoPauseSetting"></button></div>
+        <div class="settingsGroupHeader settings-magenta"><span>03</span><b>COMFORT</b><small>Motion and flash intensity</small></div>
         <div class="settingRow"><div><b>SCREEN SHAKE</b><div class="tiny">Combat impact camera movement.</div></div><button id="shakeSetting"></button></div>
         <div class="settingRow"><div><b>FLASH EFFECTS</b><div class="tiny">Bright cache / evolution pulses.</div></div><button id="flashSetting"></button></div>
         <div class="settingRow"><div><b>MOTION</b><div class="tiny">REDUCED limits camera shake, panel movement and background drift.</div></div><button id="motionSetting"></button></div>
         <div class="settingRow"><div><b>UI SCALE</b><div class="tiny">Size of menus, descriptions and the combat HUD.</div></div><button id="uiScaleSetting"></button></div>
+        <div class="settingsGroupHeader settings-violet"><span>04</span><b>GRAPHICS</b><small>Effects, detail and background</small></div>
         <div class="settingRow"><div><b>PARTICLES</b><div class="tiny">Visual debris density.</div></div><button id="particleSetting"></button></div>
         <div class="settingRow"><div><b>GRAPHICS PRESET</b><div class="tiny">Geometry detail and space-fog density.</div></div><button id="graphicsSetting"></button></div>
         <div class="settingRow"><div><b>EFFECT CLARITY</b><div class="tiny">HIGH adds hostile-fire outlines, role glyphs and threat-color separation.</div></div><button id="effectClaritySetting"></button></div>
         <div class="settingRow"><div><b>GLOW FX</b><div class="tiny">Additive weapon, ship and hostile lighting.</div></div><button id="glowSetting"></button></div>
         <div class="settingRow"><div><b>DEAD UNIVERSE</b><div class="tiny">FULL keeps animated ash fields and visible midtones; SIMPLE and OFF reduce detail.</div></div><button id="backgroundSetting"></button></div>
         <div class="settingRow"><div><b>CONTRAST</b><div class="tiny">HIGH improves HUD and object separation.</div></div><button id="contrastSetting"></button></div>
+        <div class="settingsGroupHeader settings-cyan"><span>05</span><b>AUDIO</b><small>Mix, music and impact volume</small></div>
         <div class="settingRow"><div><b>AUDIO</b><div class="tiny">Desktop music, engine ambience, weapons and impact samples.</div></div><button id="audioSetting"></button></div>
         <div class="settingRow"><div><b>DYNAMIC RANGE</b><div class="tiny">CINEMA is widest · NIGHT keeps impacts controlled and dialogue-like cues clear.</div></div><button id="audioMixSetting"></button></div>
         <div class="settingRow"><div><b>SFX VOLUME</b><div class="tiny">Weapons, impacts and interface feedback.</div></div><button id="sfxVolumeSetting"></button></div>
