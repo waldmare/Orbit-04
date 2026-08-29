@@ -238,11 +238,20 @@
     </div>
   </section>
 
-  <section id="pauseScreen" class="overlay">
+  <section id="pauseScreen" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
     <div class="panel pausePanel">
-      <div class="pauseHeader"><span>RUN SUSPENDED</span><h1>PAUSED</h1><p>Review the situation, then return to the field.</p></div>
+      <div class="pauseHeader"><span>RUN SUSPENDED</span><h1 id="pauseTitle">PAUSED</h1><p>Review the situation, then return to the field.</p></div>
       <div id="pauseSnapshot" class="pauseSnapshot"></div>
       <div class="pauseActions"><button id="resumeBtn" class="primary" aria-live="polite">RETURN TO COMBAT <b>ESC</b></button><div class="pauseTools"><button id="pauseLoadoutBtn">RUN INTEL</button><button id="pauseSettingsBtn">SETTINGS</button><button id="pauseBankBtn" class="hidden">BANK ASCENSION</button></div><div class="pauseDanger"><button id="restartRunBtn">RESTART RUN</button><button id="menuBtn">ABORT RUN</button></div></div>
+    </div>
+  </section>
+
+  <section id="confirmScreen" class="overlay confirmOverlay" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+    <div id="confirmPanel" class="panel confirmPanel" data-tone="abort">
+      <div class="confirmHeader"><span id="confirmEyebrow">RUN CONTROL</span><h1 id="confirmTitle">ABORT TRANSMISSION?</h1></div>
+      <p id="confirmMessage" class="confirmMessage"></p>
+      <div id="confirmConsequences" class="confirmConsequences"></div>
+      <div class="confirmActions"><button id="confirmCancelBtn" class="primary">KEEP PLAYING <b>ESC / B</b></button><button id="confirmAcceptBtn" class="danger">BANK &amp; ABORT</button></div>
     </div>
   </section>
 
@@ -332,11 +341,13 @@
     </div>
   </section>
 
-  <section id="gameOverScreen" class="overlay">
+  <section id="gameOverScreen" class="overlay" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
     <div class="panel widePanel">
       <div class="headerSplit"><div><h1 id="gameOverTitle">RUN ENDED</h1><h2 id="gameOverSubtitle"></h2></div><div id="gradeText" class="runGrade"></div></div>
-      <div id="gameOverStats" class="metricGrid"></div>
-      <div id="runUnlocks" class="unlockFeed"></div>
+      <div id="gameOverOutcome" class="runOutcome" aria-live="polite"></div>
+      <div id="gameOverStats" class="runReport"></div>
+      <section class="runProgress"><span>PROFILE PROGRESS</span><div id="runUnlocks" class="unlockFeed"></div></section>
+      <div id="gameOverHelp" class="gameOverHelp"></div>
       <div class="menuRow"><button id="retryBtn" class="primary">RETRY</button><button id="reviveBtn">REVIVE — 120 CR</button><button id="gameOverMenuBtn">MENU</button></div>
     </div>
   </section>

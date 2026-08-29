@@ -14,8 +14,9 @@ const briefingCaptureMode = process.argv.includes('--orbit-briefing-capture');
 const levelCaptureMode = process.argv.includes('--orbit-level-capture');
 const settingsCaptureMode = process.argv.includes('--orbit-settings-capture');
 const steamCaptureMode = process.argv.includes('--orbit-steam-capture');
+const layoutSmokeMode = process.argv.includes('--orbit-layout-smoke');
 const captureMode = runtimeCaptureMode || menuCaptureMode || briefingCaptureMode || levelCaptureMode || settingsCaptureMode || steamCaptureMode;
-const automatedMode = smokeMode || audioSmokeMode || captureMode;
+const automatedMode = smokeMode || audioSmokeMode || layoutSmokeMode || captureMode;
 const windowedMode = process.argv.includes('--windowed');
 const entryFile = path.join(__dirname, '..', 'index.html');
 const iconFile = path.join(__dirname, '..', 'assets', 'branding', 'orbit-app-icon.ico');
@@ -357,12 +358,39 @@ async function runAutomatedCapture(win) {
   await captureScene(win, preset, output, { width: 1440, height: 810 });
 }
 
+async function runLayoutSmoke(win) {
+  const sizes = [{ width: 960, height: 540 }, { width: 1280, height: 720 }, { width: 1920, height: 1080 }];
+  const report = [];
+  for (const size of sizes) {
+    win.setBounds({ x: 0, y: 0, width: size.width, height: size.height }, false);
+    await delay(260);
+    const result = await win.webContents.executeJavaScript(`(() => {
+      save.settings.audio='OFF';save.settings.uiScale='XL';save.settings.motion='REDUCED';save.briefingSeen=true;applyDisplaySettings();
+      const inspect=(id,allowVertical=true)=>{const overlay=$(id),panel=overlay.querySelector('.panel'),wrapRect=$('wrap').getBoundingClientRect(),rect=panel.getBoundingClientRect(),buttons=[...panel.querySelectorAll('button:not(.hidden)')].filter(button=>!button.disabled),buttonRects=buttons.map(button=>button.getBoundingClientRect()),horizontalOverflow=panel.scrollWidth>panel.clientWidth+1,verticalOverflow=panel.scrollHeight>panel.clientHeight+1,withinViewport=rect.left>=wrapRect.left-1&&rect.right<=wrapRect.right+1&&rect.top>=wrapRect.top-1&&rect.bottom<=wrapRect.bottom+1,usableButtons=buttonRects.every(button=>button.width>=21.5&&button.height>=21.5),minimumButton=buttonRects.length?{width:Math.round(Math.min(...buttonRects.map(button=>button.width))),height:Math.round(Math.min(...buttonRects.map(button=>button.height)))}:null,smallButtons=buttonRects.map((button,index)=>({id:buttons[index].id||buttons[index].className,width:Math.round(button.width),height:Math.round(button.height)})).filter(button=>button.width<22||button.height<22);return{id,horizontalOverflow,verticalOverflow,allowVertical,withinViewport,usableButtons,minimumButton,smallButtons,buttonCount:buttons.length,client:{width:panel.clientWidth,height:panel.clientHeight},scroll:{width:panel.scrollWidth,height:panel.scrollHeight}}};
+      const screens=[];
+      toMenu();renderMenu();screens.push(inspect('titleScreen',true));
+      startRun();pause(true);screens.push(inspect('pauseScreen',true));
+      openRunConfirmation('abort');const confirmation=inspect('confirmScreen',false);confirmation.safeDefault=document.activeElement===$('confirmCancelBtn');screens.push(confirmation);closeRunConfirmation(false);
+      startRun();state.level=5;openLevel();screens.push(inspect('levelScreen',true));
+      startRun();state.time=438;state.level=12;state.kills=731;state.score=68420;state.runCredits=93;state.damageDealt=98124;state.chainBest=42;finishRun(false);screens.push(inspect('gameOverScreen',true));
+      const visible=screens.filter(item=>!item.withinViewport||item.horizontalOverflow||!item.usableButtons||item.safeDefault===false||(!item.allowVertical&&item.verticalOverflow));
+      return{viewport:{width:innerWidth,height:innerHeight},screens,failures:visible};
+    })()`);
+    report.push(result);
+  }
+  safeConsole('log', `[layout-smoke] ${JSON.stringify(report)}`);
+  if (report.some(entry => entry.viewport.width < 960 || entry.viewport.height < 540 || entry.failures.length)) {
+    throw new Error(`responsive layout QA failed: ${JSON.stringify(report)}`);
+  }
+  return report;
+}
+
 function createWindow() {
   const captureSize = steamCaptureMode ? { width: 1920, height: 1080 } : { width: 1440, height: 810 };
   const launchFullscreen = !automatedMode && !windowedMode;
   const win = new BrowserWindow({
     ...captureSize,
-    useContentSize: captureMode,
+    useContentSize: captureMode || layoutSmokeMode,
     frame: false,
     fullscreen: launchFullscreen,
     fullscreenable: true,
@@ -384,7 +412,7 @@ function createWindow() {
       spellcheck: false,
       devTools: !app.isPackaged && !automatedMode,
       backgroundThrottling: false,
-      ...(captureMode ? { partition: 'orbit04-capture' } : {})
+      ...(captureMode ? { partition: 'orbit04-capture' } : layoutSmokeMode ? { partition: 'orbit04-layout-qa' } : {})
     }
   });
 
@@ -457,6 +485,10 @@ function createWindow() {
       const rendererState = await waitForRenderer(win);
       safeConsole('log', `[renderer-ready] ${JSON.stringify(rendererState)}`);
       if (automatedMode && rendererState.boot !== 'ok') return app.exit(1);
+      if (layoutSmokeMode && rendererState.boot === 'ok') {
+        await runLayoutSmoke(win);
+        return app.exit(0);
+      }
       if (audioSmokeMode && rendererState.boot === 'ok') {
         await win.webContents.executeJavaScript(`(() => {save.briefingSeen=true;save.settings.audio='ON';save.settings.audioMix='BALANCED';save.settings.sfxVolume='100%';save.settings.musicVolume='100%';AUDIO.syncEnabled();startRun();AUDIO.testOutput();AUDIO.sfx('enemyShot',0,{x:state.p.x+320,y:state.p.y});return true})()`);
         await delay(2300);

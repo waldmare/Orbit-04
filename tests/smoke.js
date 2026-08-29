@@ -111,6 +111,10 @@ vm.runInContext(`
   pause(true);
   if(!state.paused||!document.getElementById('pauseScreen').classList.contains('show')) throw new Error('pause screen did not open');
   if(!document.getElementById('pauseSnapshot').innerHTML.includes('CURRENT PRIORITY')) throw new Error('pause snapshot did not render');
+  if(!openRunConfirmation('abort')||!document.getElementById('confirmScreen').classList.contains('show')||!document.getElementById('confirmConsequences').innerHTML.includes('BANKED')) throw new Error('safe abort confirmation failed');
+  if(!closeRunConfirmation()||document.getElementById('confirmScreen').classList.contains('show')) throw new Error('run confirmation did not close');
+  if(!openRunConfirmation('restart')||!document.getElementById('confirmConsequences').innerHTML.includes('DISCARDED')||!document.getElementById('confirmAcceptBtn').textContent.includes('RESTART')) throw new Error('restart consequence summary failed');
+  closeRunConfirmation();
   if(!openRunIntel()||!document.getElementById('loadoutScreen').classList.contains('show')) throw new Error('run intel did not open');
   closeRunIntel();
   if(document.getElementById('loadoutScreen').classList.contains('show')) throw new Error('run intel did not close');
@@ -167,6 +171,16 @@ vm.runInContext(`
   if(!save.achievements.includes('hardline_clear')) throw new Error('hardline achievement missing');
 `,ctx);
 console.log('ORBIT victory test: PASS');
+
+vm.runInContext(`
+  toMenu();save.settings.audio='OFF';save.difficulty='STANDARD';save.sector='AURORA';save.contract='NONE';save.credits=500;const frameId=save.selected,base={runs:save.runs,kills:save.totalKills,credits:save.credits,damage:save.stats.totalDamage,taken:save.stats.damageTaken,time:save.stats.playTime,caches:save.stats.caches,distance:save.stats.distanceTraveled,mastery:save.shipMastery[frameId]||0};startRun();
+  state.kills=10;state.runCredits=20;state.damageDealt=100;state.damageTaken=10;state.time=60;state.cachesOpened=1;state.distanceTraveled=1000;finishRun(false);
+  if(document.getElementById('reviveBtn').disabled)throw new Error('restore should be available for accounting regression');document.getElementById('reviveBtn').onclick();if(state.gameOver||!state.revived)throw new Error('restore did not resume the run');
+  state.kills=15;state.runCredits=25;state.damageDealt=140;state.damageTaken=14;state.time=90;state.cachesOpened=2;state.distanceTraveled=1600;finishRun(false);
+  if(save.runs!==base.runs+1||save.totalKills!==base.kills+15||save.credits!==base.credits-120+25||save.stats.totalDamage!==base.damage+140||save.stats.damageTaken!==base.taken+14||save.stats.playTime!==base.time+90||save.stats.caches!==base.caches+2||save.stats.distanceTraveled!==base.distance+1600||(save.shipMastery[frameId]||0)!==base.mastery+15)throw new Error('restored run telemetry was counted more than once');
+  if(state.newUnlocks.filter(item=>item.startsWith(SHIPS[frameId].name+' MASTERY +')).length!==1)throw new Error('restored run mastery summary was duplicated');
+`,ctx);
+console.log('ORBIT restore accounting test: PASS');
 
 
 vm.runInContext(`

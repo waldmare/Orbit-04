@@ -32,7 +32,10 @@
     "package": "npm run vendor && electron-forge package",
     "premake": "npm run check:node && npm run branding:build",
     "make": "npm run vendor && electron-forge make",
-    "release:check": "npm test && npm run package && node tools/verify-release.mjs",
+    "release:check": "npm test && npm run test:desktop && npm run test:layout && npm run test:audio && npm run package && node tools/verify-release.mjs",
+    "test:desktop": "npm run vendor && electron . -- --orbit-smoke",
+    "test:layout": "npm run vendor && electron . -- --orbit-layout-smoke",
+    "test:audio": "npm run vendor && electron . -- --orbit-audio-smoke",
     "test:assets": "node tests/assets.mjs",
     "test": "node --check desktop/main.cjs && node --check visual-engine.js && node --check three-engine-loader.js && node --check three-visual-engine.mjs && node --check game-3d.mjs && node --check tools/check-build-environment.mjs && node --check tools/generate-audio-reforged.mjs && node --check tools/generate-app-icon.mjs && node --check tools/verify-release.mjs && node --check game.js && node tests/smoke.js && node tests/top-down-polish.mjs && npm run test:assets"
   },
