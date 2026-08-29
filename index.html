@@ -54,7 +54,7 @@
     <div id="abilityBar"><div id="dashWidget" class="ready"><b>SHIFT</b><span id="dashStatus">PHASE DASH · READY</span><i><em id="dashCharge"></em></i></div></div>
     <div id="navigationSignal" class="hidden" data-disposition="boon"><span id="navigationSignalLabel">SCANNER ALL · N TO CYCLE</span><b id="navigationSignalText"></b><small id="navigationSignalEffect"></small></div>
     <div id="prioritySignal" class="hidden" data-tone="boss" aria-live="polite"><i id="prioritySignalArrow">▲</i><span><small>OFF-SCREEN PRIORITY</small><b id="prioritySignalText"></b></span></div>
-    <div id="directiveTracker" class="hidden" aria-live="polite"><small>FIELD DIRECTIVE</small><b id="directiveTrackerText"></b><span id="directiveTrackerReward"></span></div>
+    <div id="directiveTracker" class="hidden" aria-live="polite"><small>OPTIONAL OBJECTIVE</small><b id="directiveTrackerText"></b><span id="directiveTrackerReward"></span></div>
     <div id="xpbar">
       <div class="xpIdentity"><small>LEVEL</small><b id="xpLevelValue">1</b></div>
       <div class="xpProgress"><div class="xpTrack"><div id="xpfill"></div></div><div id="xptext">0 / 8 XP · 0%</div></div>
@@ -63,7 +63,7 @@
   </div>
   <div id="centerMessage"></div>
   <div id="rewardRibbon" aria-live="polite"><b id="rewardRibbonTitle"></b><span id="rewardRibbonDetail"></span></div>
-  <div id="toastStack"></div>
+  <div id="toastStack" role="status" aria-live="polite" aria-relevant="additions"></div>
 
   <section id="titleScreen" class="overlay show">
     <div class="panel titlePanel">
@@ -102,15 +102,15 @@
           <div id="shipGrid" class="shipGrid"></div>
           <section class="releaseOverview" aria-labelledby="releaseOverviewTitle">
             <div class="releaseOverviewHeading">
-              <div><span>COMPLETE SURVIVAL PACKAGE</span><h2 id="releaseOverviewTitle">WHAT YOUR RUN CAN BECOME</h2></div>
+              <div><span>CONTENT AT A GLANCE</span><h2 id="releaseOverviewTitle">BUILD, SURVIVE, EVOLVE</h2></div>
               <p><b>OFFLINE</b><i>NO ADS</i><i>NO MICROTRANSACTIONS</i></p>
             </div>
             <div class="releaseMetrics">
-              <div data-tone="frame"><b id="contentFrameCount">10</b><span>PLAYABLE FRAMES</span><small>Distinct starting weapons and traits</small></div>
-              <div data-tone="weapon"><b id="contentWeaponCount">11</b><span>WEAPON SYSTEMS</span><small>Every system has an evolution</small></div>
-              <div data-tone="enemy"><b id="contentEnemyCount">13</b><span>HOSTILE FORMS</span><small>Plus sovereign encounters</small></div>
-              <div data-tone="link"><b id="contentLinkCount">9</b><span>RESONANCE LINKS</span><small>Build interactions to discover</small></div>
-              <div data-tone="route"><b id="contentSectorCount">4</b><span>SECTORS</span><small>12-minute signal, then endless ascent</small></div>
+              <div data-tone="frame" title="Ten frames with different weapons and traits"><b id="contentFrameCount">10</b><span>UNIQUE FRAMES</span></div>
+              <div data-tone="weapon" title="Every weapon system can evolve"><b id="contentWeaponCount">11</b><span>EVOLVING WEAPONS</span></div>
+              <div data-tone="enemy" title="Thirteen enemy roles plus boss encounters"><b id="contentEnemyCount">13</b><span>ENEMY TYPES</span></div>
+              <div data-tone="link" title="Discover interactions between compatible upgrades"><b id="contentLinkCount">9</b><span>BUILD LINKS</span></div>
+              <div data-tone="route" title="Four sectors followed by an endless Ascension mode"><b id="contentSectorCount">4</b><span>SECTORS + ENDLESS</span></div>
             </div>
           </section>
         </div>
@@ -176,10 +176,10 @@
     <div class="panel levelPanel">
       <div class="headerSplit"><div><h1>LEVEL UP</h1><h2>CHOOSE ONE UPGRADE</h2></div><div id="levelMeta" class="tag"></div></div>
       <div class="choiceGuide" aria-label="Upgrade choice guide">
-        <span class="guideAction"><b>1–3</b><em>PICK A CARD</em><small>The effect applies now</small></span>
-        <span data-tone="weapon"><svg class="uiIcon" aria-hidden="true"><use href="#icon-weapon"/></svg><em>CYAN</em><small>Weapon</small></span>
-        <span data-tone="module"><svg class="uiIcon" aria-hidden="true"><use href="#icon-trait"/></svg><em>VIOLET</em><small>Build module</small></span>
-        <span data-tone="breakpoint"><svg class="uiIcon" aria-hidden="true"><use href="#icon-output"/></svg><em>BRIGHT</em><small>Power spike</small></span>
+        <span class="guideAction"><b>1–3</b><em>PICK ONE</em><small>The large box shows exactly what changes</small></span>
+        <span data-tone="weapon"><svg class="uiIcon" aria-hidden="true"><use href="#icon-weapon"/></svg><em>WEAPON</em><small>Adds or upgrades firepower</small></span>
+        <span data-tone="module"><svg class="uiIcon" aria-hidden="true"><use href="#icon-trait"/></svg><em>MODULE</em><small>Improves the whole build</small></span>
+        <span data-tone="breakpoint"><svg class="uiIcon" aria-hidden="true"><use href="#icon-output"/></svg><em>POWER SPIKE</em><small>Major upgrade</small></span>
       </div>
       <div id="buildCompass" class="buildCompass" aria-live="polite"></div>
       <div id="choices" class="choiceGrid"></div>
@@ -257,7 +257,7 @@
 
   <section id="loadoutScreen" class="overlay">
     <div class="panel widePanel intelPanel">
-      <div class="headerSplit"><div><h1>RUN INTEL</h1><h2>ACTIVE BUILD / MISSION TELEMETRY</h2></div><div id="loadoutSummary" class="tag"></div></div>
+      <div class="headerSplit"><div><h1>RUN INTEL</h1><h2>WHAT YOU HAVE · WHAT IT DOES · WHAT COMES NEXT</h2></div><div id="loadoutSummary" class="tag"></div></div>
       <div id="loadoutMetrics" class="intelMetrics"></div>
       <div id="loadoutContent" class="intelLayout"></div>
       <div class="intelHelp">TAB / B — OPEN INTEL &nbsp;·&nbsp; ESC — RETURN TO PAUSE</div>

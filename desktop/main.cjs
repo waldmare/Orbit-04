@@ -203,6 +203,7 @@ async function captureMenu(win) {
     toMenu();
     renderMenu();
     void document.body.offsetHeight;
+    const infoText=[...document.querySelectorAll('#titleScreen .shipCardBadge,#titleScreen .shipCardRole,#titleScreen .shipCardStatus,#titleScreen .releaseMetrics span,#titleScreen .optionDetail,#titleScreen .frameLoadout small,#titleScreen .launchSummary span,#titleScreen .launchSummary i,#titleScreen .recommendedSetupBtn')].filter(node=>node.getBoundingClientRect().width>0&&node.getBoundingClientRect().height>0);
     return {
       version:GAME_VERSION,
       selected:save.selected,
@@ -212,11 +213,13 @@ async function captureMenu(win) {
       visibleScreens:screens.filter(id => $(id).classList.contains('show')),
       panelClientHeight:$('titleScreen').querySelector('.titlePanel').clientHeight,
       panelScrollHeight:$('titleScreen').querySelector('.titlePanel').scrollHeight,
+      infoTextCount:infoText.length,
+      minimumInfoFont:Math.min(...infoText.map(node=>parseFloat(getComputedStyle(node).fontSize))),
       horizontalOverflow:$('titleScreen').querySelector('.titlePanel').scrollWidth>$('titleScreen').querySelector('.titlePanel').clientWidth,
       verticalOverflow:$('titleScreen').querySelector('.titlePanel').scrollHeight>$('titleScreen').querySelector('.titlePanel').clientHeight
     };
   })()`);
-  if (setup.frames !== 10 || setup.contentMetrics !== 5 || !setup.ownershipPromise.includes('NO MICROTRANSACTIONS') || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'titleScreen' || setup.horizontalOverflow || setup.verticalOverflow) {
+  if (setup.frames !== 10 || setup.contentMetrics !== 5 || !setup.ownershipPromise.includes('NO MICROTRANSACTIONS') || setup.visibleScreens.length !== 1 || setup.visibleScreens[0] !== 'titleScreen' || setup.infoTextCount < 30 || setup.minimumInfoFont < 8.6 || setup.horizontalOverflow || setup.verticalOverflow) {
     throw new Error(`launch hangar not ready: ${JSON.stringify(setup)}`);
   }
   await win.capturePage(undefined, { stayHidden: true });

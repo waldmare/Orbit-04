@@ -25,7 +25,7 @@ assert.ok(!pkg.dependencies.three,'the pinned offline Three.js runtime must not 
 assert.match(html,/<html lang="en">/,'document language metadata is not English');
 assert.match(html,/last human vessel crossing an alien-conquered universe/,'runtime metadata is inaccurate');
 assert.match(html,/vendor\/phaser\.min\.js[\s\S]*three-engine-loader\.js[\s\S]*visual-engine\.js[\s\S]*game\.js/,'Three.js presentation and compatibility scripts are not active or ordered correctly');
-assert.ok(html.includes('choiceGuide')&&html.includes('The effect applies now')&&html.includes('COMBAT READABILITY'),'guided upgrade legend or settings groups are missing');
+assert.ok(html.includes('choiceGuide')&&html.includes('The large box shows exactly what changes')&&html.includes('COMBAT READABILITY'),'guided upgrade legend or settings groups are missing');
 assert.match(html,/id="gameThree"[\s\S]*Three\.js presentation layer/,'active Three.js canvas is missing');
 assert.doesNotMatch(html,/game-3d\.mjs|styles-3d\.css/,'third-person build is still active');
 assert.doesNotMatch(docs,/visual-direction-concept|ASSET_PROMPTS|ImageGen|OpenAI/,'documentation references non-runtime concept material');
