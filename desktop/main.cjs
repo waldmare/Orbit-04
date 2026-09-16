@@ -501,7 +501,7 @@ function createWindow() {
         await delay(2300);
         const audio = await win.webContents.executeJavaScript(`AUDIO.status()`);
         safeConsole('log', `[audio-smoke] ${JSON.stringify(audio)}`);
-        if (!audio.enabled || audio.locked || audio.muted || audio.managerVolume < .9 || audio.sampleContext !== 'running' || audio.musicPlaying < 1 || !audio.ambiencePlaying || audio.mix !== 'STUDIO' || !audio.library.startsWith('CURATED CC0') || audio.spatialVoices < 1 || !audio.confirmed || audio.attempts < 5) process.exitCode = 1;
+        if (!audio.enabled || audio.locked || audio.muted || audio.managerVolume < .9 || audio.sampleContext !== 'running' || audio.musicPlaying < 1 || audio.musicPlaying > 2 || audio.musicScene !== 'EXPLORE' || !['exploration','exploration_alt'].includes(audio.primaryMusicKey) || audio.activeMusicKeys.length < 1 || audio.activeMusicKeys.length > 2 || !audio.ambiencePlaying || audio.mix !== 'STUDIO' || !audio.library.startsWith('CURATED CC0') || audio.spatialVoices < 1 || !audio.confirmed || audio.attempts < 5) process.exitCode = 1;
         return app.exit(process.exitCode || 0);
       }
       if (smokeMode && rendererState.boot === 'ok') {
