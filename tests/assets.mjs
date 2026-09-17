@@ -77,7 +77,7 @@ for (const relative of referencedAssets) {
 }
 
 const transparentEntityAssets = [
-  'assets/visuals/player-last-ark-v1.png',
+  'assets/visuals/player-last-ark-v2.png',
   'assets/visuals/enemy-void-larva-v1.png',
   'assets/visuals/enemy-ossuary-v1.png',
   'assets/visuals/enemy-witness-v1.png',
