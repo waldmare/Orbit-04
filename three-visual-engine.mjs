@@ -82,6 +82,19 @@ function burstTexture(){
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=texture.magFilter=THREE.LinearFilter;texture.generateMipmaps=false;texture.name='radial-impact-burst';return texture;
 }
 
+function planetTexture(style=0){
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const context=canvas.getContext('2d'),palettes=[
+    {base:'#101821',mid:'#324650',light:'#72979a',rim:'rgba(53,231,255,.62)',band:'rgba(80,168,171,.15)'},
+    {base:'#15121d',mid:'#40364d',light:'#81738a',rim:'rgba(159,124,255,.56)',band:'rgba(255,61,145,.12)'},
+    {base:'#111918',mid:'#344641',light:'#7c8d82',rim:'rgba(98,234,213,.54)',band:'rgba(114,184,158,.13)'}
+  ],palette=palettes[style%palettes.length],cx=256,cy=256,r=174;
+  const halo=context.createRadialGradient(cx,cy,r*.72,cx,cy,r*1.34);halo.addColorStop(0,palette.rim.replace(/\.[0-9]+\)$/,'.16)'));halo.addColorStop(.58,palette.rim.replace(/\.[0-9]+\)$/,'.055)'));halo.addColorStop(1,'rgba(0,0,0,0)');context.fillStyle=halo;context.fillRect(0,0,512,512);
+  context.save();context.beginPath();context.arc(cx,cy,r,0,TAU);context.clip();const body=context.createRadialGradient(cx-r*.42,cy-r*.46,r*.06,cx+r*.20,cy+r*.18,r*1.12);body.addColorStop(0,palette.light);body.addColorStop(.28,palette.mid);body.addColorStop(.70,palette.base);body.addColorStop(1,'#03050a');context.fillStyle=body;context.fillRect(cx-r,cy-r,r*2,r*2);
+  context.globalCompositeOperation='screen';for(let band=0;band<7;band++){const y=cy-r*.62+band*r*.21+Math.sin(style*2.1+band)*10;context.strokeStyle=palette.band;context.lineWidth=7+(band%3)*5;context.beginPath();context.ellipse(cx-r*.06,y,r*1.04,r*(.14+(band%2)*.035),0,0,TAU);context.stroke()}
+  for(let crater=0;crater<16;crater++){const a=(crater*2.399+style*.9)%TAU,rr=r*(.16+((crater*37)%67)/100),x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr*.78,size=3+(crater%5)*2;context.fillStyle=crater%3?'rgba(0,0,0,.13)':'rgba(255,255,255,.045)';context.beginPath();context.arc(x,y,size,0,TAU);context.fill()}
+  context.restore();context.strokeStyle=palette.rim;context.lineWidth=3;context.beginPath();context.arc(cx,cy,r+2,0,TAU);context.stroke();const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;texture.generateMipmaps=true;texture.name=`procedural-planet-${style}`;return texture;
+}
+
 function pickupIconTexture(kind){
   const canvas=document.createElement('canvas');canvas.width=canvas.height=128;const context=canvas.getContext('2d');context.translate(64,64);context.lineCap='round';context.lineJoin='round';
   const path=points=>{context.beginPath();context.moveTo(points[0][0],points[0][1]);for(let index=1;index<points.length;index++)context.lineTo(points[index][0],points[index][1]);context.closePath()};
@@ -148,7 +161,7 @@ export class OrbitThreeVisualEngine{
     this.renderer.setClearColor(0x000000,0);this.maxAnisotropy=this.renderer.capabilities.getMaxAnisotropy();this.lastQuality='HIGH';this.renderResolution={width:0,height:0,pixelRatio:0};
     this.renderer.outputColorSpace=THREE.SRGBColorSpace;this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.08;
     this.scene=new THREE.Scene();this.camera=new THREE.OrthographicCamera(0,width,0,height,.1,300);this.camera.position.set(0,0,100);this.camera.lookAt(0,0,0);
-    this.loader=new THREE.TextureLoader();this.glowTexture=radialTexture();this.shadowTexture=shadowTexture();this.engineTexture=engineTexture();this.projectileTexture=projectileTexture();this.burstTexture=burstTexture();this.textures={
+    this.loader=new THREE.TextureLoader();this.glowTexture=radialTexture();this.shadowTexture=shadowTexture();this.engineTexture=engineTexture();this.projectileTexture=projectileTexture();this.burstTexture=burstTexture();this.planetTextures=[0,1,2].map(planetTexture);this.textures={
       player:this.load('assets/visuals/player-last-ark-v2.png'),muzzle:this.load('assets/visuals/weapon-muzzle-premium-v1.png'),projectileSource:this.load('assets/visuals/weapon-projectile-premium-v1.png'),projectile:this.projectileTexture
     };
     this.pickupTextures={};for(const kind of ['orb','cache','repair','flux','salvage','fracture','relic','jammer'])this.pickupTextures[kind]=pickupIconTexture(kind);
@@ -157,7 +170,7 @@ export class OrbitThreeVisualEngine{
     this.world=new THREE.Group();this.scene.add(this.world);
     this.playerShadow=this.sprite(this.shadowTexture);this.playerGlow=this.sprite(this.glowTexture,THREE.AdditiveBlending);this.playerReadabilityRing=this.mesh(this.flatMaterial('#35efff',THREE.AdditiveBlending),new THREE.RingGeometry(.90,1,64));this.playerTrail=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.playerEngineLeft=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.playerEngineRight=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.playerAttitudeLeft=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.playerAttitudeRight=this.sprite(this.engineTexture,THREE.AdditiveBlending);this.playerRim=this.sprite(this.textures.player,THREE.AdditiveBlending);this.player=this.sprite(this.textures.player);this.playerCore=this.sprite(this.glowTexture,THREE.AdditiveBlending);this.targetLock=this.mesh(this.flatMaterial('#8de9ff',THREE.AdditiveBlending),new THREE.RingGeometry(.76,1,4,1,Math.PI/4));this.targetLockSweep=this.mesh(this.flatMaterial('#8de9ff',THREE.AdditiveBlending),new THREE.RingGeometry(.91,1,64,1,0,Math.PI*.72));this.world.add(this.playerShadow,this.playerTrail,this.playerEngineLeft,this.playerEngineRight,this.playerAttitudeLeft,this.playerAttitudeRight,this.playerGlow,this.playerReadabilityRing,this.playerRim,this.player,this.playerCore,this.targetLock,this.targetLockSweep);
     this.playerMotion={ready:false,x:width*.5,y:height*.5,angle:-Math.PI/2,bank:0,strafe:0,surge:0,thrust:0,velocity:0,engineBias:0};
-    this.pools={enemies:[],enemyShadows:[],enemySilhouettes:[],enemyRims:[],enemyWakes:[],enemyGlows:[],enemyRings:[],enemyMarkers:[],allies:[],allyTrails:[],projectileTrails:[],bulletSilhouettes:[],bullets:[],hostileProjectileTrails:[],hostileBulletOutlines:[],hostileBulletGlows:[],hostileBullets:[],loot:[],particles:[],muzzles:[],impactFlashes:[],impactGlows:[],impactBursts:[],impactRings:[],impactSparks:[],rings:[],beams:[],bars:[],echoes:[],orbitals:[],mines:[],floaters:[],deathGlows:[],deathBursts:[],deathRings:[]};
+    this.pools={enemies:[],enemyShadows:[],enemySilhouettes:[],enemyRims:[],enemyWakes:[],enemyGlows:[],enemyRings:[],enemyMarkers:[],planets:[],allies:[],allyTrails:[],projectileTrails:[],bulletSilhouettes:[],bullets:[],hostileProjectileTrails:[],hostileBulletOutlines:[],hostileBulletGlows:[],hostileBullets:[],loot:[],particles:[],muzzles:[],impactFlashes:[],impactGlows:[],impactBursts:[],impactRings:[],impactSparks:[],rings:[],beams:[],bars:[],echoes:[],orbitals:[],mines:[],floaters:[],deathGlows:[],deathBursts:[],deathRings:[]};
     this.lastFrame=performance.now();this.canvas.dataset.engine='three-r185-topdown';this.canvas.dataset.pipeline='aces-topdown-v3-depth-graded';
     this.syncRendererResolution('HIGH',true);
     this.resizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(()=>this.syncRendererResolution(this.lastQuality,true)):null;this.resizeObserver?.observe(this.canvas);
@@ -193,7 +206,7 @@ export class OrbitThreeVisualEngine{
     if(!gameState||gameState.mode!=='run'){this.syncMenu(settings);this.renderer.render(this.scene,this.camera);return}
     const state=gameState,quality=settings.graphics||'HIGH',glow=settings.glow!=='OFF';
     const shake=(state.shake||0)*this.motionScale,moveLead=state.p.moving?2.4*this.motionScale:0;this.world.position.set(Math.sin(this.time*37)*shake*.09-(state.p._lastMoveX||0)*moveLead,Math.cos(this.time*29)*shake*.07-(state.p._lastMoveY||0)*moveLead,0);
-    this.syncPlayer(state,settings,glow);this.syncEnemies(state,settings,glow);this.syncTargetLock(state,settings);this.syncAllies(state);this.syncProjectiles(state,settings);this.syncLoot(state,quality);this.syncOrbitals(state);this.syncWorldSignals(state,quality);this.syncTransientFx(state,quality,glow,settings);this.syncDeathFx(state,quality,glow);this.syncFloaters(state);this.syncHealthBars(state,settings);
+    this.syncWorldScenery(state,settings,quality);this.syncPlayer(state,settings,glow);this.syncEnemies(state,settings,glow);this.syncTargetLock(state,settings);this.syncAllies(state);this.syncProjectiles(state,settings);this.syncLoot(state,quality);this.syncOrbitals(state);this.syncWorldSignals(state,quality);this.syncTransientFx(state,quality,glow,settings);this.syncDeathFx(state,quality,glow);this.syncFloaters(state);this.syncHealthBars(state,settings);
     this.renderer.toneMappingExposure=quality==='ULTRA'?1.22:quality==='LOW'?1.04:1.15;this.renderer.render(this.scene,this.camera);
   }
 
@@ -261,8 +274,13 @@ export class OrbitThreeVisualEngine{
     const mines=state.mines||[];this.use(this.pools.mines,mines.length,()=>this.mesh(this.flatMaterial('#9b7ba2',THREE.AdditiveBlending),new THREE.RingGeometry(.42,1,4)),(mesh,i)=>{const mine=mines[i],pulse=.9+.1*Math.sin(this.time*5+i);mesh.position.set(mine.x,mine.y,7);mesh.rotation.z=this.time*.7+i;mesh.scale.set(12*pulse,12*pulse,1);mesh.material.opacity=.78});
   }
 
+  syncWorldScenery(state,settings,quality){
+    const planets=settings.background==='OFF'?[]:(state.worldSites||[]).filter(site=>site.active&&site.kind==='planet'),opacity=settings.background==='SIMPLE'?.31:quality==='LOW'?.36:.58;
+    this.use(this.pools.planets,planets.length,()=>this.sprite(this.planetTextures[0]),(sprite,i)=>{const site=planets[i],texture=this.planetTextures[Math.floor(site.seed*this.planetTextures.length)%this.planetTextures.length],drift=Math.sin(this.time*.14+site.seed*TAU)*2.4,size=site.size*(1+.012*Math.sin(this.time*.23+site.seed*9));if(sprite.material.map!==texture){sprite.material.map=texture;sprite.material.needsUpdate=true}sprite.userData.sceneryKind='planet';this.placeSprite(sprite,site.x+drift,site.y-drift*.45,size,size,this.time*.004*(site.seed>.5?1:-1),1.35,opacity,'#ffffff')});
+  }
+
   syncWorldSignals(state,quality){
-    const rings=[];for(const node of state.worldNodes||[]){if(node.active&&!node.collected)rings.push({x:node.x,y:node.y,r:node.r+12+Math.sin(this.time*2+node.pulse)*4,color:node.color,alpha:node.type==='fracture'?.68:.42})}for(const enemy of state.enemies||[]){if(!enemy.dead&&enemy.type==='warden')rings.push({x:enemy.x,y:enemy.y,r:118,color:'#55d1ae',alpha:.16})}for(const rift of state.rifts||[])rings.push({x:rift.x,y:rift.y,r:rift.r*(.75+.04*Math.sin(this.time*2)),color:'#8c72a3',alpha:.24});for(const site of state.worldSites||[]){if(site.active&&quality!=='LOW')rings.push({x:site.x,y:site.y,r:site.size*.55,color:site.kind==='asteroids'?'#66706a':'#778886',alpha:.08})}
+    const rings=[];for(const node of state.worldNodes||[]){if(node.active&&!node.collected)rings.push({x:node.x,y:node.y,r:node.r+12+Math.sin(this.time*2+node.pulse)*4,color:node.color,alpha:node.type==='fracture'?.68:.42})}for(const enemy of state.enemies||[]){if(!enemy.dead&&enemy.type==='warden')rings.push({x:enemy.x,y:enemy.y,r:118,color:'#55d1ae',alpha:.16})}for(const rift of state.rifts||[])rings.push({x:rift.x,y:rift.y,r:rift.r*(.75+.04*Math.sin(this.time*2)),color:'#8c72a3',alpha:.24});for(const site of state.worldSites||[]){if(site.active&&site.kind!=='planet'&&quality!=='LOW')rings.push({x:site.x,y:site.y,r:site.size*.55,color:site.kind==='asteroids'?'#66706a':'#778886',alpha:.08})}
     this.use(this.pools.rings,rings.length,()=>this.mesh(this.flatMaterial(),new THREE.RingGeometry(.94,1,64)),(mesh,i)=>{const ring=rings[i];mesh.position.set(ring.x,ring.y,2);mesh.scale.set(ring.r,ring.r,1);mesh.material.color.set(ring.color);mesh.material.opacity=ring.alpha});
   }
 
@@ -302,7 +320,7 @@ export class OrbitThreeVisualEngine{
     this.use(this.pools.bars,bars.length,()=>this.mesh(this.flatMaterial()),(mesh,i)=>{const bar=bars[i];mesh.position.set(bar.x,bar.y,10);mesh.scale.set(bar.width,bar.height,1);mesh.material.color.set(bar.color);mesh.material.opacity=bar.alpha});
   }
 
-  destroy(){this.resizeObserver?.disconnect();this.renderer.dispose();for(const texture of Object.values(this.textures))texture.dispose();for(const texture of Object.values(this.pickupTextures))texture.dispose();for(const texture of Object.values(this.enemyRoleTextures))texture.dispose();this.glowTexture.dispose();this.shadowTexture.dispose();this.engineTexture.dispose()}
+  destroy(){this.resizeObserver?.disconnect();this.renderer.dispose();for(const texture of Object.values(this.textures))texture.dispose();for(const texture of Object.values(this.pickupTextures))texture.dispose();for(const texture of Object.values(this.enemyRoleTextures))texture.dispose();for(const texture of this.planetTextures)texture.dispose();this.glowTexture.dispose();this.shadowTexture.dispose();this.engineTexture.dispose()}
 }
 
 export const rendererName=`Three.js r${THREE.REVISION} top-down`;

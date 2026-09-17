@@ -102,6 +102,10 @@ async function configureCaptureScene(win, preset) {
     state.nextSecret=999;
     state.p.x=480;
     state.p.y=300;
+    state.worldSites.push(
+      {key:'capture:planet-a',kind:'planet',wx:state.worldX+495,wy:state.worldY+42,x:495,y:42,size:208,seed:.24,active:true},
+      {key:'capture:planet-b',kind:'planet',wx:state.worldX+938,wy:state.worldY+408,x:938,y:408,size:184,seed:.78,active:true}
+    );
     for(const weapon of ['missile','beam','drone']){
       if(!state.weapons[weapon])addWeapon(weapon);
       state.weapons[weapon].level=Math.min(6,Math.max(2,Math.floor(preset.level/3)));
@@ -163,6 +167,7 @@ async function configureCaptureScene(win, preset) {
         renderHeight:Number(document.getElementById('gameThree').dataset.renderHeight||0),
         pixelRatio:Number(document.getElementById('gameThree').dataset.pixelRatio||0),
         objects:visualEngine?.world?.children?.length||0,
+        planetCount:(visualEngine?.pools?.planets||[]).filter(item=>item.visible).length,
         playerVisible:visualEngine?.player?.visible===true,
         playerPosition:visualEngine?.player?.position?.toArray?.()||[],
         pickupKinds:[...new Set((visualEngine?.pools?.loot||[]).filter(item=>item.visible).map(item=>item.userData?.pickupKind).filter(Boolean))]
@@ -183,6 +188,9 @@ async function captureScene(win, preset, destination, expectedSize) {
   }
   if (!['repair','fracture','jammer'].every(kind => setup.presentation.pickupKinds.includes(kind))) {
     throw new Error(`capture does not expose semantic pickup icons: ${JSON.stringify(setup.presentation.pickupKinds)}`);
+  }
+  if (setup.presentation.planetCount < 2) {
+    throw new Error(`capture does not expose planetary scenery: ${JSON.stringify(setup.presentation)}`);
   }
   await delay(700);
   // Keeping the hidden window paintable avoids a stale pre-game compositor frame on Windows.

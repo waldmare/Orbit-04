@@ -100,22 +100,24 @@
           </div>
           <div class="rosterHeading"><h2>FRAME BAY</h2><span id="frameRosterCount"></span></div>
           <div id="shipGrid" class="shipGrid"></div>
-          <section class="releaseOverview" aria-labelledby="releaseOverviewTitle">
-            <div class="releaseOverviewHeading">
-              <div><span>CONTENT AT A GLANCE</span><h2 id="releaseOverviewTitle">BUILD, SURVIVE, EVOLVE</h2></div>
-              <p><b>OFFLINE</b><i>NO ADS</i><i>NO MICROTRANSACTIONS</i></p>
+          <details class="releaseOverview" aria-labelledby="releaseOverviewTitle">
+            <summary><span>GAME CONTENT</span><b id="releaseOverviewTitle">OPTIONAL OVERVIEW</b><i>EXPAND</i></summary>
+            <div class="releaseOverviewBody">
+              <div class="releaseOverviewHeading">
+                <div><span>CONTENT AT A GLANCE</span><h2>BUILD, SURVIVE, EVOLVE</h2></div>
+                <p><b>OFFLINE</b><i>NO ADS</i><i>NO MICROTRANSACTIONS</i></p>
+              </div>
+              <div class="releaseMetrics">
+                <div data-tone="frame" title="Ten frames with different weapons and traits"><b id="contentFrameCount">10</b><span>UNIQUE FRAMES</span></div>
+                <div data-tone="weapon" title="Every weapon system can evolve"><b id="contentWeaponCount">11</b><span>EVOLVING WEAPONS</span></div>
+                <div data-tone="enemy" title="Thirteen enemy roles plus boss encounters"><b id="contentEnemyCount">13</b><span>ENEMY TYPES</span></div>
+                <div data-tone="link" title="Discover interactions between compatible upgrades"><b id="contentLinkCount">9</b><span>BUILD LINKS</span></div>
+                <div data-tone="route" title="Four sectors followed by an endless Ascension mode"><b id="contentSectorCount">4</b><span>SECTORS + ENDLESS</span></div>
+              </div>
             </div>
-            <div class="releaseMetrics">
-              <div data-tone="frame" title="Ten frames with different weapons and traits"><b id="contentFrameCount">10</b><span>UNIQUE FRAMES</span></div>
-              <div data-tone="weapon" title="Every weapon system can evolve"><b id="contentWeaponCount">11</b><span>EVOLVING WEAPONS</span></div>
-              <div data-tone="enemy" title="Thirteen enemy roles plus boss encounters"><b id="contentEnemyCount">13</b><span>ENEMY TYPES</span></div>
-              <div data-tone="link" title="Discover interactions between compatible upgrades"><b id="contentLinkCount">9</b><span>BUILD LINKS</span></div>
-              <div data-tone="route" title="Four sectors followed by an endless Ascension mode"><b id="contentSectorCount">4</b><span>SECTORS + ENDLESS</span></div>
-            </div>
-          </section>
+          </details>
         </div>
         <div class="sideMenu">
-          <div class="menuFlow" aria-label="Deployment steps"><span><b>1</b> PICK SHIP</span><span><b>2</b> SET RUN</span><span><b>3</b> SURVIVE</span></div>
           <div class="sectionHeading"><div><span>DEPLOYMENT</span><h2>MISSION SETUP</h2></div><button id="recommendedSetupBtn" class="recommendedSetupBtn" title="Restore the balanced first-run route">RECOMMENDED SETUP</button></div>
           <div class="runOption difficultyOption">
             <div class="runOptionHeader"><span><svg class="uiIcon optionIcon"><use href="#icon-threat"/></svg> DIFFICULTY</span><i>THREAT</i></div>
@@ -146,10 +148,12 @@
             <button id="startBtn" class="primary" aria-keyshortcuts="Enter"><svg class="uiIcon"><use href="#icon-launch"/></svg><span>START RUN</span><kbd>ENTER</kbd></button>
             <button id="researchBtn"><svg class="uiIcon"><use href="#icon-research"/></svg><span>RESEARCH</span></button>
             <button id="operationsBtn"><svg class="uiIcon"><use href="#icon-operations"/></svg><span>OPERATIONS</span></button>
-            <button id="achievementsBtn"><svg class="uiIcon"><use href="#icon-achievements"/></svg><span>ACHIEVEMENTS</span></button>
             <button id="codexBtn"><svg class="uiIcon"><use href="#icon-codex"/></svg><span>CODEX / STATS</span></button>
             <button id="settingsBtn"><svg class="uiIcon"><use href="#icon-settings"/></svg><span>SETTINGS</span></button>
-            <button id="briefingMenuBtn"><svg class="uiIcon"><use href="#icon-codex"/></svg><span>HOW TO PLAY</span></button>
+            <details class="secondaryActions">
+              <summary>MORE OPTIONS</summary>
+              <div><button id="achievementsBtn"><svg class="uiIcon"><use href="#icon-achievements"/></svg><span>ACHIEVEMENTS</span></button><button id="briefingMenuBtn"><svg class="uiIcon"><use href="#icon-codex"/></svg><span>HOW TO PLAY</span></button></div>
+            </details>
             <button id="supportBtn" class="hidden">SUPPORT DEVELOPMENT</button>
           </div>
         </div>
