@@ -8,6 +8,7 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
 const smokeMode = process.argv.includes('--orbit-smoke');
 const audioSmokeMode = process.argv.includes('--orbit-audio-smoke');
+const musicAuditMode = process.argv.includes('--orbit-music-audit');
 const runtimeCaptureMode = process.argv.includes('--orbit-capture');
 const menuCaptureMode = process.argv.includes('--orbit-menu-capture');
 const briefingCaptureMode = process.argv.includes('--orbit-briefing-capture');
@@ -16,7 +17,7 @@ const settingsCaptureMode = process.argv.includes('--orbit-settings-capture');
 const steamCaptureMode = process.argv.includes('--orbit-steam-capture');
 const layoutSmokeMode = process.argv.includes('--orbit-layout-smoke');
 const captureMode = runtimeCaptureMode || menuCaptureMode || briefingCaptureMode || levelCaptureMode || settingsCaptureMode || steamCaptureMode;
-const automatedMode = smokeMode || audioSmokeMode || layoutSmokeMode || captureMode;
+const automatedMode = smokeMode || audioSmokeMode || musicAuditMode || layoutSmokeMode || captureMode;
 const windowedMode = process.argv.includes('--windowed');
 const entryFile = path.join(__dirname, '..', 'index.html');
 const iconFile = path.join(__dirname, '..', 'assets', 'branding', 'orbit-app-icon.ico');
@@ -496,12 +497,30 @@ function createWindow() {
         await runLayoutSmoke(win);
         return app.exit(0);
       }
+      if (musicAuditMode && rendererState.boot === 'ok') {
+        const audit = await win.webContents.executeJavaScript(`(() => {
+          const rows=[];
+          for(const id of Object.keys(ENGINE_ASSETS.audio).filter(key=>key.startsWith('music_'))){
+            const buffer=phaserScene?.cache?.audio?.get('audio-'+id);
+            if(!buffer?.getChannelData){rows.push({id,error:'decoded buffer unavailable'});continue}
+            const step=32,windowFrames=Math.max(step,Math.floor(buffer.sampleRate*.4)),windows=[];let peak=0;
+            for(let start=0;start<buffer.length;start+=windowFrames){let energy=0,count=0;for(let frame=start;frame<Math.min(buffer.length,start+windowFrames);frame+=step)for(let channel=0;channel<buffer.numberOfChannels;channel++){const value=buffer.getChannelData(channel)[frame]||0;energy+=value*value;peak=Math.max(peak,Math.abs(value));count++}const mean=energy/Math.max(1,count),db=10*Math.log10(Math.max(1e-12,mean));if(db>-48)windows.push(mean)}
+            const gatedEnergy=windows.reduce((sum,value)=>sum+value,0)/Math.max(1,windows.length),loudnessDb=10*Math.log10(Math.max(1e-12,gatedEnergy));rows.push({id,duration:Number(buffer.duration.toFixed(2)),loudnessDb:Number(loudnessDb.toFixed(2)),peakDb:Number((20*Math.log10(Math.max(1e-12,peak))).toFixed(2))});
+          }
+          const measured=rows.filter(row=>Number.isFinite(row.loudnessDb)).map(row=>row.loudnessDb).sort((a,b)=>a-b),median=measured.length?measured[Math.floor(measured.length/2)]:-18;
+          for(const row of rows)if(Number.isFinite(row.loudnessDb)){row.trimDb=Number(Math.max(-5,Math.min(5,median-row.loudnessDb)).toFixed(2));row.gain=Number(Math.pow(10,row.trimDb/20).toFixed(3))}
+          return{medianDb:Number(median.toFixed(2)),tracks:rows};
+        })()`);
+        safeConsole('log', `[music-audit] ${JSON.stringify(audit)}`);
+        if (audit.tracks.length !== 9 || audit.tracks.some(track => track.error || !Number.isFinite(track.gain))) process.exitCode = 1;
+        return app.exit(process.exitCode || 0);
+      }
       if (audioSmokeMode && rendererState.boot === 'ok') {
         await win.webContents.executeJavaScript(`(() => {save.briefingSeen=true;save.settings.audio='ON';save.settings.audioMix='BALANCED';save.settings.sfxVolume='100%';save.settings.musicVolume='100%';AUDIO.syncEnabled();startRun();AUDIO.testOutput();AUDIO.sfx('enemyShot',0,{x:state.p.x+320,y:state.p.y});return true})()`);
         await delay(2300);
         const audio = await win.webContents.executeJavaScript(`AUDIO.status()`);
         safeConsole('log', `[audio-smoke] ${JSON.stringify(audio)}`);
-        if (!audio.enabled || audio.locked || audio.muted || audio.managerVolume < .9 || audio.sampleContext !== 'running' || audio.musicPlaying < 1 || audio.musicPlaying > 2 || audio.musicScene !== 'EXPLORE' || !['exploration','exploration_alt'].includes(audio.primaryMusicKey) || audio.activeMusicKeys.length < 1 || audio.activeMusicKeys.length > 2 || !audio.ambiencePlaying || audio.mix !== 'STUDIO' || !audio.library.startsWith('CURATED CC0') || audio.spatialVoices < 1 || !audio.confirmed || audio.attempts < 5) process.exitCode = 1;
+        if (!audio.enabled || audio.locked || audio.muted || audio.managerVolume < .9 || audio.sampleContext !== 'running' || audio.musicPlaying < 1 || audio.musicPlaying > 2 || audio.musicScene !== 'EXPLORE' || !['exploration','exploration_alt'].includes(audio.primaryMusicKey) || audio.musicTrim !== 1.051 || audio.activeMusicKeys.length < 1 || audio.activeMusicKeys.length > 2 || !audio.ambiencePlaying || audio.mix !== 'STUDIO' || !audio.library.startsWith('CURATED CC0') || audio.spatialVoices < 1 || !audio.confirmed || audio.attempts < 5) process.exitCode = 1;
         return app.exit(process.exitCode || 0);
       }
       if (smokeMode && rendererState.boot === 'ok') {
