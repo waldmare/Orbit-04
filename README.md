@@ -38,7 +38,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - optional Ascension mode after completing the base run
 - persistent credits, research upgrades, frame mastery, operations, achievements, and Codex data
 - projectile grazing, kill chains, Signal Rush, Overdrive, caches, anomalies, and hostile conversion
-- authored 36-second encounter rhythms that alternate buildup, density surges, and short release windows instead of maintaining flat pressure
+- authored 36-second encounter rhythms that alternate buildup, evolving contact formations, density surges, and short release windows with faster salvage attraction instead of maintaining flat pressure
 - Phase Riposte rewards a dash through at least three hostile shots with faster dash recovery and a brief weapon-rate boost
 - earned Ark Reliquaries from boss encounters, with paced one-, three-, or five-reward reveals, a first-open guarantee, dry-streak protection, and an instant-reveal control
 - continuous directional travel with camera-safe world scrolling and active-encounter preservation
