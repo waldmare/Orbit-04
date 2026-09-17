@@ -56,6 +56,9 @@ for(const token of ['ENCOUNTER_FORMATIONS','encounterFormation','deploySurgeForm
 for(const token of ['--orbit-music-audit','musicAuditMode','decoded buffer unavailable','loudnessDb','trimDb','[music-audit]'])assert.ok(desktop.includes(token),`missing soundtrack calibration audit token: ${token}`);
 assert.ok(pkg.scripts['test:music']?.includes('--orbit-music-audit'),'soundtrack calibration audit script is missing');
 for(const token of ['MUSIC_BASE_GAIN=.60','MUSIC_TRACK_TRIM','exploration_alt:1.698','pressure:1.720','boss:.562','musicTrim'])assert.ok(game.includes(token),`missing measured soundtrack normalization token: ${token}`);
+for(const token of ['HANGAR_HULL_ASSET=ENGINE_ASSETS.player','runtime-player-hull','hangarHullImage','ctx.drawImage(hangarHullImage'])assert.ok(game.includes(token),`hangar preview is not using the deployed player hull: ${token}`);
+assert.doesNotMatch(game.match(/function renderShipCanvas[\s\S]*?\n}/)?.[0]||'',/SHIP_SHAPES/,'hangar preview regressed to a separate procedural ship silhouette');
+assert.ok(game.includes("player:'assets/visuals/player-last-ark-v1.png'")&&threeVisuals.includes("player:this.load('assets/visuals/player-last-ark-v1.png')"),'hangar and gameplay player hull assets diverged');
 assert.ok(pkg.scripts['release:check'].includes('test:music'),'release gate does not run the soundtrack calibration audit');
 for(const token of ["frame: false","fullscreen: launchFullscreen","before-input-event","toggleWindowMode","--windowed","safeConsole","EPIPE","orbit.log"])assert.ok(desktop.includes(token),`missing desktop fullscreen or detached-console safeguard: ${token}`);
 for(const name of ['Thomas Bernhard','Knut Hamsun','Stanisław Lem','Harry Haller','Hermann Hesse','William Faulkner','Fyodor Dostoevsky'])assert.ok(!game.includes(name),`archive data must not attribute original writing to ${name}`);

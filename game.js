@@ -437,27 +437,37 @@ const HANGAR_PALETTES={
   vector:{main:'#d6bcc6',edge:'#9c234c',accent:'#ff236d'},talon:{main:'#d5c8ae',edge:'#8d6925',accent:'#ffc13d'},
   halo:{main:'#cabfd3',edge:'#6d438c',accent:'#c167ff'},event:{main:'#c5d0cc',edge:'#13727b',accent:'#29e4f2'}
 };
+const HANGAR_HULL_ASSET=ENGINE_ASSETS.player;
+let hangarHullImage=null,hangarHullImageReady=false,hangarHullImageFailed=false,hangarHullRefreshQueued=false;
 const hangarShipPalette=id=>HANGAR_PALETTES[id]||HANGAR_PALETTES.striker;
 const uiIconMarkup=name=>`<svg class="uiIcon" aria-hidden="true"><use href="#icon-${name}"/></svg>`;
+function ensureHangarHullImage(){
+  if(hangarHullImage||hangarHullImageFailed||typeof Image!=='function')return hangarHullImageReady;
+  hangarHullImage=new Image();hangarHullImage.decoding='async';
+  hangarHullImage.addEventListener('load',()=>{hangarHullImageReady=true;if(!hangarHullRefreshQueued&&typeof requestAnimationFrame==='function'){hangarHullRefreshQueued=true;requestAnimationFrame(()=>{hangarHullRefreshQueued=false;if($('titleScreen')?.classList.contains('show'))renderMenu()})}}, {once:true});
+  hangarHullImage.addEventListener('error',()=>{hangarHullImageFailed=true;hangarHullImage=null}, {once:true});
+  hangarHullImage.src=HANGAR_HULL_ASSET;return false;
+}
 function renderShipCanvas(canvas,id,large=false,locked=false){
-  if(!canvas||typeof canvas.getContext!=='function')return false;
+  if(!canvas)return false;
+  canvas.dataset.shipAsset=HANGAR_HULL_ASSET;canvas.dataset.frame=id;canvas.dataset.previewSource='runtime-player-hull';
+  if(typeof canvas.getContext!=='function')return false;
   const ctx=canvas.getContext('2d');if(!ctx)return false;
   const cssWidth=canvas.clientWidth||(large?520:150),cssHeight=canvas.clientHeight||(large?300:78),dpr=Math.min(2,window.devicePixelRatio||1);
   canvas.width=Math.round(cssWidth*dpr);canvas.height=Math.round(cssHeight*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssWidth,cssHeight);
   const pal=hangarShipPalette(id),hex=(value,alpha)=>{const raw=value.replace('#','');const n=parseInt(raw.length===3?raw.split('').map(x=>x+x).join(''):raw,16);return `rgba(${n>>16},${n>>8&255},${n&255},${alpha})`};
-  const seed=[...id].reduce((sum,ch)=>sum+ch.charCodeAt(0),0),cx=cssWidth*(large?.48:.5),cy=cssHeight*(large?.52:.42),scale=large?5.2:1.22;
+  const seed=[...id].reduce((sum,ch)=>sum+ch.charCodeAt(0),0),cx=cssWidth*(large?.48:.5),cy=cssHeight*(large?.51:.44);
   const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,large?cssHeight*.48:cssHeight*.65);glow.addColorStop(0,hex(pal.accent,locked?.05:.18));glow.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,cssWidth,cssHeight);
   ctx.save();ctx.strokeStyle=hex(pal.accent,locked?.08:.20);ctx.lineWidth=large?1.2:.7;for(const radius of large?[62,102]:[23]){ctx.beginPath();ctx.arc(cx,cy,radius,Math.PI*.12,Math.PI*1.63);ctx.stroke()}ctx.restore();
   const stars=large?24:7;for(let i=0;i<stars;i++){const x=(seed*31+i*79)%Math.max(1,Math.floor(cssWidth)),y=(seed*17+i*47)%Math.max(1,Math.floor(cssHeight));ctx.fillStyle=i%5===0?hex(pal.accent,locked?.09:.34):'rgba(210,216,206,.16)';ctx.fillRect(x,y,i%6===0?1.5:1,i%6===0?1.5:1)}
-  const shape=SHIP_SHAPES[id]||SHIP_SHAPES.striker,points=shape.map(([x,y])=>[cx+x*scale,cy+y*scale]);
-  const path=pts=>{ctx.beginPath();pts.forEach(([x,y],index)=>index?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath()};
-  ctx.save();ctx.shadowColor=hex(pal.accent,locked?.05:.46);ctx.shadowBlur=large?28:10;path(points);ctx.fillStyle=locked?'rgba(76,79,74,.72)':hex(pal.main,.96);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle=locked?'rgba(132,136,129,.42)':hex(pal.edge,.92);ctx.lineWidth=large?1.8:1;ctx.stroke();ctx.restore();
-  const panel=(coords,fill)=>{path(coords.map(([x,y])=>[cx+x*scale,cy+y*scale]));ctx.fillStyle=fill;ctx.fill()};
-  panel([[-2,-2],[-7,-3],[-12,4],[-6,6]],locked?'rgba(90,93,87,.48)':hex(pal.edge,.62));panel([[2,-2],[7,-3],[12,4],[6,6]],locked?'rgba(90,93,87,.48)':hex(pal.edge,.62));
-  panel([[0,-13],[4,-4],[2,1],[-2,1],[-4,-4]],locked?'rgba(120,122,115,.55)':hex(pal.accent,.94));
-  ctx.strokeStyle=locked?'rgba(185,185,175,.18)':'rgba(255,255,246,.33)';ctx.lineWidth=large?1.2:.65;ctx.beginPath();ctx.moveTo(cx,cy-9*scale);ctx.lineTo(cx,cy+10*scale);ctx.stroke();
-  const flame=ctx.createLinearGradient(cx,cy+13*scale,cx,cy+24*scale);flame.addColorStop(0,locked?'rgba(110,111,105,.35)':hex(pal.main,.9));flame.addColorStop(.5,locked?'rgba(88,89,83,.22)':hex(pal.accent,.62));flame.addColorStop(1,'rgba(0,0,0,0)');panel([[0,13],[-2.6,19],[0,24],[2.6,19]],flame);
-  return true;
+  const ready=ensureHangarHullImage(),shipHeight=cssHeight*(large?.76:.72),assetAspect=ready&&hangarHullImage.naturalHeight?hangarHullImage.naturalWidth/hangarHullImage.naturalHeight:2/3,shipWidth=Math.min(shipHeight*assetAspect,cssWidth*(large?.35:.42)),drawHeight=shipWidth/assetAspect,shipX=cx-shipWidth/2,shipY=cy-drawHeight/2;
+  if(ready){
+    const flame=ctx.createLinearGradient(cx,shipY+drawHeight*.78,cx,shipY+drawHeight*1.08);flame.addColorStop(0,locked?'rgba(110,111,105,.25)':hex(pal.main,.72));flame.addColorStop(.48,locked?'rgba(88,89,83,.15)':hex(pal.accent,.52));flame.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=flame;ctx.beginPath();ctx.moveTo(cx-shipWidth*.07,shipY+drawHeight*.77);ctx.lineTo(cx-shipWidth*.12,shipY+drawHeight*1.06);ctx.lineTo(cx,shipY+drawHeight*.96);ctx.lineTo(cx+shipWidth*.12,shipY+drawHeight*1.06);ctx.lineTo(cx+shipWidth*.07,shipY+drawHeight*.77);ctx.closePath();ctx.fill();
+    ctx.save();ctx.globalAlpha=locked?.34:1;ctx.filter=locked?'grayscale(1) brightness(.58)':'none';ctx.shadowColor=hex(pal.accent,locked?.04:.38);ctx.shadowBlur=large?24:9;ctx.drawImage(hangarHullImage,shipX,shipY,shipWidth,drawHeight);ctx.restore();
+    ctx.save();ctx.strokeStyle=hex(pal.accent,locked?.08:.58);ctx.lineWidth=large?1.25:.7;ctx.beginPath();ctx.moveTo(cx-shipWidth*.20,shipY+drawHeight*.53);ctx.lineTo(cx,shipY+drawHeight*.44);ctx.lineTo(cx+shipWidth*.20,shipY+drawHeight*.53);ctx.stroke();ctx.restore();
+    return true;
+  }
+  ctx.save();ctx.fillStyle=locked?'rgba(151,155,147,.34)':hex(pal.accent,.64);ctx.font=`600 ${large?11:7}px ui-monospace, monospace`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(hangarHullImageFailed?'HULL ASSET OFFLINE':'LOADING HULL',cx,cy);ctx.restore();return false;
 }
 function renderFrameBrief(id){
   const s=SHIPS[id]||SHIPS.striker,w=WEAPON_META[s.weapon],mastery=masteryLevel(id),pal=hangarShipPalette(id);
