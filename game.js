@@ -21,6 +21,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const dampValue=(current,target,response,delta)=>target+(current-target)*Math.exp(-response*delta);
 const choice=a=>a[(Math.random()*a.length)|0];
 const dist2=(a,b)=>{const x=a.x-b.x,y=a.y-b.y;return x*x+y*y};
+const segmentPointDist2=(point,x1,y1,x2,y2)=>{const dx=x2-x1,dy=y2-y1,length2=dx*dx+dy*dy;if(length2<=.0001)return(point.x-x1)**2+(point.y-y1)**2;const t=clamp(((point.x-x1)*dx+(point.y-y1)*dy)/length2,0,1),x=x1+dx*t,y=y1+dy*t;return(point.x-x)**2+(point.y-y)**2};
 const fmtTime=sec=>`${String(Math.floor(sec/60)).padStart(2,'0')}:${String(Math.floor(sec%60)).padStart(2,'0')}`;
 const canvas=$('game'),wrap=$('wrap');
 // Gameplay simulation stays at 960x540. Phaser renders it at 1440x810 for clean desktop output.
@@ -712,7 +713,7 @@ function tryPhaseDash(){
   const p=state.p;if((p.dashCooldown||0)>0)return false;let {dx,dy}=moveInput();
   if(Math.hypot(dx,dy)<.12){dx=p._lastMoveX||0;dy=p._lastMoveY||-1}const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;
   p.dashFromX=p.x;p.dashFromY=p.y;p._lastMoveX=dx;p._lastMoveY=dy;p.x+=dx*82;p.y+=dy*82;state.distanceTraveled=(state.distanceTraveled||0)+82;p.dashToX=p.x;p.dashToY=p.y;followWorldCamera();p.dashCooldown=3.1;p.dashFx=.32;p.iFrames=Math.max(p.iFrames,.34);
-  let phased=0;for(const b of state.enemyBullets){if(b.life>0&&dist2(b,p)<52*52){b.life=0;phased++}}
+  let phased=0;for(const b of state.enemyBullets){const corridor=p.r+(b.r||3)+17;if(b.life>0&&segmentPointDist2(b,p.dashFromX,p.dashFromY,p.dashToX,p.dashToY)<corridor*corridor){b.life=0;phased++}}
   if(phased){state.score+=phased*7*(state.p.scoreMul||1);state.chainTimer=Math.max(state.chainTimer,.8)}if(phased>=3){p.dashCooldown=2.2;state.surgeUntil=Math.max(state.surgeUntil,state.time+1.8);state.phaseRipostes++;AUDIO.sfx('overdrive',2);rewardCue('PHASE RIPOSTE',`${phased} SHOTS ERASED · +25% FIRE RATE · FASTER DASH`,2,1350)}
   state.arcs.push({circle:true,x1:p.dashFromX,y1:p.dashFromY,r:24,life:.14,color:'#8de9ff'},{circle:true,x1:p.x,y1:p.y,r:34,life:.18,color:'#8dffd6'});particle(p.dashFromX,p.dashFromY,'#8de9ff',16);particle(p.x,p.y,'#ffffff',12);AUDIO.sfx('dash');addShake(3.5);return true
 }
