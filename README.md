@@ -296,4 +296,4 @@ Version 0.92.0 raises regular encounter pressure while retaining population brak
 
 ## License
 
-The project source is privately hosted and proprietary. See [LICENSE.md](LICENSE.md). Third-party software and media retain their respective licenses as documented in [THIRD_PARTY.md](THIRD_PARTY.md).
+The source is publicly visible for evaluation and remains proprietary. See [LICENSE.md](LICENSE.md). Third-party software and media retain their respective licenses as documented in [THIRD_PARTY.md](THIRD_PARTY.md).
