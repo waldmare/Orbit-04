@@ -1,5 +1,9 @@
 # ORBIT//04
 
+![ORBIT//04 current Conqueror encounter](steam/store/screenshots/05-carrier-boss-encounter.png)
+
+**A 12-minute top-down survival run aboard humanity's last vessel.** Build an automatic arsenal, cross an alien-occupied universe, and survive the Conqueror.
+
 [![CI](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml/badge.svg)](https://github.com/waldmare/Orbit-04/actions/workflows/ci.yml)
 ![Version](https://img.shields.io/badge/version-0.92.0-35cfe0)
 ![Three.js](https://img.shields.io/badge/Three.js-r185-b39a63)
@@ -42,7 +46,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - Phase Riposte rewards a dash through at least three hostile shots with faster dash recovery and a brief weapon-rate boost
 - earned Ark Reliquaries from boss encounters, with paced one-, three-, or five-reward reveals, a first-open guarantee, dry-streak protection, and an instant-reveal control
 - continuous directional travel with camera-safe world scrolling and active-encounter preservation
-- deterministic conquered-universe generation beyond the starting view, including ash fields, wreckage, alien formations, and void sites
+- deterministic conquered-universe generation beyond the starting view, including ash fields, wreckage, alien formations, planetary scenery, and void sites
 - six exploration signals: repair, combat amplification, salvage, rare Time Fractures, risk/reward relics, and hostile jammers
 - rare Time Fractures that slow hostiles, projectiles, effects, spawning, backgrounds, and the soundtrack while preserving full player thrust
 - tiered reward ribbons for chains, Signal Rush, Overdrive, captured signals, and boss defeats
