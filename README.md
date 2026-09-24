@@ -32,7 +32,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 ## Implemented game systems
 
 - 10 configurations of the single ORBIT//04 ark, each with individual statistics, a starting weapon, and a trait
-- a focused launch hangar with an authentic vector preview of every frame, explicit previous/next deployment controls, comparable ratings, and a final launch summary
+- a focused launch hangar using the deployed hull asset, an owned-frame filter, comparable ratings, and a separate credit purchase after previewing a locked frame
 - a data-driven content overview in the launch hangar that states the shipped frame, weapon, hostile, synergy, and sector counts alongside the offline, advertising-free ownership model
 - a one-screen first-deployment briefing that explains automatic fire, movement, upgrades, signal colors, keyboard controls, and standard gamepad controls without interrupting later runs
 - 11 automatic weapon systems rethemed around grief, survival instinct, memory, and absence
@@ -63,7 +63,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - a three-count safe return from manual pause plus automatic run protection when a connected controller is removed
 - one concise Field Directive per run, rotating between exploration, travel, and attrition objectives with existing-system rewards
 - live Run Intel for weapon contribution, modules, links, doctrines, protocols, artifacts, and mission conditions
-- keyboard, mouse, and gamepad movement
+- keyboard, mouse, and gamepad movement, with keyboard focus and gamepad access to expandable menu sections
 - native desktop exit handling that can bank an active run before closing instead of silently discarding earned progress
 - layered 48 kHz stereo sound playback with automatic context recovery, verified mixer status, mute warnings, and an in-game output check
 - independent 0–100% SFX and music sliders with 5% precision, immediate mix updates, and keyboard/gamepad adjustment controls

@@ -469,6 +469,19 @@ function renderShipCanvas(canvas,id,large=false,locked=false){
   }
   ctx.save();ctx.fillStyle=locked?'rgba(151,155,147,.34)':hex(pal.accent,.64);ctx.font=`600 ${large?11:7}px ui-monospace, monospace`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(hangarHullImageFailed?'HULL ASSET OFFLINE':'LOADING HULL',cx,cy);ctx.restore();return false;
 }
+let previewFrameId='',ownedFramesOnly=false;
+function frameUnlockCost(id){return id==='oracle'&&save.achievements.includes('iff_friend')?Math.floor(SHIPS[id].cost*.7):SHIPS[id].cost}
+function previewFrame(id){
+  if(!SHIPS[id])return false;previewFrameId=id;
+  if(save.unlocked.includes(id)){save.selected=id;persist(false)}
+  AUDIO.sfx('ui');renderMenu();return true
+}
+function unlockPreviewFrame(){
+  const id=previewFrameId;if(!SHIPS[id]||save.unlocked.includes(id))return false;
+  const cost=frameUnlockCost(id);if(save.credits<cost)return false;
+  save.credits-=cost;save.unlocked.push(id);save.selected=id;persist(false);checkMetaAchievements();renderMenu();
+  $('startBtn').focus?.({preventScroll:true});AUDIO.sfx('research');toast('FRAME UNLOCKED',`${SHIPS[id].name} is ready for deployment.`);return true
+}
 function renderFrameBrief(id){
   const s=SHIPS[id]||SHIPS.striker,w=WEAPON_META[s.weapon],mastery=masteryLevel(id),pal=hangarShipPalette(id);
   $('frameStage').style['--frame-accent']=pal.accent;$('frameStage').style['--frame-edge']=pal.edge;
@@ -476,27 +489,37 @@ function renderFrameBrief(id){
   $('frameWeapon').textContent=w.name;$('frameWeaponDesc').textContent=w.quick||w.desc;$('frameWeaponCard').title=w.desc;$('frameTrait').textContent=s.trait;$('frameTraitDesc').textContent=s.traitDesc;$('frameTraitCard').title=s.traitDesc;$('frameAvailability').textContent='READY FOR DEPLOYMENT';
   $('frameHullValue').textContent=s.hp;$('frameSpeedValue').textContent=s.speed;$('frameOutputValue').textContent=`${Math.round(s.damage*100)}%`;
   $('frameHullBar').style.width=`${clamp(s.hp/130*100,8,100)}%`;$('frameSpeedBar').style.width=`${clamp(s.speed/300*100,8,100)}%`;$('frameOutputBar').style.width=`${clamp(s.damage/1.25*100,8,100)}%`;
-  $('frameRosterCount').textContent=`${save.unlocked.length} / ${Object.keys(SHIPS).length} UNLOCKED`;renderShipCanvas($('framePreview'),id,true,false);
+  const locked=!save.unlocked.includes(id),cost=frameUnlockCost(id);
+  $('frameAvailability').textContent=locked?'LOCKED FRAME PREVIEW':'READY FOR DEPLOYMENT';
+  $('framePurchase').classList.toggle('hidden',!locked);
+  $('framePurchaseHint').textContent=locked?`${save.credits} CR AVAILABLE${save.credits<cost?` · NEED ${cost-save.credits} MORE`:''}`:'';
+  $('frameUnlockBtn').textContent=`UNLOCK ${s.name} · ${cost} CR`;$('frameUnlockBtn').disabled=!locked||save.credits<cost;
+  $('frameRosterCount').textContent=`${save.unlocked.length} / ${Object.keys(SHIPS).length} OWNED`;renderShipCanvas($('framePreview'),id,true,false);
 }
 function cycleUnlockedFrame(direction=1){
   const frames=Object.keys(SHIPS).filter(id=>save.unlocked.includes(id));if(frames.length<2)return false;
-  const current=Math.max(0,frames.indexOf(save.selected));save.selected=frames[(current+direction+frames.length)%frames.length];AUDIO.sfx('ui');persist();return true
+  const current=Math.max(0,frames.indexOf(save.selected));save.selected=frames[(current+direction+frames.length)%frames.length];previewFrameId=save.selected;AUDIO.sfx('ui');persist();return true
 }
 function renderMenu(){
   $('saveLine').textContent=`${save.credits} CR · BEST ${Math.floor(save.bestScore)}`;
   $('researchLevelText').textContent=researchLevels();$('achievementCountText').textContent=`${save.achievements.length}/${Object.keys(ACHIEVEMENTS).length}`;$('lifetimeKillsText').textContent=save.totalKills;$('operationCountText').textContent=`${save.claimedOperations.length}/${Object.keys(OPERATIONS).length}${readyOperations().length?` · ${readyOperations().length} READY`:''}`;
   $('contentFrameCount').textContent=Object.keys(SHIPS).length;$('contentWeaponCount').textContent=Object.keys(WEAPON_META).length;$('contentEnemyCount').textContent=Object.keys(ENEMY_META).filter(id=>id!=='boss').length;$('contentLinkCount').textContent=Object.keys(SYNERGIES).length;$('contentSectorCount').textContent=Object.keys(SECTORS).length;
   const d=DIFFICULTIES[save.difficulty]||DIFFICULTIES.STANDARD;$('difficultyBtn').textContent=d.name;$('difficultyBtn').title=d.desc;$('difficultyBtn').setAttribute('aria-label',`Current difficulty: ${d.name}. ${d.desc}`);$('difficultyDesc').textContent=d.menu||d.desc;const contract=CONTRACTS[save.contract]||CONTRACTS.NONE;$('contractBtn').textContent=contract.name;$('contractBtn').title=contract.desc;$('contractBtn').setAttribute('aria-label',`Current contract: ${contract.name}. ${contract.desc}`);$('contractDesc').textContent=contract.menu||contract.desc;const sector=SECTORS[save.sector]||SECTORS.AURORA;$('sectorBtn').textContent=sector.name;$('sectorBtn').title=sector.desc;$('sectorBtn').setAttribute('aria-label',`Current sector: ${sector.name}. ${sector.desc}`);$('sectorDesc').textContent=sector.menu||sector.desc;
-  const selectedId=save.unlocked.includes(save.selected)&&SHIPS[save.selected]?save.selected:'striker';if(save.selected!==selectedId)save.selected=selectedId;renderFrameBrief(selectedId);
+  const selectedId=save.unlocked.includes(save.selected)&&SHIPS[save.selected]?save.selected:'striker';if(save.selected!==selectedId)save.selected=selectedId;
+  const briefId=SHIPS[previewFrameId]&&!save.unlocked.includes(previewFrameId)&&!ownedFramesOnly?previewFrameId:selectedId;renderFrameBrief(briefId);
   const selectedShip=SHIPS[selectedId];$('launchSummary').innerHTML=`<span>${uiIconMarkup('launch')} READY</span><b>${selectedShip.name}</b><i>${uiIconMarkup('sector')} ${sector.name} <em>·</em> ${uiIconMarkup('threat')} ${d.name} <em>·</em> ${uiIconMarkup('contract')} ${contract.name}</i>`;$('startBtn').innerHTML=`${uiIconMarkup('launch')}<span>DEPLOY ${selectedShip.name}</span><kbd>ENTER</kbd>`;
-  const grid=$('shipGrid');grid.innerHTML='';
+  const grid=$('shipGrid'),scrollLeft=grid.scrollLeft||0,focusedFrame=document.activeElement?.dataset?.frameId;grid.innerHTML='';
+  $('frameFilterBtn').setAttribute('aria-pressed',String(ownedFramesOnly));$('frameFilterBtn').textContent=ownedFramesOnly?'SHOW ALL FRAMES':'OWNED ONLY';
   for(const [id,s] of Object.entries(SHIPS)){
+    if(ownedFramesOnly&&!save.unlocked.includes(id))continue;
     const unlocked=save.unlocked.includes(id),selected=save.selected===id;const b=document.createElement('button');b.className=`shipCard${selected?' selected':''}`;
-    const cost=id==='oracle'&&save.achievements.includes('iff_friend')?Math.floor(s.cost*.7):s.cost;
+    const cost=frameUnlockCost(id);b.dataset.frameId=id;b.setAttribute('aria-pressed',String(briefId===id));b.classList.toggle('previewed',briefId===id&&!selected);
     const mastery=masteryLevel(id);b.style['--ship-accent']=hangarShipPalette(id).accent;b.dataset.state=selected?'selected':unlocked?'available':'locked';b.setAttribute('aria-label',`${s.name}, ${s.role}${unlocked?', unlocked':`, locked, ${cost} credits`}`);b.innerHTML=`<span class="shipCardBadge">${selected?'SELECTED':unlocked?'READY':'LOCKED'}</span><canvas class="shipThumb" width="150" height="68" aria-hidden="true"></canvas><span class="shipCardTop"><b class="shipName">${s.name}</b><i style="color:${masteryColor(mastery)}">M${mastery}</i></span><span class="shipCardRole">${uiIconMarkup('frame')}${s.role}</span><span class="shipCardStatus">${selected?'CURRENT LOADOUT':unlocked?'SELECT FRAME':`${cost} CR TO UNLOCK`}</span>`;
-    b.onclick=()=>{AUDIO.sfx('ui');if(!unlocked){if(save.credits>=cost){save.credits-=cost;save.unlocked.push(id);save.selected=id;persist();checkMetaAchievements()}else toast('INSUFFICIENT CREDITS',`You need ${cost-save.credits} more credits to unlock ${s.name}.`);return}save.selected=id;persist()};grid.appendChild(b);
+    b.onclick=()=>previewFrame(id);grid.appendChild(b);
     renderShipCanvas(b.querySelector('canvas'),id,false,!unlocked);
+    if(focusedFrame===id)b.focus?.({preventScroll:true});
   }
+  grid.scrollLeft=scrollLeft;
   $('startBtn').disabled=!save.unlocked.includes(save.selected);
   const singleFrame=save.unlocked.filter(id=>SHIPS[id]).length<2;$('framePrevBtn').disabled=singleFrame;$('frameNextBtn').disabled=singleFrame;
   if(SUPPORT_URL&&BUILD_TARGET==='web')$('supportBtn').classList.remove('hidden');else $('supportBtn').classList.add('hidden');
@@ -624,18 +647,18 @@ const keys={},touch={active:false,startX:0,startY:0,x:0,y:0},mouse={active:false
 addEventListener('pointerdown',()=>AUDIO.ensure(),{passive:true});
 addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();if(k==='tab'&&(e.altKey||e.metaKey)){keys[k]=false;return}keys[k]=true;AUDIO.ensure();
-  if(['arrowup','arrowdown','arrowleft','arrowright',' ','tab'].includes(k))e.preventDefault();
+  if(!visibleOverlay()&&['arrowup','arrowdown','arrowleft','arrowright',' ','tab'].includes(k))e.preventDefault();
   if($('briefingScreen').classList.contains('show')){if(['enter',' ','escape'].includes(k))dismissPilotBriefing();return}
   if($('confirmScreen').classList.contains('show')){if(k==='escape')closeRunConfirmation();return}
   if($('titleScreen').classList.contains('show')&&!e.repeat){
     if(k==='q'){cycleUnlockedFrame(-1);return}if(k==='e'){cycleUnlockedFrame(1);return}
-    if(k==='enter'&&!['BUTTON','INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName)){startRun();return}
+    if(k==='enter'&&!['BUTTON','INPUT','SELECT','TEXTAREA','SUMMARY'].includes(e.target?.tagName)){startRun();return}
   }
   if(state?.reliquaryOpen){if(['escape','enter',' ','e'].includes(k)){reliquarySequence?.complete?claimReliquary():revealReliquaryNow()}return}
   if(state?.archiveOpen){if(['escape','enter',' ','e'].includes(k))closeArchiveFragment();return}
   if(k==='escape'&&$('loadoutScreen').classList.contains('show')){closeRunIntel();return}
   if(k==='escape'&&$('settingsScreen').classList.contains('show')){hide('settingsScreen');return}
-  if((k==='tab'||k==='b')&&state?.mode==='run'&&!state.choosing&&!$('settingsScreen').classList.contains('show')){$('loadoutScreen').classList.contains('show')?closeRunIntel():openRunIntel();return}
+if((k==='tab'||k==='b')&&state?.mode==='run'&&(!visibleOverlay()||$('loadoutScreen').classList.contains('show'))&&!state.choosing&&!$('settingsScreen').classList.contains('show')){$('loadoutScreen').classList.contains('show')?closeRunIntel():openRunIntel();return}
   if((k==='p'||k==='escape')&&state?.mode==='run'&&!state.choosing&&!$('settingsScreen').classList.contains('show'))togglePause();
   if(k==='shift'&&!e.repeat)tryPhaseDash();if(k==='n'&&!e.repeat&&state?.mode==='run'&&!state.choosing&&!state.paused)cycleSignalFilter();if(k==='r'&&state?.gameOver)startRun();if(k==='f')toggleFullscreen();
   if(k==='m'){save.settings.audio=save.settings.audio==='ON'?'OFF':'ON';persist(false);AUDIO.syncEnabled();renderSettings();AUDIO.sfx('ui');toast(save.settings.audio==='ON'?'AUDIO ENABLED':'AUDIO MUTED','Press M to toggle output.')}
@@ -657,7 +680,7 @@ function toggleFullscreen(){document.fullscreenElement?document.exitFullscreen()
 
 function pollGamepadPause(){const gps=navigator.getGamepads?.()||[],gp=gps.find(Boolean),pressed=!!(gp&&(gp.buttons[9]?.pressed||gp.buttons[8]?.pressed));if(pressed&&!gamepadPauseLatch&&state?.mode==='run'&&!state.choosing&&!state.archiveOpen&&!state.reliquaryOpen&&!$('settingsScreen').classList.contains('show'))togglePause();gamepadPauseLatch=pressed}
 function visibleOverlay(){const overlays=[...(document.querySelectorAll?.('.overlay.show')||[])];return overlays.at(-1)||null}
-function gamepadUiButtons(overlay){return overlay?[...overlay.querySelectorAll('button')].filter(b=>!b.disabled&&!b.classList.contains('hidden')&&b.offsetParent!==null):[]}
+function gamepadUiButtons(overlay){return overlay?[...overlay.querySelectorAll('button, summary')].filter(b=>{const closed=b.closest('details:not([open])');return !b.disabled&&!b.classList.contains('hidden')&&b.offsetParent!==null&&(!closed||b.tagName==='SUMMARY'&&b.parentElement===closed)}):[]}
 function focusGamepadDefault(overlay,buttons){if(!buttons.length)return;const preferred=buttons.find(b=>b.classList.contains('primary'))||buttons.find(b=>b.classList.contains('selected'))||buttons[0];preferred.focus?.({preventScroll:true});preferred.scrollIntoView?.({block:'nearest',inline:'nearest'})}
 function moveGamepadFocus(buttons,dx,dy){if(!buttons.length)return;let cur=document.activeElement;if(!buttons.includes(cur)){focusGamepadDefault(visibleOverlay(),buttons);return}const r=cur.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let best=null,bestScore=Infinity;for(const b of buttons){if(b===cur)continue;const q=b.getBoundingClientRect(),x=q.left+q.width/2,y=q.top+q.height/2,vx=x-cx,vy=y-cy;if(dx&&Math.sign(vx)!==Math.sign(dx)||dy&&Math.sign(vy)!==Math.sign(dy))continue;const primary=dx?Math.abs(vx):Math.abs(vy),cross=dx?Math.abs(vy):Math.abs(vx),score=primary+cross*2.4;if(primary<3||score>=bestScore)continue;best=b;bestScore=score}if(!best){const i=buttons.indexOf(cur),step=dx<0||dy<0?-1:1;best=buttons[(i+step+buttons.length)%buttons.length]}best.focus?.({preventScroll:true});best.scrollIntoView?.({block:'nearest',inline:'nearest'});AUDIO.sfx('ui')}
 function gamepadBack(overlay){if(!overlay)return;const back=overlay.querySelector('[data-close], #confirmCancelBtn, #archiveContinueBtn, #reliquaryClaimBtn:not(.hidden), #reliquarySkipBtn:not(.hidden), #loadoutBackBtn, #settingsBackBtn, #resumeBtn');if(back&&!back.disabled){back.click();back.focus?.({preventScroll:true})}}
@@ -836,6 +859,9 @@ function startRun(){
 }
 $('startBtn').onclick=startRun;
 $('framePrevBtn').onclick=()=>cycleUnlockedFrame(-1);$('frameNextBtn').onclick=()=>cycleUnlockedFrame(1);
+$('frameUnlockBtn').onclick=unlockPreviewFrame;
+$('frameReturnBtn').onclick=()=>{previewFrameId='';renderMenu();$('startBtn').focus?.()};
+$('frameFilterBtn').onclick=()=>{ownedFramesOnly=!ownedFramesOnly;previewFrameId='';renderMenu();AUDIO.sfx('ui')};
 function gainXp(n){state.xp+=xpGain(n)*(state.sector?.xp||1);while(state.xp>=state.xpNeed&&!state.choosing){state.xp-=state.xpNeed;state.level++;state.xpNeed=Math.floor(state.xpNeed*1.16+4);save.stats.highestLevel=Math.max(save.stats.highestLevel,state.level);if((state.level===10||state.level===20)&&state.doctrinePicks<2)openDoctrine(true);else openLevel();break}}
 function enemyBase(type){return {scout:{hp:24,speed:52,r:9,damage:13,xp:1,color:'#ff4d86'},charger:{hp:42,speed:89,r:8,damage:17,xp:2,color:'#ff684c'},tank:{hp:118,speed:31,r:15,damage:26,xp:3,color:'#d79d49'},gunner:{hp:58,speed:39,r:11,damage:14,xp:3,color:'#ff2d82'},splitter:{hp:66,speed:46,r:12,damage:18,xp:3,color:'#d64b79'},sniper:{hp:48,speed:30,r:10,damage:12,xp:4,color:'#a879ff'},stalker:{hp:51,speed:67,r:9,damage:16,xp:3,color:'#d84dbe'},weaver:{hp:72,speed:43,r:11,damage:13,xp:4,color:'#7b82ff'},warden:{hp:142,speed:27,r:16,damage:18,xp:6,color:'#51c6a8'},reaper:{hp:74,speed:76,r:10,damage:20,xp:4,color:'#bdf34b'},harrower:{hp:86,speed:48,r:12,damage:15,xp:5,color:'#ff8b3d'},moth:{hp:34,speed:72,r:8,damage:14,xp:2,color:'#e75cff'},anchor:{hp:96,speed:34,r:13,damage:13,xp:5,color:'#5f7cff'}}[type]}
 function selectEnemyType(time,roll){if(time>330&&roll<.035)return'harrower';if(time>235&&roll<.075)return'anchor';if(time>270&&roll<.12)return'reaper';if(time>260&&roll<.16)return'warden';if(time>210&&roll<.215)return'sniper';if(time>165&&roll<.30)return'weaver';if(time>150&&roll<.39)return'splitter';if(time>100&&roll<.48)return'gunner';if(time>95&&roll<.56)return'moth';if(time>80&&roll<.61)return'stalker';if(time>55&&roll<.69)return'charger';const tankCeiling=time>55?.84:.14;if(time>25&&roll<tankCeiling)return'tank';return'scout'}

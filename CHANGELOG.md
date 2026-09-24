@@ -2,6 +2,10 @@
 
 ## 0.92.0 — Hostile Ecology and Resonance
 
+- added locked-frame previews with explicit credit purchases and an owned-frame roster filter
+- preserved roster position and card focus after frame selection
+- restored native keyboard Tab navigation in menus and gamepad access to expandable sections
+
 - raised regular-wave population and spawn cadence while retaining pressure braking, boss-approach relief, and the existing boss scaling
 - added Grave Moths with rapid alternating pursuit cuts and Null Anchors with range-holding six-way needle lattices
 - added distinct silhouettes, motion profiles, accents, intent markers, telegraphs, and Codex descriptions for both new hostile classes
