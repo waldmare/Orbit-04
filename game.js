@@ -354,7 +354,7 @@ let state=null;
 
 const PASSIVES={
   reactor:{name:'ANGER',max:6,desc:l=>`Weapon damage +${l*9}%`,apply:l=>{state.p.damageMul=state.p.baseDamageMul*(1+l*.09)}},
-  overclock:{name:'INSOMNIA',max:6,desc:l=>`Weapon cooldown -${l*6}%`,apply:l=>{state.p.cooldownMul=state.p.baseCooldownMul*Math.pow(.94,l)}},
+  overclock:{name:'INSOMNIA',max:6,desc:l=>`Weapon cooldown -${Number(((1-Math.pow(.94,l))*100).toFixed(1))}%`,apply:l=>{state.p.cooldownMul=state.p.baseCooldownMul*Math.pow(.94,l)}},
   targeting:{name:'FIXATION',max:6,desc:l=>`Critical chance +${l*2.5}%`,apply:l=>{state.p.crit=state.p.baseCrit+l*.025}},
   armor:{name:'DENIAL',max:6,desc:l=>`Damage taken -${l*3.5}% · hull +${l*6}`,apply:l=>{state.p.moduleArmor=l*.035;state.p.maxHp=state.p.baseHp+l*6;state.p.hp=Math.min(state.p.hp+6,state.p.maxHp)}},
   velocity:{name:'PANIC',max:6,desc:l=>`Projectile speed +${l*11}%`,apply:l=>{state.p.projectileMul=1+l*.11}},
@@ -799,7 +799,40 @@ function offerPresentation(o,breakpoint=false){
   if(o.key==='repair')return{tone:'utility',icon:'hull',action:'REPAIR HULL NOW'};
   return{tone:'module',icon:'trait',action:'INSTALL UPGRADE'}
 }
-function offerSummary(o){if(o.key.startsWith('new:'))return`NEW AUTO-WEAPON · ${WEAPON_QUICK_DESC[o.systemId]||'Automatically attacks nearby hostiles.'}`;if(o.key.startsWith('oc:'))return'+16% DAMAGE FOR THIS EVOLVED WEAPON';if(o.key==='repair')return'RESTORE 16% MAXIMUM HULL NOW';const first=String(o.desc||'').split(/(?<=[.!?])\s+/)[0].replace(/\.$/,'');return(first.length>76?`${first.slice(0,73).trim()}…`:first).toUpperCase()}
+function upgradeNumber(value,precision=1){return String(Number(value.toFixed(precision)))}
+function passiveOfferSummary(id){
+  const level=state.passives[id]||0,next=level+1,p=state.p;
+  const bonus=(label,step)=>`${label} +${upgradeNumber(level*step)}% → +${upgradeNumber(next*step)}%`;
+  switch(id){
+    case'reactor':return bonus('DAMAGE BONUS',9);
+    case'overclock':return`COOLDOWN REDUCTION ${upgradeNumber((1-.94**level)*100)}% → ${upgradeNumber((1-.94**next)*100)}%`;
+    case'targeting':return`CRIT CHANCE ${upgradeNumber(p.crit*100)}% → ${upgradeNumber((p.baseCrit+next*.025)*100)}%`;
+    case'armor':return`MAX HULL ${upgradeNumber(p.maxHp)} → ${upgradeNumber(p.baseHp+next*6)} · ${bonus('ARMOR',3.5)}`;
+    case'velocity':return bonus('PROJECTILE SPEED BONUS',11);
+    case'thruster':return bonus('MOVEMENT SPEED BONUS',5);
+    case'magnet':return`PICKUP RADIUS ${upgradeNumber(p.magnet)} → ${upgradeNumber(p.baseMagnet+next*24)}`;
+    case'iff':return`CONVERT ON HIT ${upgradeNumber(p.convertChance*100,2)}% → ${upgradeNumber(.18+next*.20,2)}% · UP TO ${1+Math.floor(next/2)} ALLIES`;
+    case'amplifier':return bonus('AREA RADIUS BONUS',9);
+    case'capacitor':return bonus('SPECIAL FIRE RATE BONUS',7);
+    case'loyalty':return`${bonus('ALLY LIFETIME',18)} · ${bonus('ALLY DAMAGE',8)}`;
+    case'uplink':return bonus('ALLY FIRE RATE BONUS',12);
+    case'scuttle':return`ALLY DEATH BLAST ${level*35}% → ${next*35}% WEAPON OUTPUT`;
+    default:return PASSIVES[id].desc(next).toUpperCase();
+  }
+}
+function offerRequirement(o){
+  if(['loyalty','uplink','scuttle'].includes(o.passiveId)&&state.p.convertChance<=0)return'NEEDS ALIEN REFLEX · NO ALLIES CAN BE CONVERTED YET';
+  if(o.passiveId==='capacitor'&&!['nova','beam','rift'].some(id=>state.weapons[id]))return'NEEDS DEAD SUN, PALE LIGHT OR ABSENCE';
+  return'';
+}
+function offerSummary(o){
+  if(o.key.startsWith('p:'))return passiveOfferSummary(o.passiveId);
+  if(o.key.startsWith('new:'))return`NEW AUTO-WEAPON · ${WEAPON_QUICK_DESC[o.systemId]||'Automatically attacks nearby hostiles.'}`;
+  if(o.key.startsWith('oc:')){const level=state.weapons[o.systemId]?.overcharge||0;return`WEAPON OUTPUT BONUS +${level*16}% → +${(level+1)*16}%`}
+  if(o.key==='repair'){const heal=Math.max(0,Math.min(state.p.maxHp-state.p.hp,state.p.maxHp*.16*(state.contract?.heal??1)));return heal>0?`RESTORE ${upgradeNumber(heal)} HULL NOW`:'HULL ALREADY FULL · NO REPAIR NEEDED'}
+  // Keep complete tradeoffs and conditional effects visible, including a second sentence.
+  return String(o.desc||'').replace(/\.$/,'').toUpperCase();
+}
 function connectionSummary(connection){if(!connection)return'';const parts=connection.split(' · '),name=parts[1]||'';if(parts[0]==='LINK READY')return`UNLOCKS LINK · ${name}`;if(parts[0]==='LINK PATH')return`HELPS UNLOCK · ${name}`;if(parts[0]==='EVOLUTION'||parts[0]==='FUTURE EVOLUTION')return`BUILDS TOWARD · ${name}`;return parts.slice(0,2).join(' · ')}
 function offerBreakpoint(o){if(o.key.startsWith('w:'))return(state.weapons[o.systemId]?.level||0)+1===6;if(o.key.startsWith('p:'))return(state.passives[o.passiveId]||0)+1===4;return false}
 function evolutionTargets(){return Object.entries(state.weapons).filter(([_id,w])=>!w.evolved).map(([id,w])=>{const m=WEAPON_META[id],passive=state.passives[m.req]||0,progress=w.level/6*.62+Math.min(4,passive)/4*.38;return{id,w,m,passive,progress}}).sort((a,b)=>b.progress-a.progress)}
@@ -828,17 +861,41 @@ function drawFreshOffers(previousKeys=[],pinnedOffer=null,forcedOffer=null){
   return offers
 }
 const SIGNAL_DRAW_TIERS={FRESH:{tier:1,detail:'THREE NEW OFFERS'},TUNED:{tier:2,detail:'ONE BUILD-MATCHED OFFER GUARANTEED'},RESONANT:{tier:3,detail:'PRIORITY OFFER · SELECT IT FOR +25% DAMAGE / 20 SEC'}};
-function signalDrawCandidate(tier,pinnedKey=''){const pool=buildOfferPool().filter(o=>o.key!==pinnedKey),connected=pool.filter(o=>offerConnection(o)),priority=pool.filter(o=>offerBreakpoint(o)||o.key.startsWith('artifact:')||o.key.startsWith('proto:'));const candidates=tier==='RESONANT'?(priority.length?priority:connected):tier==='TUNED'?connected:[];const offer=candidates.length?weighted(candidates,1)[0]:null;return offer?{...offer,signalTier:tier}:null}
+function signalDrawCandidate(tier,pinnedKey=''){const pool=buildOfferPool().filter(o=>o.key!==pinnedKey&&!offerRequirement(o)),connected=pool.filter(o=>{const link=offerConnection(o);return link&&!link.startsWith('FUTURE EVOLUTION')}),priority=pool.filter(o=>offerBreakpoint(o)||o.key.startsWith('artifact:')||o.key.startsWith('proto:'));const candidates=tier==='RESONANT'?(priority.length?priority:connected):tier==='TUNED'?connected:[];const offer=candidates.length?weighted(candidates,1)[0]:null;return offer?{...offer,signalTier:tier}:null}
 function renderRerollInfo(isNewDraw=false,signalTier=''){const pinned=state.pinnedOfferKey?' · 1 PINNED':'',draw=signalTier?` · ${signalTier} DRAW`:isNewDraw?' · NEW DRAW':'';$('rerollInfo').textContent=`REROLLS ${state.rerolls} · SKIPS ${state.skips}${pinned}${draw}`}
 function renderOfferPins(offers){const box=$('offerPins');box.innerHTML='';for(const [i,o] of offers.entries()){const b=document.createElement('button'),pinned=state.pinnedOfferKey===o.key;b.className=`offerPin${pinned?' selected':''}`;b.textContent=`${pinned?'PINNED':'PIN'} [${i+1}] ${o.name}`;b.setAttribute('aria-pressed',String(pinned));b.onclick=()=>togglePinnedOffer(o.key);box.appendChild(b)}}
-function togglePinnedOffer(key){if(!state?.choosing||state.choiceMode!=='level')return false;state.pinnedOfferKey=state.pinnedOfferKey===key?'':key;AUDIO.sfx('ui');renderOfferPins(state.currentOffers);renderRerollInfo();return true}
+function togglePinnedOffer(key){if(!state?.choosing||state.choiceMode!=='level')return false;const index=state.currentOffers.findIndex(o=>o.key===key);if(index<0)return false;state.pinnedOfferKey=state.pinnedOfferKey===key?'':key;AUDIO.sfx('ui');renderOfferPins(state.currentOffers);renderRerollInfo();$('offerPins').children[index]?.focus({preventScroll:true});return true}
 function openLevel(){state.choosing=true;state.choiceMode='level';state.paused=true;state.pinnedOfferKey='';AUDIO.sfx('level');show('levelScreen');renderOffers()}
-function renderOffers(previousKeys=[],pinnedOffer=null,draw={}){const offers=drawFreshOffers(previousKeys,pinnedOffer,draw.forcedOffer||null),c=$('choices');c.innerHTML='';renderBuildCompass();offers.forEach((o,i)=>{const b=document.createElement('button'),connection=offerConnection(o),shortConnection=connectionSummary(connection),breakpoint=offerBreakpoint(o),impact=offerImpact(o),summary=offerSummary(o),presentation=offerPresentation(o,breakpoint),signalNote=o.signalTier==='RESONANT'?'RESONANT BONUS · +25% DAMAGE FOR 20 SEC':o.signalTier==='TUNED'?'TUNED SIGNAL · MATCHES YOUR CURRENT BUILD':'';b.className=`choice${breakpoint?' breakpoint':''}${o.signalTier?' signalOffer':''}`;b.dataset.tone=presentation.tone;if(o.signalTier)b.dataset.signal=o.signalTier.toLowerCase();b.style.animationDelay=`${i*55}ms`;b.innerHTML=`<span class="choiceNumber" aria-hidden="true">${i+1}</span><span class="choiceTop"><span class="choiceIdentity"><span class="choiceGlyph">${uiIconMarkup(presentation.icon)}</span><span><span class="kind">${o.kind}</span><span class="name">${o.name}</span></span></span><span class="lvl">${o.lvl}</span></span><span class="choiceBenefit"><small>YOU GET</small><b>${summary}</b></span>${signalNote?`<span class="signalBonus">${signalNote}</span>`:''}${shortConnection?`<span class="connection">${shortConnection}</span>`:''}<span class="choiceAction"><span>${presentation.action}</span><kbd>SELECT ${i+1}</kbd></span>`;b.title=[o.desc,impact,signalNote,connection].filter(Boolean).join('\n');b.setAttribute('aria-label',[`${i+1}. ${o.name}`,o.lvl,summary,signalNote,connection].filter(Boolean).join('. '));b.onclick=()=>selectOffer(o);c.appendChild(b)});state.currentOffers=offers;renderOfferPins(offers);renderRerollInfo(previousKeys.length>0,draw.tier||'');$('rerollBtn').disabled=state.rerolls<=0;$('signalDrawBtn').disabled=state.rerolls<=0;$('skipBtn').disabled=state.skips<=0;$('levelMeta').textContent=`LEVEL ${state.level}`}
-function selectOffer(o){if(!o)return;const breakpoint=offerBreakpoint(o),special=o.key.startsWith('artifact:')||o.key.startsWith('proto:');if(!special)AUDIO.sfx('install',breakpoint?2:1);o.apply();if(o.signalTier==='RESONANT'){state.fieldBoostUntil=Math.max(state.fieldBoostUntil,state.time+20);rewardCue('RESONANT INSTALL',`${o.name} · +25% DAMAGE FOR 20 SEC`,3,1700)}recordUpgrade(o.name,o.kind,[o.lvl,o.signalTier==='RESONANT'?'+25% DAMAGE / 20 SEC':''].filter(Boolean).join(' · '));state.pinnedOfferKey='';state.upgradePulse=.9;state.lastUpgradeLabel=o.name;const evolved=tryEvolutions();if(breakpoint&&!evolved.length&&o.signalTier!=='RESONANT')rewardCue('BREAKPOINT REACHED',o.name,1,1250);hide('levelScreen');state.choosing=false;state.choiceMode='';state.paused=false;state.last=performance.now();processCeremony();if(!state.ceremony)processPendingLevel()}
-$('rerollBtn').onclick=()=>{if(state.rerolls>0){const previousKeys=state.currentOffers.map(o=>o.key),pinnedOffer=state.currentOffers.find(o=>o.key===state.pinnedOfferKey)||null;state.rerolls--;AUDIO.sfx('reroll');renderOffers(previousKeys,pinnedOffer)}};
-$('signalDrawBtn').onclick=()=>{if(state.rerolls<=0)return;const previousKeys=state.currentOffers.map(o=>o.key),pinnedOffer=state.currentOffers.find(o=>o.key===state.pinnedOfferKey)||null,roll=Math.random(),tier=roll<.08?'RESONANT':roll<.35?'TUNED':'FRESH',forcedOffer=signalDrawCandidate(tier,pinnedOffer?.key||'');state.rerolls--;AUDIO.sfx(tier==='RESONANT'?'artifact':tier==='TUNED'?'streak':'reroll');renderOffers(previousKeys,pinnedOffer,{tier,forcedOffer});const result=SIGNAL_DRAW_TIERS[tier];rewardCue(`SIGNAL DRAW · ${tier}`,result.detail,result.tier,1500)};
-$('skipBtn').onclick=()=>{if(state.skips<=0)return;state.skips--;state.pinnedOfferKey='';recordUpgrade('SALVAGE CONVERSION','UTILITY','SKIPPED UPGRADE · +3 CR');runCredit(3);state.score+=40;AUDIO.sfx('ui');hide('levelScreen');state.choosing=false;state.choiceMode='';state.paused=false;state.last=performance.now();message('SALVAGE +3 CR',500);processPendingLevel()};
-addEventListener('keydown',e=>{if(!state?.choosing)return;const i=Number(e.key)-1;if(i<0)return;if(state.choiceMode==='doctrine'){const o=state.currentDoctrineOffers?.[i];if(o)selectDoctrine(o.id)}else{const o=state.currentOffers?.[i];if(o)selectOffer(o)}});
+function renderOffers(previousKeys=[],pinnedOffer=null,draw={}){
+  const offers=drawFreshOffers(previousKeys,pinnedOffer,draw.forcedOffer||null),c=$('choices');
+  c.innerHTML='';renderBuildCompass();
+  offers.forEach((o,i)=>{
+    const b=document.createElement('button'),connection=offerConnection(o),requirement=offerRequirement(o),shortConnection=connectionSummary(connection),breakpoint=offerBreakpoint(o),impact=offerImpact(o),summary=offerSummary(o),presentation=offerPresentation(o,breakpoint),signalNote=o.signalTier==='RESONANT'?'RESONANT BONUS · +25% DAMAGE FOR 20 SEC':o.signalTier==='TUNED'?'TUNED SIGNAL · MATCHES YOUR CURRENT BUILD':'';
+    b.className=`choice${breakpoint?' breakpoint':''}${o.signalTier?' signalOffer':''}`;
+    b.dataset.tone=presentation.tone;if(o.signalTier)b.dataset.signal=o.signalTier.toLowerCase();
+    b.style.animationDelay=`${i*55}ms`;
+    b.innerHTML=`<span class="choiceNumber" aria-hidden="true">${i+1}</span><span class="choiceTop"><span class="choiceIdentity"><span class="choiceGlyph">${uiIconMarkup(presentation.icon)}</span><span><span class="kind">${o.kind}</span><span class="name">${o.name}</span></span></span><span class="lvl">${o.lvl}</span></span><span class="choiceBenefit"><small>YOU GET${o.passiveId?' · BEFORE → AFTER':''}</small><b>${summary}</b></span>${signalNote?`<span class="signalBonus">${signalNote}</span>`:''}${requirement?`<span class="connection choiceRequirement">${requirement}</span>`:shortConnection?`<span class="connection">${shortConnection}</span>`:''}<span class="choiceAction"><span>${presentation.action}</span><kbd>SELECT ${i+1}</kbd></span>`;
+    b.title=[o.desc,impact,requirement,signalNote,connection].filter(Boolean).join('\n');
+    b.setAttribute('aria-label',[`${i+1}. ${o.name}`,o.lvl,summary,requirement,signalNote,connection].filter(Boolean).join('. '));
+    b.onclick=()=>selectOffer(o);c.appendChild(b);
+  });
+  state.currentOffers=offers;renderOfferPins(offers);renderRerollInfo(previousKeys.length>0,draw.tier||'');
+  $('rerollBtn').disabled=state.rerolls<=0;$('signalDrawBtn').disabled=state.rerolls<=0;$('skipBtn').disabled=state.skips<=0;$('levelMeta').textContent=`LEVEL ${state.level}`;
+  c.querySelector('button')?.focus({preventScroll:true});
+}
+function selectOffer(o){if(!o||!state?.choosing||state.choiceMode!=='level'||!state.currentOffers.includes(o))return false;state.currentOffers=[];const breakpoint=offerBreakpoint(o),special=o.key.startsWith('artifact:')||o.key.startsWith('proto:');if(!special)AUDIO.sfx('install',breakpoint?2:1);o.apply();if(o.signalTier==='RESONANT'){state.fieldBoostUntil=Math.max(state.fieldBoostUntil,state.time+20);rewardCue('RESONANT INSTALL',`${o.name} · +25% DAMAGE FOR 20 SEC`,3,1700)}recordUpgrade(o.name,o.kind,[o.lvl,o.signalTier==='RESONANT'?'+25% DAMAGE / 20 SEC':''].filter(Boolean).join(' · '));state.pinnedOfferKey='';state.upgradePulse=.9;state.lastUpgradeLabel=o.name;const evolved=tryEvolutions();if(breakpoint&&!evolved.length&&o.signalTier!=='RESONANT')rewardCue('BREAKPOINT REACHED',o.name,1,1250);hide('levelScreen');state.choosing=false;state.choiceMode='';state.paused=false;state.last=performance.now();processCeremony();if(!state.ceremony)processPendingLevel();return true}
+$('rerollBtn').onclick=()=>{if(state?.choosing&&state.choiceMode==='level'&&state.rerolls>0){const previousKeys=state.currentOffers.map(o=>o.key),pinnedOffer=state.currentOffers.find(o=>o.key===state.pinnedOfferKey)||null;state.rerolls--;AUDIO.sfx('reroll');renderOffers(previousKeys,pinnedOffer)}};
+$('signalDrawBtn').onclick=()=>{if(!state?.choosing||state.choiceMode!=='level'||state.rerolls<=0)return;const previousKeys=state.currentOffers.map(o=>o.key),pinnedOffer=state.currentOffers.find(o=>o.key===state.pinnedOfferKey)||null,roll=Math.random(),tier=roll<.08?'RESONANT':roll<.35?'TUNED':'FRESH',forcedOffer=signalDrawCandidate(tier,pinnedOffer?.key||'');state.rerolls--;AUDIO.sfx(tier==='RESONANT'?'artifact':tier==='TUNED'?'streak':'reroll');renderOffers(previousKeys,pinnedOffer,{tier,forcedOffer});const result=SIGNAL_DRAW_TIERS[tier];rewardCue(`SIGNAL DRAW · ${tier}`,result.detail,result.tier,1500)};
+$('skipBtn').onclick=()=>{if(!state?.choosing||state.choiceMode!=='level'||state.skips<=0)return;state.skips--;state.currentOffers=[];state.pinnedOfferKey='';recordUpgrade('SALVAGE CONVERSION','UTILITY','SKIPPED UPGRADE · +3 CR');runCredit(3);state.score+=40;AUDIO.sfx('ui');hide('levelScreen');state.choosing=false;state.choiceMode='';state.paused=false;state.last=performance.now();message('SALVAGE +3 CR',500);processPendingLevel()};
+addEventListener('keydown',e=>{
+  if(!state?.choosing||e.altKey||e.ctrlKey||e.metaKey)return;
+  if(e.repeat&&(/^[1-3]$/.test(e.key)||e.key==='Enter'||e.key===' ')){e.preventDefault();return}
+  if(!/^[1-3]$/.test(e.key))return;
+  const overlay=visibleOverlay(),expected=state.choiceMode==='doctrine'?'doctrineScreen':'levelScreen';
+  if(overlay&&overlay.id!==expected)return;
+  const i=Number(e.key)-1;e.preventDefault();
+  if(state.choiceMode==='doctrine'){const o=state.currentDoctrineOffers?.[i];if(o)selectDoctrine(o.id)}else{const o=state.currentOffers?.[i];if(o)selectOffer(o)}
+});
 
 // ---------- RUN START / SPAWNING ----------
 let briefingPreviewMode=false;

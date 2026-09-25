@@ -252,11 +252,13 @@ async function captureLevel(win) {
     applyDisplaySettings();
     save.briefingSeen=true;
     startRun();
-    state.level=2;
+    state.level=3;
+    state.passives.reactor=1;PASSIVES.reactor.apply(1);
     state.rerolls=2;
     openLevel();
     const originalRandom=Math.random;
-    Math.random=()=>.01;
+    const captureDraw=[.01,.01,.01,.42,.94];
+    Math.random=()=>captureDraw.shift()??.01;
     document.getElementById('signalDrawBtn').click();
     Math.random=originalRandom;
     void document.body.offsetHeight;
@@ -400,6 +402,24 @@ const inspect=(id,allowVertical=true)=>{const overlay=$(id),panel=overlay.queryS
       if(pauseTab.defaultPrevented||$('loadoutScreen').classList.contains('show')||!state.paused)throw new Error('Pause Tab must navigate controls without opening Run Intel');
       openRunConfirmation('abort');const confirmation=inspect('confirmScreen',false);confirmation.safeDefault=document.activeElement===$('confirmCancelBtn');screens.push(confirmation);closeRunConfirmation(false);
       startRun();state.level=5;openLevel();screens.push(inspect('levelScreen',true));
+      const firstChoice=$('choices').querySelector('button');
+      if(document.activeElement!==firstChoice)throw new Error('Level-up has no initial keyboard focus');
+      const installs=state.upgradeHistory.length;
+      for(const key of ['1','Enter',' ']){
+        const held=new KeyboardEvent('keydown',{key,repeat:true,bubbles:true,cancelable:true});firstChoice.dispatchEvent(held);
+        if(!held.defaultPrevented||state.upgradeHistory.length!==installs)throw new Error('Repeated input consumed an upgrade');
+      }
+      $('offerPins').children[1].click();
+      if(document.activeElement!==$('offerPins').children[1])throw new Error('Pin lost keyboard focus');
+      const missingSystem=buildOfferPool().find(offer=>offer.key==='p:loyalty');
+      renderOffers([],null,{forcedOffer:missingSystem});
+      const warning=$('choices').querySelector('.choiceRequirement');
+      if(!warning?.textContent.includes('NEEDS ALIEN REFLEX'))throw new Error('Missing-system warning is not visible');
+      const benefit=$('choices').querySelector('.choiceBenefit b');
+      if(benefit.scrollWidth>benefit.clientWidth+1)throw new Error('Upgrade benefit is horizontally clipped');
+      screens.push({...inspect('levelScreen',true),id:'levelDependencies'});
+      state.rerolls=1;$('rerollBtn').click();
+      if(document.activeElement!==$('choices').querySelector('button')||!$('rerollBtn').disabled||!$('signalDrawBtn').disabled)throw new Error('Exhausted reroll did not restore a usable focus target');
       startRun();state.time=438;state.level=12;state.kills=731;state.score=68420;state.runCredits=93;state.damageDealt=98124;state.chainBest=42;finishRun(false);screens.push(inspect('gameOverScreen',true));
       const visible=screens.filter(item=>!item.withinViewport||item.horizontalOverflow||!item.usableButtons||item.safeDefault===false||(!item.allowVertical&&item.verticalOverflow));
       if(!hudToastSafe)visible.push({id:'combatHud',reason:'hostile briefing overlaps the field directive'});

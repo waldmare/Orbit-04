@@ -54,7 +54,7 @@ The supported runtime is the top-down game loaded by `index.html`. Three.js is t
 - level-end pickup convergence, boss-clear salvage sweeps, and correctly queued multi-level rewards
 - rerolls protected against returning an identical draw, with one upgrade card optionally pinned through the reroll
 - an optional Resonance Draw that spends one earned reroll, discloses its 65% / 27% / 8% outcome table, and never uses real-money currency
-- concise level-up cards showing one immediate effect and one relevant build link, with full mechanical detail retained in tooltips and accessible labels
+- level-up cards with before/after module bonuses, missing-system warnings, complete tradeoffs, and one relevant build link; pinning and rerolling preserve keyboard focus
 - selectable automatic targeting priorities for nearest, damaged, or elite hostiles
 - a low-noise combat tracker for the build's nearest weapon evolution
 - an in-run signal scanner that filters procedural discoveries by support, time anomaly, or risk category and states each signal's exact benefit or risk before collection
@@ -124,7 +124,7 @@ This 1440 × 810 image was captured from the active 0.92.0 Electron/Three.js Web
 
 ![ORBIT//04 version 0.92.0 level-up interface](docs/level-up-v0.92.0.png)
 
-The level-up capture verifies the cold cyan-violet hierarchy, plain-language `NEW MODULE`, `NEW SYSTEM`, and `UPGRADE TO LV` states, dominant instant-effect summaries, and the disclosed earned-reroll Resonance Draw at the same desktop resolution.
+The level-up capture shows the cold cyan-violet hierarchy, before/after module bonuses, a missing-system warning, and the disclosed earned-reroll Resonance Draw at the same desktop resolution. It is captured from the running game with a deterministic draw.
 
 ## Audio implementation
 

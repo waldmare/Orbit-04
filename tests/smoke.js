@@ -258,3 +258,42 @@ vm.runInContext(`
   if(!state.gameOver || !state.victory || state.bossesKilled<3) throw new Error('full run timeline failed');
 `,ctx);
 console.log('ORBIT full-run timeline: PASS');
+
+vm.runInContext(`{
+  toMenu();save.settings.audio='OFF';save.briefingSeen=true;save.contract='NONE';save.selected='striker';startRun();
+  state.level=5;
+  const passive=id=>({key:'p:'+id,passiveId:id});
+  if(offerSummary(passive('iff'))!=='CONVERT ON HIT 0% → 0.38% · UP TO 1 ALLIES')throw new Error('conversion summary lost fractional precision');
+  for(const id of Object.keys(PASSIVES)){
+    state.passives[id]=1;PASSIVES[id].apply(1);
+    const summary=offerSummary(passive(id));
+    if(!summary.includes('→')||/NaN|undefined/.test(summary))throw new Error('missing before/after module summary: '+id);
+  }
+  if(offerSummary(passive('reactor'))!=='DAMAGE BONUS +9% → +18%')throw new Error('module total was presented as an additional gain');
+  if(offerSummary(passive('overclock'))!=='COOLDOWN REDUCTION 6% → 11.6%'||!PASSIVES.overclock.desc(2).includes('11.6%'))throw new Error('cooldown description ignored multiplicative stacking');
+  state.p.convertChance=0;
+  for(const id of ['loyalty','uplink','scuttle'])if(!offerRequirement(passive(id)).includes('NEEDS ALIEN REFLEX'))throw new Error('ally module omitted its dependency');
+  if(!offerRequirement(passive('capacitor')).includes('PALE LIGHT'))throw new Error('special module omitted compatible systems');
+  state.p.convertChance=.0038;addWeapon('beam');
+  if(offerRequirement(passive('loyalty'))||offerRequirement(passive('capacitor')))throw new Error('dependency warning persisted for compatible build');
+  state.p.hp=state.p.maxHp-2;
+  if(offerSummary({key:'repair'})!=='RESTORE 2 HULL NOW')throw new Error('repair summary ignored missing hull');
+  state.p.hp=state.p.maxHp;
+  if(!offerSummary({key:'repair'}).includes('ALREADY FULL'))throw new Error('full-hull repair promised a benefit');
+  const tradeoff='Increases output. Incoming damage +10%.';
+  if(!offerSummary({key:'proto:test',desc:tradeoff}).includes('INCOMING DAMAGE +10%'))throw new Error('tradeoff was truncated');
+  state.p.convertChance=0;delete state.weapons.beam;
+  for(let i=0;i<40;i++){const offer=signalDrawCandidate('TUNED');if(offer&&(offerRequirement(offer)||offerConnection(offer).startsWith('FUTURE EVOLUTION')))throw new Error('tuned draw selected an incompatible future build');}
+  openLevel();
+  const stale=state.currentOffers[0];renderOffers();const history=state.upgradeHistory.length;
+  if(selectOffer(stale)!==false||state.upgradeHistory.length!==history)throw new Error('stale offer applied after reroll');
+  let prevented=0;const choiceKey=windowListeners.keydown.at(-1),event={key:'1',repeat:true,preventDefault(){prevented++}};
+  choiceKey(event);choiceKey({...event,key:'Enter'});choiceKey({...event,key:' '});
+  if(prevented!==3||state.upgradeHistory.length!==history)throw new Error('held key consumed upgrade');
+  choiceKey({...event,repeat:false,altKey:true});if(state.upgradeHistory.length!==history)throw new Error('system shortcut selected an upgrade');
+  const picked=state.currentOffers[0];choiceKey({...event,repeat:false});
+  if(state.upgradeHistory.length!==history+1||selectOffer(picked)!==false)throw new Error('offer was not selected exactly once');
+  const resources=[state.rerolls,state.skips];$('rerollBtn').onclick();$('signalDrawBtn').onclick();$('skipBtn').onclick();
+  if(state.rerolls!==resources[0]||state.skips!==resources[1])throw new Error('hidden upgrade controls spent resources');
+}`,ctx);
+console.log('ORBIT upgrade clarity and input safety: PASS');

@@ -2,6 +2,12 @@
 
 ## 0.92.0 — Hostile Ecology and Resonance
 
+- show module bonuses before and after installation, with accurate compound cooldown reduction and capped hull repair previews
+- expose missing weapon or conversion requirements on upgrade cards and exclude incompatible future builds from tuned draws
+- retain complete protocol tradeoffs and artifact conditions instead of truncating their descriptions
+- reject stale upgrade selections and held-key repeats; retain keyboard focus when pinning or rerolling cards
+- extend upgrade regression tests and desktop layout checks across all three supported test resolutions
+
 - added locked-frame previews with explicit credit purchases and an owned-frame roster filter
 - preserved roster position and card focus after frame selection
 - restored native keyboard Tab navigation in menus and gamepad access to expandable sections
